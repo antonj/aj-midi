@@ -1,11 +1,9 @@
 /*global Audio */
-import { Component, Fragment, useEffect } from "react";
+import { Component, Fragment } from "react";
 
-import { withRouter } from "next/router";
-import Link from "next/link";
-import { fitText } from "../lib/fittext";
+import { withRouter, useRouter } from "next/router";
 
-class Elma extends Component {
+class Elma extends Component<{ facit: any; mission: any }> {
   state = {
     onlyUpperCase: true,
     onlyChars: true,
@@ -15,6 +13,9 @@ class Elma extends Component {
     char: ""
   };
   lastKey = null;
+  audioCorrectChar = null;
+  audioInCorrectChar = null;
+  audioCorrectWord = null;
 
   static getDerivedStateFromProps(props, state) {
     return {
@@ -74,7 +75,6 @@ class Elma extends Component {
   };
 
   render() {
-    const { mission } = this.props;
     const fontSizeVw = Math.min(10, 60 / this.state.facit.length);
     const index = this.state.text.length;
 
@@ -87,13 +87,6 @@ class Elma extends Component {
 
     return (
       <div className="root">
-        {/* <nav>
-          {mission.map((m, i) => (
-            <Link key={i} href={`?w=${m}`}>
-              <a>{m}</a>
-            </Link>
-          ))}
-        </nav> */}
         <header
           style={{ fontSize: fontSizeVw + "vw" }}
           className={
@@ -119,6 +112,7 @@ class Elma extends Component {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
+            outline: 1px solid red;
           }
           .currentChar {
             color: gold;
@@ -166,20 +160,29 @@ class Elma extends Component {
   }
 }
 
-export default withRouter(({ router }) => (
-  <Fragment>
-    <Elma
-      facit={[].concat(router.query.w)[0]}
-      mission={[].concat(router.query.w)}
-    />
-    <style jsx global>{`
-      html,
-      body {
-        min-height: 100%;
-      }
-      body {
-        font-size: 10vw;
-      }
-    `}</style>
-  </Fragment>
-));
+export default function Page() {
+  const { query } = useRouter();
+
+  return (
+    <div>
+      <Elma facit={[].concat(query.w)[0]} mission={[].concat(query.w)} />
+      <style jsx global>{`
+        html,
+        body {
+          height: 100%;
+          margin: 0;
+        }
+        body {
+          font-size: 10vw;
+        }
+        div {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      `}</style>
+    </div>
+  );
+}
