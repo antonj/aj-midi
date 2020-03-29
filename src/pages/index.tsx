@@ -1,13 +1,15 @@
 import { Type } from "../components/Type";
 import { useRouter } from "next/router";
+import { Create } from "../components/Create";
 
 export default function Page() {
   const { query } = useRouter();
-  let words = Array.isArray(query.w) ? query.w : [query.w || ""];
-
+  let words = Array.isArray(query.w)
+    ? query.w
+    : [query.w || ""].filter(Boolean);
   return (
     <div>
-      <Type words={words} />
+      {words.length === 0 ? <Create /> : <Type words={words} />}
       <style jsx global>{`
         html,
         body {
