@@ -1,6 +1,7 @@
 import { useSound } from "../util/useSound";
 import { useKeyUp } from "../util/useKeyUp";
 import { useState } from "react";
+import { fontSizeVw } from "../util/text";
 
 export function Type({ words }: { words: string[] }) {
   const audioCorrectChar = useSound("/static/audio/correct_char.wav");
@@ -12,11 +13,11 @@ export function Type({ words }: { words: string[] }) {
   const facit = word.toUpperCase();
 
   const reset = () => {
-    setIndexWord(index => (index + 1) % words.length);
+    setIndexWord((index) => (index + 1) % words.length);
     setWritten("");
   };
 
-  useKeyUp(ev => {
+  useKeyUp((ev) => {
     let key = ev.key;
     switch (key) {
       case "Backspace":
@@ -51,7 +52,7 @@ export function Type({ words }: { words: string[] }) {
 
     if (correct) {
       audioCorrectChar();
-      setWritten(written => written + outputChars);
+      setWritten((written) => written + outputChars);
       if (written.length + outputChars.length === facit.length) {
         audioCorrectWord();
         setTimeout(reset, 3000);
@@ -61,13 +62,12 @@ export function Type({ words }: { words: string[] }) {
     }
   });
 
-  const fontSizeVw = Math.min(10, 60 / word.length);
   const index = written.length;
 
   return (
     <div className="root">
       <header
-        style={{ fontSize: fontSizeVw + "vw" }}
+        style={{ fontSize: fontSizeVw(word) + "vw" }}
         className={facit.length === written.length ? "correct" : ""}
       >
         <h1>
