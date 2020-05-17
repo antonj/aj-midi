@@ -9,13 +9,17 @@ export function Create() {
       .split("\n")
       .filter(Boolean);
 
-    window.location.href = "/?" + words.map(w => "w=" + w).join("&");
+    window.location.href = "/?" + words.map((w) => "w=" + w).join("&");
   };
   return (
     <section>
-      <h1>Words</h1>
+      <h1>Type</h1>
       <form onSubmit={onSubmit}>
-        <textarea autoFocus name="words"></textarea>
+        <textarea
+          autoFocus
+          name="words"
+          placeholder="on challange per line"
+        ></textarea>
         <button>start</button>
       </form>
       <style jsx>{`

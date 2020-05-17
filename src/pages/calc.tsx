@@ -1,6 +1,9 @@
 import { Calc } from "../components/Calc";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+
+const MAX = 9;
+
 function rndBetween(min: number, max: number) {
   return Math.random() * max - min;
 }
@@ -12,26 +15,30 @@ function qToNumber(q: string | string[]) {
   }
   return parseInt(str);
 }
-export default function CalcPage() {
-  const { query } = useRouter();
-  const first = qToNumber(query.f);
-  const second = qToNumber(query.s);
 
-  const max = 9;
-  console.log(query, first, second);
-  if (first == null || second == null) {
-    const first = Math.floor(rndBetween(0, max));
-    const second = Math.floor(rndBetween(0, max - first));
-    useEffect(() => {
-      window.location.href = "/calc?f=" + first + "&s=" + second;
-    }, []);
-    return null;
-  }
+export function getNewRandomUrl() {
+  const first = Math.round(rndBetween(0, MAX));
+  const second = Math.round(rndBetween(0, MAX - first));
+  return "/calc?f=" + first + "&s=" + second;
+}
+
+export default function CalcPage() {
+  const router = useRouter();
+  const first = qToNumber(router.query.f);
+  const second = qToNumber(router.query.s);
+
+  console.log(router.query, first, second);
+
+  useEffect(() => {
+    if (first == null || second == null) {
+      router.replace(getNewRandomUrl());
+    }
+  }, [first, second]);
 
   return (
     <>
       <div>
-        <Calc first={first} second={second} max={max} />
+        <Calc first={first} second={second} />
       </div>
       <style jsx global>
         {`

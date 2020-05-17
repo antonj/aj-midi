@@ -2,16 +2,12 @@ import { fontSizeVw } from "../util/text";
 import { useState, useEffect, useRef } from "react";
 import { useSound } from "../util/useSound";
 import { useKeyUp } from "../util/useKeyUp";
+import { Numpad } from "./Numpad";
+import { useRouter } from "next/router";
+import { getNewRandomUrl } from "../pages/calc";
 
-export function Calc({
-  first,
-  second,
-  max,
-}: {
-  first: number;
-  second: number;
-  max: number;
-}) {
+export function Calc({ first, second }: { first: number; second: number }) {
+  const router = useRouter();
   const audioIncorrectChar = useSound("/static/audio/incorrect_char.wav");
   const audioCorrectWord = useSound("/static/audio/correct_word.wav");
   const [answer, setAnswer] = useState<number>(null);
@@ -21,7 +17,21 @@ export function Calc({
 
   const buttonRefs = useRef<{ [key: number]: HTMLButtonElement }>({});
   const reset = () => {
-    location.href = "/calc";
+    setAnswer(null);
+    router.replace(getNewRandomUrl()).then(() => {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+    });
+  };
+
+  const onSetAnswer = (a: number) => {
+    setAnswer(a);
+    if (a === facit) {
+      audioCorrectWord();
+    } else {
+      audioIncorrectChar();
+    }
   };
 
   useKeyUp((ev) => {
@@ -37,7 +47,7 @@ export function Calc({
 
     const num = parseInt(key);
     if (!isNaN(num)) {
-      setAnswer(parseInt(key));
+      onSetAnswer(parseInt(key));
     }
   });
 
@@ -53,10 +63,7 @@ export function Calc({
     }
     let timeout;
     if (answer === facit) {
-      audioCorrectWord();
       timeout = setTimeout(reset, 2000);
-    } else {
-      audioIncorrectChar();
     }
     return () => {
       clearTimeout(timeout);
@@ -64,31 +71,19 @@ export function Calc({
   }, [answer]);
 
   const question = first + " + " + second;
-
   const answerStr = answer != null ? answer : "?";
-
   const state =
     answer === null ? "noanswer" : correct ? "correct" : "incorrect";
 
   return (
     <div className="root">
-      <header style={{ fontSize: fontSizeVw(question) + "vw" }}>
-        {question} <span className="noanswer">=</span>{" "}
+      <header style={{ fontSize: fontSizeVw(question) * 2 + "vw" }}>
+        {question}{" "}
+        <span className="noanswer">{state === "incorrect" ? "≠" : "="}</span>{" "}
         <span className={state}>{answerStr}</span>
       </header>
       <form>
-        {Array.from(Array(max + 1).keys()).map((a) => (
-          <button
-            ref={(el) => (buttonRefs.current[a] = el)}
-            onClick={(e) => {
-              e.preventDefault();
-              setAnswer(a);
-            }}
-            key={a}
-          >
-            {a}
-          </button>
-        ))}
+        <Numpad facit={facit} answer={answer} setAnswer={onSetAnswer} />
       </form>
       <style jsx>{`
         .root {
@@ -98,6 +93,7 @@ export function Calc({
         }
         header {
           font-weight: bold;
+          padding-bottom: 2rem;
         }
         .noanswer {
           color: LIGHTSLATEGRAY;
@@ -107,23 +103,6 @@ export function Calc({
         }
         .incorrect {
           color: CRIMSON;
-        }
-        form {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-          grid-gap: 0.5rem;
-        }
-        button {
-          font-size: 2rem;
-          padding: 1rem;
-          background: black;
-          color: white;
-          border: 0px solid gold;
-          border-radius: 0.25rem;
-        }
-        button:focus {
-          box-shadow: 0 0 0 1px white, 0 0 0 6px LIGHTCORAL;
-          outline: none;
         }
       `}</style>
     </div>
