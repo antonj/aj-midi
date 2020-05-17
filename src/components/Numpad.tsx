@@ -3,7 +3,7 @@ import { useRef, useEffect } from "react";
 export function Numpad({
   facit,
   answer,
-  setAnswer,
+  setAnswer
 }: {
   facit: number;
   answer: number;
@@ -16,20 +16,18 @@ export function Numpad({
       return;
     }
     const btnRef = buttonRefs.current[answer];
-    console.log(buttonRefs.current);
     if (btnRef) {
-      console.log(btnRef);
       btnRef.focus();
     }
   }, [answer]);
 
   return (
     <div>
-      {layout.map((a) => (
+      {layout.map(a => (
         <button
           className={answer === facit ? "correct" : "incorrect"}
-          ref={(el) => (buttonRefs.current[a] = el)}
-          onClick={(e) => {
+          ref={el => (buttonRefs.current[a] = el)}
+          onClick={e => {
             e.preventDefault();
             setAnswer(a);
           }}

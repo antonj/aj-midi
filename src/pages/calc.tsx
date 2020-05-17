@@ -27,8 +27,6 @@ export default function CalcPage() {
   const first = qToNumber(router.query.f);
   const second = qToNumber(router.query.s);
 
-  console.log(router.query, first, second);
-
   useEffect(() => {
     if (first == null || second == null) {
       router.replace(getNewRandomUrl());

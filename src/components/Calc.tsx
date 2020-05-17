@@ -34,9 +34,8 @@ export function Calc({ first, second }: { first: number; second: number }) {
     }
   };
 
-  useKeyUp((ev) => {
+  useKeyUp(ev => {
     let key = ev.key;
-    console.log(key);
     switch (key) {
       case "Backspace":
       case "Escape": {
@@ -56,12 +55,10 @@ export function Calc({ first, second }: { first: number; second: number }) {
       return;
     }
     const btnRef = buttonRefs.current[answer];
-    console.log(buttonRefs.current);
     if (btnRef) {
-      console.log(btnRef);
       btnRef.focus();
     }
-    let timeout;
+    let timeout: NodeJS.Timeout;
     if (answer === facit) {
       timeout = setTimeout(reset, 2000);
     }
