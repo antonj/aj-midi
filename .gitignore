@@ -1,3 +1,12 @@
 node_modules
-.next
-.now
+
+.cache
+.env
+.vercel
+.output
+
+/build/
+/public/build
+/api/index.js
+
+/app/styles/tailwind.css

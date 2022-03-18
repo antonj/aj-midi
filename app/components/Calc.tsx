@@ -3,14 +3,14 @@ import { useState, useEffect, useRef } from "react";
 import { useSound } from "../util/useSound";
 import { useKeyUp } from "../util/useKeyUp";
 import { Numpad } from "./Numpad";
-import { useRouter } from "next/router";
-import { getNewRandomUrl } from "../pages/calc";
+import { getNewRandomUrl } from "../routes/calc";
+import { useNavigate } from "remix";
 
 export function Calc({ first, second }: { first: number; second: number }) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const audioIncorrectChar = useSound("/static/audio/incorrect_char.wav");
   const audioCorrectWord = useSound("/static/audio/correct_word.wav");
-  const [answer, setAnswer] = useState<number>(null);
+  const [answer, setAnswer] = useState<number | null>(null);
 
   const facit = first + second;
   const correct = facit === answer;
@@ -18,11 +18,12 @@ export function Calc({ first, second }: { first: number; second: number }) {
   const buttonRefs = useRef<{ [key: number]: HTMLButtonElement }>({});
   const reset = () => {
     setAnswer(null);
-    router.replace(getNewRandomUrl()).then(() => {
-      if (document.activeElement instanceof HTMLElement) {
-        document.activeElement.blur();
-      }
-    });
+    navigate(getNewRandomUrl(), { replace: true });
+    // .then(() => {
+    //   if (document.activeElement instanceof HTMLElement) {
+    //     document.activeElement.blur();
+    //   }
+    // });
   };
 
   const onSetAnswer = (a: number) => {
@@ -34,7 +35,7 @@ export function Calc({ first, second }: { first: number; second: number }) {
     }
   };
 
-  useKeyUp(ev => {
+  useKeyUp((ev) => {
     let key = ev.key;
     switch (key) {
       case "Backspace":

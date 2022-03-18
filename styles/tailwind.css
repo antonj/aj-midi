@@ -1,0 +1,50 @@
+@tailwind base;
+
+/* Write your own custom base styles here */
+
+/* Start purging... */
+@tailwind components;
+/* Stop purging. */
+
+html,
+body {
+  @apply bg-primary;
+  @apply text-primary;
+  @apply antialiased;
+}
+
+/* Start purging... */
+@tailwind utilities;
+/* Stop purging. */
+
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.dialog {
+  text-align: center;
+}
+.dialog:before {
+  content: "";
+  vertical-align: middle;
+  display: inline-block;
+  height: 100%;
+  width: 0px;
+}
+
+body,
+#__next {
+  min-height: 100vh;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+}

@@ -1,6 +1,6 @@
 import { Calc } from "../components/Calc";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "remix";
 
 const MAX = 9;
 
@@ -23,22 +23,23 @@ export function getNewRandomUrl() {
 }
 
 export default function CalcPage() {
-  const router = useRouter();
-  const first = qToNumber(router.query.f);
-  const second = qToNumber(router.query.s);
+  let navigate = useNavigate();
+  const [sp] = useSearchParams();
+  const first = qToNumber(sp.getAll("f"));
+  const second = qToNumber(sp.getAll("s"));
 
   useEffect(() => {
     if (first == null || second == null) {
-      router.replace(getNewRandomUrl());
+      navigate(getNewRandomUrl(), { replace: true });
     }
-  }, [first, second]);
+  }, [first, second, navigate]);
 
   return (
     <>
       <div>
         <Calc first={first} second={second} />
       </div>
-      <style jsx global>
+      <style>
         {`
           html,
           body {
@@ -49,7 +50,7 @@ export default function CalcPage() {
           }
         `}
       </style>
-      <style jsx>{`
+      <style>{`
         div {
           min-height: 100vh;
           min-height: -webkit-fill-available;
@@ -62,8 +63,3 @@ export default function CalcPage() {
     </>
   );
 }
-
-CalcPage.getInitialProps = () => {
-  // make sure query is not empty
-  return {};
-};

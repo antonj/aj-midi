@@ -1,16 +1,14 @@
-import { Type } from "../components/Type";
-import { useRouter } from "next/router";
+import { useSearchParams } from "remix";
 import { Create } from "../components/Create";
+import { Type } from "../components/Type";
 
-export default function Page() {
-  const { query } = useRouter();
-  let words = Array.isArray(query.w)
-    ? query.w
-    : [query.w || ""].filter(Boolean);
+export default function Index() {
+  const [sp] = useSearchParams();
+  const words = sp.getAll("w").filter(Boolean);
   return (
     <div>
       {words.length === 0 ? <Create /> : <Type words={words} />}
-      <style jsx global>{`
+      <style>{`
         html,
         body {
           height: 100%;

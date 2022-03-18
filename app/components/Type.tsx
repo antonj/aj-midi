@@ -1,12 +1,25 @@
 import { useSound } from "../util/useSound";
 import { useKeyUp } from "../util/useKeyUp";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fontSizeVw } from "../util/text";
 
 export function Type({ words }: { words: string[] }) {
-  const audioCorrectChar = useSound("/static/audio/correct_char.wav");
-  const audioIncorrectChar = useSound("/static/audio/incorrect_char.wav");
-  const audioCorrectWord = useSound("/static/audio/correct_word.wav");
+  const aCtx = useRef<AudioContext>();
+  useEffect(() => {
+    aCtx.current = new AudioContext();
+  }, []);
+  const audioCorrectChar = useSound(
+    "/static/audio/correct_char.wav",
+    aCtx.current
+  );
+  const audioIncorrectChar = useSound(
+    "/static/audio/incorrect_char.wav",
+    aCtx.current
+  );
+  const audioCorrectWord = useSound(
+    "/static/audio/correct_word.wav",
+    aCtx.current
+  );
   const [indexWord, setIndexWord] = useState(0);
   const [written, setWritten] = useState("");
   const word = words[indexWord] || "";
