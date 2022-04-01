@@ -41,8 +41,6 @@ export function useRecording({
                 return;
               }
               setState({ state: "done", src });
-              console.log("url", URL.createObjectURL(audioBlob));
-              console.log("red", src);
             };
             fr.readAsDataURL(audioBlob);
             break;

@@ -88,7 +88,7 @@ export function Type({ words, record }: { words: string[]; record: boolean }) {
     word.charAt(index) === " " ? word.charAt(index + 1) : word.charAt(index);
 
   usePlaySavedSound(char, 500, aCtx.current);
-  usePlaySavedSound(facit, 500, aCtx.current);
+  usePlaySavedSound(facit, 1000, aCtx.current);
 
   return (
     <div>
@@ -147,7 +147,7 @@ export function Type({ words, record }: { words: string[]; record: boolean }) {
           transition: transform 1s cubic-bezier(0.87, -0.41, 0.19, 1.44);
           transform: translateY(50%);
         }
-        .correct h1 + h1 {
+        .correct h1 ~ h1 {
           transform: translateY(-50%);
         }
       `}</style>

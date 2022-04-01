@@ -18,7 +18,6 @@ export function RecordChar({ char }: { char: string }) {
       }
     }
   }, [recorder.state, char, dispatch]);
-  console.log("state", state);
 
   return (
     <span
