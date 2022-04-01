@@ -1,13 +1,20 @@
 import { useSearchParams } from "remix";
+import { Type } from "~/components/Type";
+import { AudioProvider } from "../components/audio-context";
 import { Create } from "../components/Create";
-import { Type } from "../components/Type";
 
 export default function Index() {
   const [sp] = useSearchParams();
   const words = sp.getAll("w").filter(Boolean);
   return (
     <div>
-      {words.length === 0 ? <Create /> : <Type words={words} />}
+      {words.length > 0 ? (
+        <AudioProvider>
+          <Type record={sp.get("record") === "true"} words={words} />
+        </AudioProvider>
+      ) : (
+        <Create />
+      )}
       <style>{`
         html,
         body {

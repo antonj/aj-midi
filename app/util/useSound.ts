@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { dataURItoBlob } from "../components/audio-context";
 
 export function useSound(src: string, ctx?: AudioContext) {
   const audioBuffer = useRef<AudioBuffer>();
@@ -24,4 +25,13 @@ export function useSound(src: string, ctx?: AudioContext) {
     source.start();
   };
   return play;
+}
+
+export async function playDataURL(dataURL: string, ctx: AudioContext) {
+  console.log("playDataURL", dataURL);
+  const source = ctx.createBufferSource();
+  const blob = dataURItoBlob(dataURL);
+  source.buffer = await ctx.decodeAudioData(await blob.arrayBuffer());
+  source.connect(ctx.destination);
+  source.start();
 }
