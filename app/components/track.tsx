@@ -36,7 +36,7 @@ export function Track({ song }: { song: Midi }) {
   );
   console.log(info);
 
-  useTicker(song, (tick) => {
+  useTicker(song, (tick, msPerTick) => {
     const canv = canvasRef.current;
     if (!canv) {
       return;
@@ -45,7 +45,7 @@ export function Track({ song }: { song: Midi }) {
     if (!ctx) {
       return;
     }
-    draw(ctx, tick, song, octaves);
+    draw(ctx, tick, msPerTick, song, octaves);
   });
 
   useEffect(() => {
@@ -57,7 +57,6 @@ export function Track({ song }: { song: Midi }) {
     if (!ctx) {
       return;
     }
-    requestAnimationFrame(() => draw(ctx, song, octaves));
 
     const handleResize = () => {
       const rect = wrapperRef.current?.getBoundingClientRect();
@@ -84,6 +83,7 @@ export function Track({ song }: { song: Midi }) {
 function draw(
   ctx: CanvasRenderingContext2D,
   tick: number,
+  msPerTick: number,
   song: Midi,
   octaves: number[]
 ) {
@@ -109,7 +109,7 @@ function draw(
   console.log(minMidi, maxMidi);
   const numWhites = octaves.length * numWhiteInOctate;
 
-  const tickWindow = 500; // ticks shown in height
+  const tickWindow = 400; // ticks shown in height
   const minTick = tick;
   //const maxTick = song.durationTicks;
   const maxTick = tick + tickWindow;

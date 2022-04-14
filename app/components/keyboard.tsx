@@ -39,8 +39,12 @@ export function Keyboard({ song }: { song: Midi }) {
   const [pressed, setPressed] = useState(new Set<number>());
   const beep = useBeep();
 
-  useTicker(song, (tick) => {
-    const changes = new Set<{ midi: number; duration: number }>();
+  useTicker(song, (tick, msPerTick) => {
+    const changes = new Set<{
+      midi: number;
+      duration: number;
+      durationTicks: number;
+    }>();
     const curr = new Set<number>();
     for (const n of song.tracks[0].notes ?? []) {
       if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
@@ -51,7 +55,7 @@ export function Keyboard({ song }: { song: Midi }) {
     if (!eqSet(curr, pressed)) {
       setPressed(curr);
       for (const t of changes) {
-        beep(t.duration * 1000, t.midi);
+        beep(t.durationTicks * msPerTick, t.midi);
       }
     }
   });

@@ -4,7 +4,10 @@ import { eqSet } from "../util/set";
 import { useBeep } from "./use-beep";
 import { useRequestAnimationFrame } from "./use-request-animation-frame";
 
-export function useTicker(song: Midi, onTick: (tick: number) => void) {
+export function useTicker(
+  song: Midi,
+  onTick: (tick: number, msPerTick: number) => void
+) {
   const refStart = useRef(performance.now());
   const ppq = song.header.ppq;
   let bpm = song.header.tempos[0].bpm;
@@ -14,6 +17,6 @@ export function useTicker(song: Midi, onTick: (tick: number) => void) {
     const now = performance.now();
     const elapsed = now - refStart.current;
     const tick = Math.floor(elapsed / msPerTick);
-    onTick(tick);
+    onTick(tick, msPerTick);
   });
 }
