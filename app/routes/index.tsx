@@ -1,37 +1,33 @@
-import { useSearchParams } from "remix";
-import { Type } from "~/components/Type";
-import { AudioProvider } from "../components/audio-context";
-import { Create } from "../components/Create";
+import { Keyboard, links as keyboardLinks } from "../components/keyboard";
+import { Midi } from "@tonejs/midi";
+import { useEffect, useState } from "react";
+import { Track } from "../components/track";
+
+export function links() {
+  return [...keyboardLinks()];
+}
+
+function useMidi(path: string) {
+  const [x, setX] = useState<Midi | null>(null);
+  useEffect(() => {
+    Midi.fromUrl("/static/midi/moon.mid").then((f) => setX(f));
+  }, [path]);
+  return x;
+}
 
 export default function Index() {
-  const [sp] = useSearchParams();
-  const words = sp.getAll("w").filter(Boolean);
+  const m = useMidi("/static/midi/moon.mid");
+  console.log(m);
   return (
-    <div>
-      {words.length > 0 ? (
-        <AudioProvider>
-          <Type record={sp.get("record") === "true"} words={words} />
-        </AudioProvider>
-      ) : (
-        <Create />
-      )}
-      <style>{`
-        html,
-        body {
-          height: 100%;
-          margin: 0;
-        }
-        body {
-          font-size: 10vw;
-        }
-        div {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-      `}</style>
+    <div className="flex flex-col h-screen">
+      <div className="bg-secondary h-full overflow-hidden">
+        <Track />
+      </div>
+      {m ? (
+        <div className="w-full h-60 outline-black">
+          <Keyboard song={m} />
+        </div>
+      ) : null}
     </div>
   );
 }
