@@ -1,25 +1,19 @@
+import { Midi } from "@tonejs/midi";
+import { useRef, useState } from "react";
 import { eqSet } from "../util/set";
+import { useBeep } from "./use-beep";
 import { useRequestAnimationFrame } from "./use-request-animation-frame";
 
-export function useTicker() {
+export function useTicker(song: Midi, onTick: (tick: number) => void) {
+  const refStart = useRef(performance.now());
+  const ppq = song.header.ppq;
+  let bpm = song.header.tempos[0].bpm;
+  const msPerTick = (bpm * ppq) / (60 * 1000);
+
   useRequestAnimationFrame(() => {
     const now = performance.now();
     const elapsed = now - refStart.current;
     const tick = Math.floor(elapsed / msPerTick);
-
-    const changes = new Set<{ midi: number; duration: number }>();
-    const curr = new Set<number>();
-    for (const n of song.tracks[0].notes ?? []) {
-      if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
-        curr.add(n.midi);
-        changes.add(n);
-      }
-    }
-    if (!eqSet(curr, pressed)) {
-      setPressed(curr);
-      for (const t of changes) {
-        beep(t.duration * 1000, t.midi);
-      }
-    }
+    onTick(tick);
   });
 }

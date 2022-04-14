@@ -52,6 +52,6 @@ export function useBeep() {
     if (!ctxRef.current) {
       return () => null;
     }
-    beep(ctxRef.current, durationMs, noteToFreq(frequency), 0.5, "sawtooth");
+    beep(ctxRef.current, durationMs, noteToFreq(frequency), 0.01, "sawtooth");
   };
 }

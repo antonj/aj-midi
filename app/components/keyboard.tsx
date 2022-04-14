@@ -1,10 +1,10 @@
 import { Midi } from "@tonejs/midi";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { isBlack, midiToOctave, notes, toMidiTone } from "../util/music";
 
 import styles from "./keyboard.css";
 import { useBeep } from "./use-beep";
-import { useRequestAnimationFrame } from "./use-request-animation-frame";
+import { useTicker } from "./use-ticker";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
@@ -36,18 +36,10 @@ export function Keyboard({ song }: { song: Midi }) {
     (_, i) => low.octave + i
   );
 
-  const refStart = useRef(performance.now());
-  const ppq = song.header.ppq;
-  let bpm = song.header.tempos[0].bpm;
-  const msPerTick = (bpm * ppq) / (60 * 1000);
   const [pressed, setPressed] = useState(new Set<number>());
   const beep = useBeep();
 
-  useRequestAnimationFrame(() => {
-    const now = performance.now();
-    const elapsed = now - refStart.current;
-    const tick = Math.floor(elapsed / msPerTick);
-
+  useTicker(song, (tick) => {
     const changes = new Set<{ midi: number; duration: number }>();
     const curr = new Set<number>();
     for (const n of song.tracks[0].notes ?? []) {

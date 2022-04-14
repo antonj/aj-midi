@@ -10,8 +10,8 @@ import {
   numWhiteInOctate,
   toMidiTone,
   whiteIndexInOctave,
-  xInPiano,
 } from "../util/music";
+import { useTicker } from "./use-ticker";
 
 export function Track({ song }: { song: Midi }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -35,6 +35,18 @@ export function Track({ song }: { song: Midi }) {
     (_, i) => info.low.octave + i
   );
   console.log(info);
+
+  useTicker(song, (tick) => {
+    const canv = canvasRef.current;
+    if (!canv) {
+      return;
+    }
+    const ctx = canv.getContext("2d");
+    if (!ctx) {
+      return;
+    }
+    draw(ctx, tick, song, octaves);
+  });
 
   useEffect(() => {
     const canv = canvasRef.current;
@@ -69,7 +81,12 @@ export function Track({ song }: { song: Midi }) {
   );
 }
 
-function draw(ctx: CanvasRenderingContext2D, song: Midi, octaves: number[]) {
+function draw(
+  ctx: CanvasRenderingContext2D,
+  tick: number,
+  song: Midi,
+  octaves: number[]
+) {
   const canvas = ctx.canvas;
   const w = canvas.width;
   const h = canvas.height;
@@ -92,9 +109,10 @@ function draw(ctx: CanvasRenderingContext2D, song: Midi, octaves: number[]) {
   console.log(minMidi, maxMidi);
   const numWhites = octaves.length * numWhiteInOctate;
 
-  const minTick = 50;
+  const tickWindow = 500; // ticks shown in height
+  const minTick = tick;
   //const maxTick = song.durationTicks;
-  const maxTick = 1000;
+  const maxTick = tick + tickWindow;
   const whiteWidth = w / numWhites;
 
   function xInPiano(
@@ -138,7 +156,7 @@ function draw(ctx: CanvasRenderingContext2D, song: Midi, octaves: number[]) {
   for (const n of song.tracks[0].notes) {
     let nw = w / numWhites;
     const note = midiToNote(n.midi);
-    const nh = h / (maxTick / n.durationTicks);
+    const nh = h / (tickWindow / n.durationTicks);
     let x = xInPiano(n.midi, octaves, 0, w);
     const y = map(n.ticks, minTick, maxTick, h, 0) - nh; // ticks // flip y axis
     if (isBlack(note)) {
@@ -152,6 +170,4 @@ function draw(ctx: CanvasRenderingContext2D, song: Midi, octaves: number[]) {
     ctx.fillRect(x, y, nw, nh);
     ctx.fillText("" + n.midi, x, y, 100);
   }
-
-  requestAnimationFrame(() => draw(ctx, song, octaves));
 }
