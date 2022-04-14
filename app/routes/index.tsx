@@ -21,13 +21,14 @@ export default function Index() {
   return (
     <div className="flex flex-col h-screen">
       <div className="bg-secondary h-full overflow-hidden">
-        <Track />
+        {m ? <Track song={m} /> : null}
       </div>
       {m ? (
         <div className="w-full h-60 outline-black">
           <Keyboard song={m} />
         </div>
       ) : null}
+      {/* <pre>{JSON.stringify(m?.tracks[0].notes, null, 2)}</pre> */}
     </div>
   );
 }

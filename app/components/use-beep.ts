@@ -5,7 +5,7 @@ function beep(
   durationMs: number,
   frequency: number,
   volume: number,
-  type: "sine"
+  type: OscillatorType = "sine"
 ) {
   var oscillator = ctx.createOscillator();
   var gainNode = ctx.createGain();
@@ -13,18 +13,30 @@ function beep(
   oscillator.connect(gainNode);
   gainNode.connect(ctx.destination);
 
-  if (volume) {
-    gainNode.gain.value = volume;
+  gainNode.gain.value = 0;
+  if (!volume) {
+    volume = 0.8;
   }
-  if (frequency) {
-    oscillator.frequency.value = frequency;
+  if (!durationMs) {
+    durationMs = 500;
   }
+  // fade in
+  gainNode.gain.setTargetAtTime(
+    volume,
+    ctx.currentTime,
+    Math.min(0.1, (durationMs / 1000) * 0.1)
+  );
+  // fade out
+  gainNode.gain.setTargetAtTime(0, ctx.currentTime + durationMs / 1000, 0.1);
+
+  oscillator.frequency.value = frequency;
+
   if (type) {
     oscillator.type = type;
   }
 
   oscillator.start(ctx.currentTime);
-  oscillator.stop(ctx.currentTime + (durationMs || 500) / 1000);
+  oscillator.stop(ctx.currentTime + durationMs / 1000);
 }
 
 function noteToFreq(midi: number, tuning = 440) {
@@ -40,6 +52,6 @@ export function useBeep() {
     if (!ctxRef.current) {
       return () => null;
     }
-    beep(ctxRef.current, durationMs, noteToFreq(frequency), 1, "sine");
+    beep(ctxRef.current, durationMs, noteToFreq(frequency), 0.5, "sawtooth");
   };
 }

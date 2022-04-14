@@ -1,41 +1,13 @@
 import { Midi } from "@tonejs/midi";
 import { useMemo, useRef, useState } from "react";
+import { isBlack, midiToOctave, notes, toMidiTone } from "../util/music";
 
 import styles from "./keyboard.css";
 import { useBeep } from "./use-beep";
 import { useRequestAnimationFrame } from "./use-request-animation-frame";
 
-const octave = [
-  "c",
-  "c#",
-  "d",
-  "d#",
-  "e",
-  "f",
-  "f#",
-  "g",
-  "g#",
-  "a",
-  "a#",
-  "h",
-];
-
-function isBlack(key?: string) {
-  if (typeof key === "string") {
-    return key.length === 2;
-  }
-  return false;
-}
-
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
-}
-
-function midiToOctave(midiTone: number) {
-  const octaveLenght = 12;
-  const octave = Math.floor(midiTone / octaveLenght) - 1;
-  const index = midiTone % octaveLenght;
-  return { octave, index };
 }
 
 function eqSet<T>(as: Set<T>, bs: Set<T>) {
@@ -87,7 +59,7 @@ export function Keyboard({ song }: { song: Midi }) {
     if (!eqSet(curr, pressed)) {
       setPressed(curr);
       for (const t of changes) {
-        beep(100, t.midi);
+        beep(t.duration * 1000, t.midi);
       }
     }
   });
@@ -108,10 +80,6 @@ export function Keyboard({ song }: { song: Midi }) {
   );
 }
 
-function toMidiTone(octave: number, index: number): number {
-  return (octave + 1) * 12 + index;
-}
-
 function Octave({
   octaveIndex,
   pressedMidiTone,
@@ -121,7 +89,7 @@ function Octave({
 }) {
   return (
     <>
-      {octave.map((t, i) => {
+      {notes.map((t, i) => {
         if (isBlack(t)) {
           return null;
         }
@@ -140,7 +108,7 @@ function Octave({
               <br />
               {toMidiTone(octaveIndex, i)}
             </button>
-            {isBlack(octave[i + 1]) ? (
+            {isBlack(notes[i + 1]) ? (
               <button
                 className={
                   "key-black " +
@@ -149,7 +117,9 @@ function Octave({
                     : "")
                 }
               >
-                {octave[i + 1]}
+                {notes[i + 1]}
+                <br />
+                {toMidiTone(octaveIndex, i + 1)}
               </button>
             ) : null}
           </div>
