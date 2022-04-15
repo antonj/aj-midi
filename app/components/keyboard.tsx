@@ -4,7 +4,7 @@ import { isBlack, midiToOctave, notes, toMidiTone } from "../util/music";
 
 import styles from "./keyboard.css";
 import { useBeep } from "./use-beep";
-import { useTicker } from "./use-ticker";
+import { useSongTicker } from "./use-song-context";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
@@ -36,27 +36,47 @@ export function Keyboard({ song }: { song: Midi }) {
     (_, i) => low.octave + i
   );
 
-  const [pressed, setPressed] = useState(new Set<number>());
+  const [sPressed, setPressed] = useState(new Set<number>());
+  const [sFuture, setFuture] = useState(new Set<number>());
   const beep = useBeep();
 
-  useTicker(song, (tick, msPerTick) => {
+  useSongTicker(song, (tick, settings) => {
     const changes = new Set<{
       midi: number;
       duration: number;
       durationTicks: number;
     }>();
-    const curr = new Set<number>();
+    const pressed = new Set<number>();
+    const future = new Set<number>();
     for (const n of song.tracks[0].notes ?? []) {
+      // current
       if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
-        curr.add(n.midi);
+        pressed.add(n.midi);
         changes.add(n);
       }
-    }
-    if (!eqSet(curr, pressed)) {
-      setPressed(curr);
-      for (const t of changes) {
-        beep(t.durationTicks * msPerTick, t.midi);
+      // future
+      if (tick < n.ticks && tick > n.ticks - settings.tickWindow) {
+        future.add(n.midi);
       }
+    }
+    if (!eqSet(pressed, sPressed)) {
+      setPressed((curr) => {
+        if (!eqSet(curr, pressed)) {
+          return pressed;
+        }
+        return curr;
+      });
+      for (const t of changes) {
+        beep(t.durationTicks * settings.msPerTick, t.midi);
+      }
+    }
+    if (!eqSet(future, sFuture)) {
+      setFuture((curr) => {
+        if (!eqSet(curr, future)) {
+          return future;
+        }
+        return curr;
+      });
     }
   });
 
@@ -66,10 +86,8 @@ export function Keyboard({ song }: { song: Midi }) {
         <Octave
           key={octave}
           octaveIndex={octave}
-          pressedMidiTone={
-            pressed
-            //new Set([50])
-          }
+          pressedMidiTone={sPressed}
+          pressedMidiToneFuture={sFuture}
         />
       ))}
     </div>
@@ -79,9 +97,11 @@ export function Keyboard({ song }: { song: Midi }) {
 function Octave({
   octaveIndex,
   pressedMidiTone,
+  pressedMidiToneFuture,
 }: {
   octaveIndex: number;
   pressedMidiTone: Set<number>;
+  pressedMidiToneFuture: Set<number>;
 }) {
   return (
     <>
@@ -95,7 +115,10 @@ function Octave({
               className={
                 "key-white " +
                 (pressedMidiTone.has(toMidiTone(octaveIndex, i))
-                  ? "key-pressed"
+                  ? "key-pressed "
+                  : "") +
+                (pressedMidiToneFuture.has(toMidiTone(octaveIndex, i))
+                  ? "key-pressed-future "
                   : "")
               }
             >
@@ -109,7 +132,10 @@ function Octave({
                 className={
                   "key-black " +
                   (pressedMidiTone.has(toMidiTone(octaveIndex, i + 1))
-                    ? "key-pressed"
+                    ? "key-pressed "
+                    : "") +
+                  (pressedMidiToneFuture.has(toMidiTone(octaveIndex, i + 1))
+                    ? "key-pressed-future "
                     : "")
                 }
               >

@@ -1,6 +1,13 @@
+:root {
+	--color-text-primary: transparent;
+	 --color-text-secondary: transparent;
+	/* --color-text-primary: black;
+	--color-text-secondary: white; */
+}
+
 [data-keyboard] {
 	display: flex;
-	color: #454545;
+	color: var(--color-text-primary);
 }
 
 [data-keyboard] .key-wrapper {
@@ -25,11 +32,22 @@
 	left: 70%;
 	width: 60%;
 	height: 70%;
-	color: white;
+	color: var(--color-text-secondary);
 	background: black;
 	border: 1px solid black;
 }
 
-[data-keyboard] .key-pressed {
+[data-keyboard] .key-pressed-future:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 10px;
+	width: 100%;
+	background: salmon;
+}
+
+[data-keyboard] .key-pressed,
+[data-keyboard] .key-pressed-future.key-pressed {
 	background: gold;
 }

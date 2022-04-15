@@ -1,5 +1,3 @@
-import { map } from "./map";
-
 export type Note = typeof notes[number];
 
 export const notes = [

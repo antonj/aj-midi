@@ -11,7 +11,7 @@ import {
   toMidiTone,
   whiteIndexInOctave,
 } from "../util/music";
-import { useTicker } from "./use-ticker";
+import { SongSettings, useSongTicker } from "./use-song-context";
 
 export function Track({ song }: { song: Midi }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -34,9 +34,8 @@ export function Track({ song }: { song: Midi }) {
   const octaves = Array.from({ length: numOctaves }).map(
     (_, i) => info.low.octave + i
   );
-  console.log(info);
 
-  useTicker(song, (tick, msPerTick) => {
+  useSongTicker(song, (tick, songCtx) => {
     const canv = canvasRef.current;
     if (!canv) {
       return;
@@ -45,7 +44,7 @@ export function Track({ song }: { song: Midi }) {
     if (!ctx) {
       return;
     }
-    draw(ctx, tick, msPerTick, song, octaves);
+    draw(ctx, tick, songCtx, song, octaves);
   });
 
   useEffect(() => {
@@ -83,7 +82,7 @@ export function Track({ song }: { song: Midi }) {
 function draw(
   ctx: CanvasRenderingContext2D,
   tick: number,
-  msPerTick: number,
+  songCtx: SongSettings,
   song: Midi,
   octaves: number[]
 ) {
@@ -91,7 +90,7 @@ function draw(
   const w = canvas.width;
   const h = canvas.height;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = "salmon";
+  ctx.fillStyle = "#ddd";
   ctx.fillRect(0, 0, w, h);
 
   // | |x| | |x| |  |  |
@@ -106,10 +105,9 @@ function draw(
 
   const minMidi = toMidiTone(octaves[0], 0);
   const maxMidi = toMidiTone(octaves[octaves.length - 1], numNotesInOctave - 1);
-  console.log(minMidi, maxMidi);
   const numWhites = octaves.length * numWhiteInOctate;
 
-  const tickWindow = 400; // ticks shown in height
+  const tickWindow = songCtx.tickWindow; // ticks shown in height
   const minTick = tick;
   //const maxTick = song.durationTicks;
   const maxTick = tick + tickWindow;
@@ -168,6 +166,6 @@ function draw(
       x = x - whiteWidth / 2;
     }
     ctx.fillRect(x, y, nw, nh);
-    ctx.fillText("" + n.midi, x, y, 100);
+    //ctx.fillText("" + n.midi, x, y, 100);
   }
 }
