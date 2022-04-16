@@ -22,9 +22,9 @@ export default function Index() {
   //const m = useMidi("/static/midi/elise.midi");
   const start = useRef(performance.now());
   const [settings, setSettings] = useState<SongSettings>({
-    speed: 0.2,
+    speed: 0.1,
     start: start.current,
-    tickWindow: 400,
+    tickWindow: 700,
   });
 
   useEffect(() => {
