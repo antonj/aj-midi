@@ -49,9 +49,13 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
   const songRef = useRef<SongSettingsExtended>({
     ...ctx,
     msPerTick,
-    tick: 0,
+    tick: -1000, // start before song
     lastTickAt: 0,
   });
+  if (ctx.start !== songRef.current.start) {
+    // seek
+    songRef.current.tick = ctx.start;
+  }
   songRef.current = {
     ...songRef.current,
     ...ctx,
@@ -59,9 +63,12 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
   };
 
   useRequestAnimationFrame(() => {
-    const elapsed = performance.now() - songRef.current.start;
-    const tick = Math.floor(elapsed / songRef.current.msPerTick);
-    console.log("frame start", songRef.current.start);
+    const now = performance.now();
+    const elapsedSinceLastTick = now - songRef.current.lastTickAt;
+    const tick =
+      songRef.current.tick + elapsedSinceLastTick / songRef.current.msPerTick;
     onTick(tick, songRef.current);
+    songRef.current.tick = tick;
+    songRef.current.lastTickAt = now;
   });
 }

@@ -59,11 +59,11 @@ function Song(props: { song: Midi }) {
       settings.setSettings({ ...obj });
     });
     gui
-      .add(obj, "time", 0, m.duration, 1)
+      .add(obj, "time", 0, m.durationTicks, 1)
       .onChange((v: number) => {
         changing.current = true;
         console.log("setstart", v);
-        settings.setStart(-clamp(v, 0, m.duration) * 1000);
+        settings.setStart(clamp(v, 0, m.durationTicks));
       })
       .onFinishChange(() => {
         changing.current = false;
@@ -75,7 +75,7 @@ function Song(props: { song: Midi }) {
 
   useSongTicker(m, (_, ctx) => {
     if (!changing.current) {
-      params.current.time = Math.floor((performance.now() - ctx.start) / 1000);
+      params.current.time = ctx.tick;
     }
   });
 
