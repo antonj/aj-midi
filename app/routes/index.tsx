@@ -3,7 +3,12 @@ import { Midi } from "@tonejs/midi";
 import { useEffect, useRef, useState } from "react";
 import { Track } from "../components/track";
 import { Keyboard, links as keyboardLinks } from "../components/keyboard";
-import { SongProvider, SongSettings } from "../components/use-song-context";
+import {
+  SongSettings,
+  useSettings,
+  useSongTicker,
+} from "../components/use-song-context";
+import { clamp, map } from "../util/map";
 
 export function links() {
   return [...keyboardLinks()];
@@ -19,40 +24,70 @@ function useMidi(path: string) {
 
 export default function Index() {
   const m = useMidi("/static/midi/moon.midi");
-  //const m = useMidi("/static/midi/elise.midi");
-  const start = useRef(performance.now());
-  const [settings, setSettings] = useState<SongSettings>({
-    speed: 0.1,
-    start: start.current,
-    tickWindow: 700,
-  });
+  if (!m) {
+    return null;
+  }
+  return <Song song={m} />;
+}
+
+function Song(props: { song: Midi }) {
+  const m = props.song;
+  const settings = useSettings();
 
   useEffect(() => {
-    let obj = {
-      ...settings,
-    };
+    if (!m) {
+      return;
+    }
+  }, [settings, m]);
+
+  let params = useRef<SongSettings & { time: number }>({
+    ...settings,
+    time: 0,
+  });
+
+  let changing = useRef(false);
+  useEffect(() => {
+    if (!m) {
+      return;
+    }
+    let obj = params.current;
     const gui = new GUI();
-    gui.add(obj, "speed", 0, 2, 0.05);
-    gui.add(obj, "tickWindow", 0, 2000, 5);
-    gui.onChange(() => {
-      setSettings({ ...obj });
+    gui.add(obj, "speed", 0, 2, 0.05).onChange(() => {
+      settings.setSettings({ ...obj });
     });
+    gui.add(obj, "tickWindow", 0, 2000, 5).onChange(() => {
+      settings.setSettings({ ...obj });
+    });
+    gui
+      .add(obj, "time", 0, m.duration, 1)
+      .onChange((v: number) => {
+        changing.current = true;
+        console.log("setstart", v);
+        settings.setStart(-clamp(v, 0, m.duration) * 1000);
+      })
+      .onFinishChange(() => {
+        changing.current = false;
+      })
+      .listen();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [m]);
+
+  useSongTicker(m, (_, ctx) => {
+    if (!changing.current) {
+      params.current.time = Math.floor((performance.now() - ctx.start) / 1000);
+    }
+  });
 
   return (
-    <SongProvider settings={settings}>
-      <div className="flex flex-col h-screen">
-        <div className="bg-secondary h-full overflow-hidden">
-          {m ? <Track song={m} /> : null}
-        </div>
-        {m ? (
-          <div className="w-full h-60 outline-black">
-            <Keyboard song={m} />
-          </div>
-        ) : null}
-        {/* <pre>{JSON.stringify(m?.tracks[0].notes, null, 2)}</pre> */}
+    <div className="flex flex-col h-screen">
+      <div className="bg-secondary h-full overflow-hidden">
+        <Track song={m} />
       </div>
-    </SongProvider>
+
+      <div className="w-full h-60 outline-black">
+        <Keyboard song={m} />
+      </div>
+    </div>
   );
 }

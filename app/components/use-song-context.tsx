@@ -1,39 +1,40 @@
-import { createContext, ReactNode, useContext, useRef } from "react";
+import { useRef } from "react";
 import { Midi } from "@tonejs/midi";
+import create from "zustand";
+import { persist } from "zustand/middleware";
 import { useRequestAnimationFrame } from "./use-request-animation-frame";
 
 export type SongSettings = {
   speed: number;
   start: number;
   tickWindow: number;
+  setStart(start: number): void;
+  setSettings(settings: SongSettings): void;
 };
 
-type SongSettingsExtended = SongSettings & { msPerTick: number };
+export const useSettings = create<SongSettings>(
+  persist(
+    (set) => ({
+      speed: 1,
+      start: 0,
+      tickWindow: 600,
+      setStart: (start: number) => set((s) => ({ ...s, start })),
+      setSettings: (settings: SongSettings) => set(settings),
+    }),
+    {
+      name: "song-settings",
+    }
+  )
+);
 
-const SongContext = createContext<SongSettings>({
-  speed: 1,
-  start: 0,
-  tickWindow: 400,
-});
-
-export function SongProvider(props: {
-  children: ReactNode;
-  settings: SongSettings;
-}) {
-  return (
-    <SongContext.Provider value={props.settings}>
-      {props.children}
-    </SongContext.Provider>
-  );
-}
-
-export function useSongContext() {
-  const ctx = useContext(SongContext);
-  return ctx;
-}
+type SongSettingsExtended = SongSettings & {
+  msPerTick: number;
+  tick: number;
+  lastTickAt: number;
+};
 
 export function useSongTicker(song: Midi, cb: TickerCallback) {
-  const ctx = useContext(SongContext);
+  const ctx = useSettings();
   useTicker(song, ctx, cb);
 }
 
@@ -48,16 +49,19 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
   const songRef = useRef<SongSettingsExtended>({
     ...ctx,
     msPerTick,
+    tick: 0,
+    lastTickAt: 0,
   });
   songRef.current = {
+    ...songRef.current,
     ...ctx,
     msPerTick,
   };
 
   useRequestAnimationFrame(() => {
-    const now = performance.now();
-    const elapsed = now - ctx.start;
+    const elapsed = performance.now() - songRef.current.start;
     const tick = Math.floor(elapsed / songRef.current.msPerTick);
+    console.log("frame start", songRef.current.start);
     onTick(tick, songRef.current);
   });
 }

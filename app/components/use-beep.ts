@@ -49,9 +49,10 @@ export function useBeep() {
   );
 
   return (durationMs: number, frequency: number) => {
-    if (!ctxRef.current) {
+    const ctx = ctxRef.current;
+    if (!ctx) {
       return () => null;
     }
-    beep(ctxRef.current, durationMs, noteToFreq(frequency), 0.01, "sawtooth");
+    beep(ctx, durationMs, noteToFreq(frequency), 0.01, "sawtooth");
   };
 }
