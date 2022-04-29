@@ -9,7 +9,8 @@ export type SongSettings = {
   start: number;
   tickWindow: number;
   setStart(start: number): void;
-  setSettings(settings: SongSettings): void;
+  setTickWindow(tickWindow: number): void;
+  setSpeed(start: number): void;
 };
 
 export const useSettings = create<SongSettings>(
@@ -18,8 +19,9 @@ export const useSettings = create<SongSettings>(
       speed: 1,
       start: 0,
       tickWindow: 600,
+      setSpeed: (speed: number) => set((s) => ({ ...s, speed })),
+      setTickWindow: (tickWindow: number) => set((s) => ({ ...s, tickWindow })),
       setStart: (start: number) => set((s) => ({ ...s, start })),
-      setSettings: (settings: SongSettings) => set(settings),
     }),
     {
       name: "song-settings",
@@ -30,6 +32,7 @@ export const useSettings = create<SongSettings>(
 type SongSettingsExtended = SongSettings & {
   msPerTick: number;
   tick: number;
+  currentTimeMs: number;
   lastTickAt: number;
 };
 
@@ -49,7 +52,8 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
   const songRef = useRef<SongSettingsExtended>({
     ...ctx,
     msPerTick,
-    tick: -1000, // start before song
+    tick: -1000,
+    currentTimeMs: -1000,
     lastTickAt: 0,
   });
   if (ctx.start !== songRef.current.start) {

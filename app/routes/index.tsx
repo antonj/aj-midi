@@ -40,26 +40,25 @@ function Song(props: { song: Midi }) {
     }
   }, [settings, m]);
 
-  let params = useRef<SongSettings & { time: number }>({
-    ...settings,
-    time: 0,
-  });
+  let params = useRef<SongSettings>(settings);
+  let timeRef = useRef(0);
 
   let changing = useRef(false);
   useEffect(() => {
     if (!m) {
       return;
     }
+    let time = { time: timeRef.current };
     let obj = params.current;
     const gui = new GUI();
     gui.add(obj, "speed", 0, 2, 0.05).onChange(() => {
-      settings.setSettings({ ...obj });
+      settings.setSpeed(obj.speed);
     });
     gui.add(obj, "tickWindow", 0, 2000, 5).onChange(() => {
-      settings.setSettings({ ...obj });
+      settings.setTickWindow(obj.tickWindow);
     });
     gui
-      .add(obj, "time", 0, m.durationTicks, 1)
+      .add(time, "time", 0, m.durationTicks, 1)
       .onChange((v: number) => {
         changing.current = true;
         console.log("setstart", v);
@@ -75,7 +74,7 @@ function Song(props: { song: Midi }) {
 
   useSongTicker(m, (_, ctx) => {
     if (!changing.current) {
-      params.current.time = ctx.tick;
+      timeRef.current = ctx.tick;
     }
   });
 

@@ -67,6 +67,7 @@ export function Keyboard({ song }: { song: Midi }) {
         return curr;
       });
       for (const t of changes) {
+        console.log("beep, t.name", t.durationTicks * settings.msPerTick);
         beep(t.durationTicks * settings.msPerTick, t.midi);
       }
     }
@@ -81,7 +82,7 @@ export function Keyboard({ song }: { song: Midi }) {
   });
 
   return (
-    <div className="relative w-full h-full flex" data-keyboard>
+    <div className="relative w-full h-full" data-keyboard>
       {ovtaves.map((octave) => (
         <Octave
           key={octave}
@@ -104,7 +105,7 @@ function Octave({
   pressedMidiToneFuture: Set<number>;
 }) {
   return (
-    <>
+    <div className="octave flex">
       {notes.map((t, i) => {
         if (isBlack(t)) {
           return null;
@@ -147,6 +148,6 @@ function Octave({
           </div>
         );
       })}
-    </>
+    </div>
   );
 }

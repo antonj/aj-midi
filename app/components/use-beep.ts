@@ -1,5 +1,15 @@
 import { useRef } from "react";
 
+function isValidNumber(x: number) {
+  if (x === 0) {
+    return false;
+  }
+  if (!isFinite(x)) {
+    return false;
+  }
+  return true;
+}
+
 function beep(
   ctx: AudioContext,
   durationMs: number,
@@ -7,6 +17,14 @@ function beep(
   volume: number,
   type: OscillatorType = "sine"
 ) {
+  if (
+    !isValidNumber(durationMs) ||
+    !isValidNumber(durationMs) ||
+    !isValidNumber(frequency)
+  ) {
+    return;
+  }
+
   var oscillator = ctx.createOscillator();
   var gainNode = ctx.createGain();
 

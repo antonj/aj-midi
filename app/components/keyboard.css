@@ -10,6 +10,21 @@
 	color: var(--color-text-primary);
 }
 
+[data-keyboard] .octave {
+	position: relative;
+	width: 100%;
+}
+
+[data-keyboard] .octave::after {
+	position: absolute;
+	content: "";
+	top: 0;
+	bottom: 0;
+	left: -2px;
+	width: 4px;
+	background: black;
+}
+
 [data-keyboard] .key-wrapper {
 	position: relative;
 	width: 100%;
@@ -44,7 +59,7 @@
 	left: 0;
 	height: 10px;
 	width: 100%;
-	background: salmon;
+	background: gold;
 }
 [data-keyboard] .key-black.key-pressed-future:after {
 	box-shadow: inset 0 0 0 2px black;
@@ -56,10 +71,10 @@
 [data-keyboard] .key-pressed.key-white {
 	background: gold;
 	/* hsl(50, 100%, 80%); */
-	box-shadow: inset 0 0 0 8px white;
+	box-shadow: inset 0 -3px 0 3px white;
 }
 [data-keyboard] .key-pressed.key-black {
 	/* background: hsl(50, 100%, 30%); */
 	background: gold;
-	box-shadow: inset 0 0 0 8px black;
+	box-shadow: inset 0 0 0 3px black;
 }
