@@ -9,6 +9,7 @@ import {
   useSongTicker,
 } from "../components/use-song-context";
 import { clamp, map } from "../util/map";
+import { TimeoutError, timer } from "rxjs";
 
 export function links() {
   return [...keyboardLinks()];
@@ -41,14 +42,14 @@ function Song(props: { song: Midi }) {
   }, [settings, m]);
 
   let params = useRef<SongSettings>(settings);
-  let timeRef = useRef(0);
+  let timeRef = useRef({ time: 0 });
 
   let changing = useRef(false);
   useEffect(() => {
     if (!m) {
       return;
     }
-    let time = { time: timeRef.current };
+    let time = timeRef.current;
     let obj = params.current;
     const gui = new GUI();
     gui.add(obj, "speed", 0, 2, 0.05).onChange(() => {
@@ -74,7 +75,7 @@ function Song(props: { song: Midi }) {
 
   useSongTicker(m, (_, ctx) => {
     if (!changing.current) {
-      timeRef.current = ctx.tick;
+      timeRef.current.time = ctx.tick;
     }
   });
 
