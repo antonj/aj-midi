@@ -59,11 +59,10 @@ function Song(props: { song: Midi }) {
       settings.setTickWindow(obj.tickWindow);
     });
     gui
-      .add(time, "time", 0, m.durationTicks, 1)
+      .add(time, "time", -1000, m.durationTicks, 1)
       .onChange((v: number) => {
         changing.current = true;
-        console.log("setstart", v);
-        settings.setStart(clamp(v, 0, m.durationTicks));
+        settings.setStart(clamp(v, -1000, m.durationTicks));
       })
       .onFinishChange(() => {
         changing.current = false;

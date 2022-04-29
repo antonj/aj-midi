@@ -96,7 +96,7 @@ function draw(
   // | |x| | |x| |  |  |
   // | 2-- | 5-- |  |  |
   // |  |  |  |  |  |  |
-  // 1- 3- 4- 6- 7- 7-
+  // 1- 3- 4- 6- 7- 8-
 
   // white left = index
   // white left = index + w
@@ -112,6 +112,7 @@ function draw(
   //const maxTick = song.durationTicks;
   const maxTick = tick + tickWindow;
   const whiteWidth = w / numWhites;
+  const blackWidth = 0.6 * whiteWidth;
 
   function xInPiano(
     midi: number,
@@ -134,15 +135,48 @@ function draw(
   }
 
   ctx.font = "18px helvetica";
+  // draw whites
   for (let midi = minMidi; midi <= maxMidi; midi++) {
-    let x = xInPiano(midi, octaves, 0, w);
-
     const note = midiToNote(midi);
-    ctx.lineWidth = 1;
     if (isBlack(note)) {
-      ctx.strokeStyle = "black";
-    } else {
-      ctx.strokeStyle = "white";
+      continue;
+    }
+    let x = xInPiano(midi, octaves, 0, w);
+    x = x - whiteWidth / 2;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+    ctx.fillRect(x, 0, whiteWidth, h);
+  }
+  // draw blacks
+  for (let midi = minMidi; midi <= maxMidi; midi++) {
+    const note = midiToNote(midi);
+    if (isWhite(note)) {
+      continue;
+    }
+    let x = xInPiano(midi, octaves, 0, w);
+    x = x - blackWidth / 2;
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.fillRect(x, 0, blackWidth, h);
+  }
+
+  // lines
+  for (let midi = minMidi; midi <= maxMidi; midi++) {
+    const note = midiToNote(midi);
+    let x = xInPiano(midi, octaves, 0, w);
+    switch (note) {
+      case "c": {
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
+        x = x - whiteWidth / 2;
+        break;
+      }
+      case "f": {
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
+        x = x - whiteWidth / 2;
+        break;
+      }
+      default:
+        continue;
     }
     ctx.beginPath();
     ctx.moveTo(x, 0);
@@ -151,21 +185,23 @@ function draw(
     ctx.stroke();
   }
 
+  // draw notes
   for (const n of song.tracks[0].notes) {
-    let nw = w / numWhites;
     const note = midiToNote(n.midi);
-    const nh = h / (tickWindow / n.durationTicks);
+    let noteWidth;
+    const noteHeight = h / (tickWindow / n.durationTicks);
     let x = xInPiano(n.midi, octaves, 0, w);
-    const y = map(n.ticks, minTick, maxTick, h, 0) - nh; // ticks // flip y axis
+    const y = map(n.ticks, minTick, maxTick, h, 0) - noteHeight; // ticks // flip y axis
     if (isBlack(note)) {
       ctx.fillStyle = "black";
-      nw = 0.6 * whiteWidth;
-      x = x - nw / 2;
+      noteWidth = blackWidth;
+      x = x - noteWidth / 2;
     } else {
       ctx.fillStyle = "white";
+      noteWidth = whiteWidth;
       x = x - whiteWidth / 2;
     }
-    ctx.fillRect(x, y, nw, nh);
+    ctx.fillRect(x, y, noteWidth, noteHeight);
     //ctx.fillText("" + n.midi, x, y, 100);
   }
 }

@@ -67,7 +67,6 @@ export function Keyboard({ song }: { song: Midi }) {
         return curr;
       });
       for (const t of changes) {
-        console.log("beep, t.name", t.durationTicks * settings.msPerTick);
         beep(t.durationTicks * settings.msPerTick, t.midi);
       }
     }

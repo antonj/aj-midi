@@ -15,7 +15,13 @@
 	width: 100%;
 }
 
+[data-keyboard] .octave:nth-child(odd) {
+	background:rgba(150, 140, 100, 0.2);
+}
+
 [data-keyboard] .octave::after {
+	/* fatter octave divier line to left of c note */
+	display: none;
 	position: absolute;
 	content: "";
 	top: 0;
