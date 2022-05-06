@@ -8,8 +8,7 @@ import {
   useSettings,
   useSongTicker,
 } from "../components/use-song-context";
-import { clamp, map } from "../util/map";
-import { TimeoutError, timer } from "rxjs";
+import { clamp } from "../util/map";
 
 export function links() {
   return [...keyboardLinks()];
@@ -18,17 +17,38 @@ export function links() {
 function useMidi(path: string) {
   const [x, setX] = useState<Midi | null>(null);
   useEffect(() => {
-    Midi.fromUrl(path).then((f) => setX(f));
+    Midi.fromUrl(path)
+      .then((f) => setX(f))
+      .catch((e) => {
+        console.error("failed to load midi", e);
+      });
   }, [path]);
   return x;
 }
 
 export default function Index() {
-  const m = useMidi("/static/midi/moon.midi");
+  const [file, setFile] = useState<string>("/static/midi/moon.midi");
+  const m = useMidi(file);
   if (!m) {
     return null;
   }
-  return <Song song={m} />;
+  console.log(m);
+
+  return (
+    <>
+      <input
+        type="file"
+        accept="audio/midi"
+        onChange={(e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            setFile(URL.createObjectURL(file));
+          }
+        }}
+      />
+      <Song song={m} />
+    </>
+  );
 }
 
 function Song(props: { song: Midi }) {
@@ -59,10 +79,10 @@ function Song(props: { song: Midi }) {
       settings.setTickWindow(obj.tickWindow);
     });
     gui
-      .add(time, "time", -1000, m.durationTicks, 1)
+      .add(time, "time", -1920, m.durationTicks, 1)
       .onChange((v: number) => {
         changing.current = true;
-        settings.setStart(clamp(v, -1000, m.durationTicks));
+        settings.setStart(clamp(v, -1920, m.durationTicks));
       })
       .onFinishChange(() => {
         changing.current = false;

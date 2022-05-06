@@ -4,7 +4,7 @@ import { isBlack, midiToOctave, notes, toMidiTone } from "../util/music";
 
 import styles from "./keyboard.css";
 import { useBeep } from "./use-beep";
-import { useSongTicker } from "./use-song-context";
+import { useSettings, useSongTicker } from "./use-song-context";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
@@ -48,7 +48,7 @@ export function Keyboard({ song }: { song: Midi }) {
     }>();
     const pressed = new Set<number>();
     const future = new Set<number>();
-    for (const n of song.tracks[0].notes ?? []) {
+    for (const n of settings.song.tracks[0].notes ?? []) {
       // current
       if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
         pressed.add(n.midi);

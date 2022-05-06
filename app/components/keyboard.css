@@ -1,11 +1,11 @@
 :root {
-	--color-text-primary: transparent;
-	 --color-text-secondary: transparent;
-	/* --color-text-primary: black;
-	--color-text-secondary: white; */
+	--color-text-primary: black;
+	--color-text-secondary: white;
 }
 
 [data-keyboard] {
+	--color-text-primary: transparent;
+	 --color-text-secondary: transparent;
 	display: flex;
 	color: var(--color-text-primary);
 }

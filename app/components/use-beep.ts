@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 function isValidNumber(x: number) {
   if (x === 0) {
@@ -38,14 +38,18 @@ function beep(
   if (!durationMs) {
     durationMs = 500;
   }
+
+  const fadeTimeSeconds = 0.05;
+  const startSeconds = ctx.currentTime;
+  const endSeconds = ctx.currentTime + durationMs / 1000;
   // fade in
-  gainNode.gain.setTargetAtTime(
-    volume,
-    ctx.currentTime,
-    Math.min(0.1, (durationMs / 1000) * 0.1)
-  );
+  gainNode.gain.setTargetAtTime(volume, startSeconds, fadeTimeSeconds);
   // fade out
-  gainNode.gain.setTargetAtTime(0, ctx.currentTime + durationMs / 1000, 0.1);
+  gainNode.gain.setTargetAtTime(
+    0,
+    endSeconds - fadeTimeSeconds,
+    fadeTimeSeconds
+  );
 
   oscillator.frequency.value = frequency;
 
@@ -54,7 +58,11 @@ function beep(
   }
 
   oscillator.start(ctx.currentTime);
-  oscillator.stop(ctx.currentTime + durationMs / 1000);
+  oscillator.stop(endSeconds);
+  oscillator.onended = () => {
+    gainNode.disconnect();
+  };
+  return gainNode;
 }
 
 function noteToFreq(midi: number, tuning = 440) {
@@ -62,9 +70,11 @@ function noteToFreq(midi: number, tuning = 440) {
 }
 
 export function useBeep() {
-  const ctxRef = useRef(
-    typeof window !== "undefined" ? new AudioContext() : null
-  );
+  const ctxRef = useRef<AudioContext>();
+  if (!ctxRef.current) {
+    ctxRef.current =
+      typeof window !== "undefined" ? new AudioContext() : undefined;
+  }
 
   return (durationMs: number, frequency: number) => {
     const ctx = ctxRef.current;
