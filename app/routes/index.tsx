@@ -35,7 +35,7 @@ export default function Index() {
   console.log(m);
 
   return (
-    <>
+    <div className="flex flex-col h-s-screen">
       <input
         type="file"
         accept="audio/midi"
@@ -47,7 +47,7 @@ export default function Index() {
         }}
       />
       <Song song={m} />
-    </>
+    </div>
   );
 }
 
@@ -76,7 +76,7 @@ function Song(props: { song: Midi }) {
     gui.add(obj, "speed", 0, 10, 0.05).onChange(() => {
       settings.setSpeed(obj.speed);
     });
-    gui.add(obj, "tickWindow", 0, 2000, 5).onChange(() => {
+    gui.add(obj, "tickWindow", 0, 4000, 5).onChange(() => {
       settings.setTickWindow(obj.tickWindow);
     });
     gui.add(obj, "repeatBars", 0, 50, 1).onChange(() => {
@@ -103,8 +103,8 @@ function Song(props: { song: Midi }) {
   });
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="bg-secondary h-full overflow-hidden">
+    <div className="flex flex-col h-full">
+      <div className="bg-secondary flex-1 overflow-hidden">
         <Track song={m} />
       </div>
 

@@ -39,9 +39,9 @@ body {
   width: 0px;
 }
 
-body,
-#__next {
-  min-height: 100vh;
+.h-s-screen {
+  height: 100vh;
+  height: 100svh;
 }
 
 input[type="number"]::-webkit-inner-spin-button,

@@ -13,6 +13,8 @@
 [data-keyboard] .octave {
 	position: relative;
 	width: 100%;
+	flex: 1;
+	overflow: hidden;
 }
 
 [data-keyboard] .octave:nth-child(odd) {
@@ -35,6 +37,9 @@
 	position: relative;
 	width: 100%;
 	border: 1px solid black;
+	border-width: 0.5px;
+	word-break: break-all;
+	min-width: 0;
 }
 
 [data-keyboard] button:hover {
@@ -50,12 +55,12 @@
 	z-index: 1;
 	position: absolute;
 	top:0;
-	left: 70%;
+	left: 100%;
 	width: 60%;
-	height: 70%;
+	transform: translateX(-50%);
+	height: 55%;
 	color: var(--color-text-secondary);
 	background: black;
-	border: 1px solid black;
 }
 
 [data-keyboard] .key-pressed-future:after {
