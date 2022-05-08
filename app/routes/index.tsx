@@ -62,6 +62,7 @@ function Song(props: { song: Midi }) {
   }, [settings, m]);
 
   let params = useRef<SongSettings>(settings);
+  params.current = settings;
   let timeRef = useRef({ time: 0 });
 
   let changing = useRef(false);
@@ -72,11 +73,14 @@ function Song(props: { song: Midi }) {
     let time = timeRef.current;
     let obj = params.current;
     const gui = new GUI();
-    gui.add(obj, "speed", 0, 2, 0.05).onChange(() => {
+    gui.add(obj, "speed", 0, 10, 0.05).onChange(() => {
       settings.setSpeed(obj.speed);
     });
     gui.add(obj, "tickWindow", 0, 2000, 5).onChange(() => {
       settings.setTickWindow(obj.tickWindow);
+    });
+    gui.add(obj, "repeatBars", 0, 50, 1).onChange(() => {
+      settings.setRepeatBars(obj.repeatBars);
     });
     gui
       .add(time, "time", -1920, m.durationTicks, 1)

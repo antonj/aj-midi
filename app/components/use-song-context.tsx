@@ -4,14 +4,15 @@ import create from "zustand";
 import { persist } from "zustand/middleware";
 import { useRequestAnimationFrame } from "./use-request-animation-frame";
 import { midiToOctave } from "../util/music";
+import { roundTo } from "../util/map";
 
 export type SongSettings = {
   speed: number;
   tickStart: number;
-  tickEnd: number;
+  repeatBars: number;
   tickWindow: number;
   setStart(tickStart: number): void;
-  setEnd(tickEnd: number): void;
+  setRepeatBars(bars: number): void;
   setTickWindow(tickWindow: number): void;
   setSpeed(start: number): void;
 };
@@ -21,12 +22,13 @@ export const useSettings = create<SongSettings>(
     (set) => ({
       speed: 1,
       tickStart: 0,
-      tickEnd: 0,
+      repeatBars: 0,
       tickWindow: 600,
       setSpeed: (speed: number) => set((s) => ({ ...s, speed })),
       setTickWindow: (tickWindow: number) => set((s) => ({ ...s, tickWindow })),
-      setStart: (tickStart: number) => set((s) => ({ ...s, tickStart })),
-      setEnd: (tickEnd: number) => set((s) => ({ ...s, tickEnd })),
+      setStart: (tickStart: number) =>
+        set((s) => ({ ...s, tickStart: Math.floor(tickStart) })),
+      setRepeatBars: (repeatBars: number) => set((s) => ({ ...s, repeatBars })),
     }),
     {
       name: "song-settings",
@@ -40,6 +42,7 @@ export type SongSettingsExtended = SongSettings & {
   tick: number;
   octaves: Array<number>;
   ticksPerBar: number;
+  tickEnd: number;
 };
 
 export function useSongTicker(song: Midi, cb: TickerCallback) {
@@ -82,6 +85,7 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
     octaves,
     msPerTick,
     ticksPerBar,
+    tickEnd: song.durationTicks,
     tick: ctx.tickStart,
   });
   if (ctx.tickStart !== songRef.current.tickStart) {
@@ -98,13 +102,13 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
   };
 
   // repeat bars
-  songRef.current.tickEnd =
-    Math.max(0, songRef.current.tickStart) + 2 * ticksPerBar;
-  console.log(
-    songRef.current.tickStart,
-    songRef.current.tickEnd,
-    songRef.current.tick
-  );
+  if (songRef.current.repeatBars > 0) {
+    songRef.current.tickEnd = roundTo(
+      Math.max(0, songRef.current.tickStart) +
+        songRef.current.repeatBars * ticksPerBar,
+      ticksPerBar
+    );
+  }
 
   useRequestAnimationFrame((deltaMs) => {
     let tick = songRef.current.tick + deltaMs / songRef.current.msPerTick;
@@ -113,7 +117,7 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
       songRef.current.tickStart < songRef.current.tickEnd
     ) {
       // reset to start
-      tick = songRef.current.tickStart;
+      tick = roundTo(songRef.current.tickStart, songRef.current.ticksPerBar);
     }
     songRef.current.tick = tick;
     onTick(songRef.current.tick, songRef.current);
