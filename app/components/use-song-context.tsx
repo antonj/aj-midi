@@ -117,7 +117,9 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
       songRef.current.tickStart < songRef.current.tickEnd
     ) {
       // reset to start
-      tick = roundTo(songRef.current.tickStart, songRef.current.ticksPerBar);
+      tick =
+        roundTo(songRef.current.tickStart, songRef.current.ticksPerBar) -
+        songRef.current.ticksPerBar;
     }
     songRef.current.tick = tick;
     onTick(songRef.current.tick, songRef.current);

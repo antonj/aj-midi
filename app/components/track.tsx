@@ -1,6 +1,6 @@
 import { Midi } from "@tonejs/midi";
 import { PointerEventHandler, useCallback, useEffect, useRef } from "react";
-import { map } from "../util/map";
+import { map, roundTo } from "../util/map";
 import {
   isBlack,
   isWhite,
@@ -116,6 +116,27 @@ export function Track({ song }: { song: Midi }) {
   );
 }
 
+function xInPiano(
+  midi: number,
+  octaves: Array<number>,
+  minX: number,
+  maxX: number,
+  whiteWidth: number
+) {
+  const oct = midiToOctave(midi);
+  const whiteIndex =
+    (oct.octave - octaves[0]) * numWhiteInOctate + // white to left of octave
+    whiteIndexInOctave(oct.index); // white index in octave
+  const minWhite = 0;
+  const maxWhite = octaves.length * numWhiteInOctate;
+  let x = map(whiteIndex, minWhite, maxWhite, minX, maxX); // midi tone
+  const note = midiToNote(midi);
+  if (isWhite(note)) {
+    x = x + whiteWidth / 2;
+  }
+  return x;
+}
+
 function draw(
   ctx: CanvasRenderingContext2D,
   tick: number,
@@ -148,27 +169,6 @@ function draw(
   const maxTick = tick + tickWindow;
   const whiteWidth = w / numWhites;
   const blackWidth = blackWidthRatio * whiteWidth;
-
-  function xInPiano(
-    midi: number,
-    octaves: Array<number>,
-    minX: number,
-    maxX: number,
-    whiteWidth: number
-  ) {
-    const oct = midiToOctave(midi);
-    const whiteIndex =
-      (oct.octave - octaves[0]) * numWhiteInOctate + // white to left of octave
-      whiteIndexInOctave(oct.index); // white index in octave
-    const minWhite = 0;
-    const maxWhite = octaves.length * numWhiteInOctate;
-    let x = map(whiteIndex, minWhite, maxWhite, minX, maxX); // midi tone
-    const note = midiToNote(midi);
-    if (isWhite(note)) {
-      x = x + whiteWidth / 2;
-    }
-    return x;
-  }
 
   ctx.font = "18px helvetica";
   // draw whites
@@ -259,6 +259,15 @@ function draw(
     ctx.fillRect(-1, y, w, 2);
   }
 
+  if (songCtx.repeatBars > 0) {
+    const startBar = roundTo(songCtx.tickStart, songCtx.ticksPerBar);
+    const top = map(songCtx.tickEnd, minTick, maxTick, h, 0);
+    const bottom = map(startBar, minTick, maxTick, h, 0);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.fillRect(0, 0, w, top);
+    ctx.fillRect(0, bottom, w, h);
+  }
+
   // draw minimap
   {
     const miniLeft = 0;
@@ -283,10 +292,12 @@ function draw(
 
     // fill repeat bars
     if (songCtx.repeatBars > 0) {
-      const top = map(songCtx.tickStart, minTickMini, maxTickMini, h, 0);
-      const bottom = map(songCtx.tickEnd, minTickMini, maxTickMini, h, 0);
+      const startBar = roundTo(songCtx.tickStart, songCtx.ticksPerBar);
+      const top = map(songCtx.tickEnd, minTickMini, maxTickMini, h, 0);
+      const bottom = map(startBar, minTickMini, maxTickMini, h, 0);
       ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-      ctx.fillRect(miniLeft, top, miniWidth, bottom - top);
+      ctx.fillRect(miniLeft, 0, miniWidth, top);
+      ctx.fillRect(miniLeft, bottom, miniWidth, h);
     }
 
     // draw notes
