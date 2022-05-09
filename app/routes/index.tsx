@@ -76,7 +76,7 @@ function Song(props: { song: Midi }) {
     gui.add(obj, "speed", 0, 10, 0.05).onChange(() => {
       settings.setSpeed(obj.speed);
     });
-    gui.add(obj, "tickWindow", 0, 4000, 5).onChange(() => {
+    gui.add(obj, "tickWindow", 0, 20000, 5).onChange(() => {
       settings.setTickWindow(obj.tickWindow);
     });
     gui.add(obj, "repeatBars", 0, 50, 1).onChange(() => {

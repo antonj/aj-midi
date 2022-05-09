@@ -4,7 +4,7 @@ import { isBlack, midiToOctave, notes, toMidiTone } from "../util/music";
 
 import styles from "./keyboard.css";
 import { useBeep } from "./use-beep";
-import { useSettings, useSongTicker } from "./use-song-context";
+import { useSongTicker } from "./use-song-context";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
