@@ -75,7 +75,6 @@ export function useBeep() {
     ctxRef.current =
       typeof window !== "undefined" ? new AudioContext() : undefined;
   }
-
   return (durationMs: number, frequency: number) => {
     const ctx = ctxRef.current;
     if (!ctx) {

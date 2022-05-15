@@ -146,8 +146,6 @@ function draw(
   const w = canvas.width;
   const h = canvas.height;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = "#ddd";
-  ctx.fillRect(0, 0, w, h);
   const octaves = songCtx.octaves;
 
   // | |x| | |x| |  |  |
@@ -171,18 +169,26 @@ function draw(
   const blackWidth = blackWidthRatio * whiteWidth;
 
   ctx.font = "18px helvetica";
-  // draw whites
+
+  // draw bg whites
   for (let midi = minMidi; midi <= maxMidi; midi++) {
     const note = midiToNote(midi);
     if (isBlack(note)) {
       continue;
     }
+
     let x = xInPiano(midi, octaves, 0, w, whiteWidth);
     x = x - whiteWidth / 2;
-    ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+
+    const oct = midiToOctave(midi);
+    if (oct.octave % 2 == 0) {
+      ctx.fillStyle = "rgba(150, 140, 100, 0.1)";
+    } else {
+      ctx.fillStyle = "rgba(150, 140, 100, 0.3)";
+    }
     ctx.fillRect(x, 0, whiteWidth, h);
   }
-  // draw blacks
+  // draw bg blacks
   for (let midi = minMidi; midi <= maxMidi; midi++) {
     const note = midiToNote(midi);
     if (isWhite(note)) {
@@ -201,13 +207,13 @@ function draw(
     switch (note) {
       case "c": {
         ctx.lineWidth = 2;
-        ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
         x = x - whiteWidth / 2;
         break;
       }
       case "f": {
         ctx.lineWidth = 1;
-        ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
         x = x - whiteWidth / 2;
         break;
       }
@@ -317,11 +323,14 @@ function draw(
       noteWidth = blackWidth;
       x = x - noteWidth / 2;
     } else {
+      ctx.strokeStyle = "rgba(0,0,0, 0.4)";
+      ctx.lineWidth = 1;
       ctx.fillStyle = "white";
       noteWidth = whiteWidth;
       x = x - whiteWidth / 2;
     }
     ctx.fillRect(x, y, noteWidth, noteHeight);
+    ctx.strokeRect(x, y, noteWidth, noteHeight);
     //ctx.fillText("" + n.midi, x, y, 100);
   }
 }

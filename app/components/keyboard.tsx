@@ -81,7 +81,7 @@ export function Keyboard({ song }: { song: Midi }) {
   });
 
   return (
-    <div className="relative w-full h-full" data-keyboard>
+    <div data-keyboard>
       {ovtaves.map((octave) => (
         <Octave
           key={octave}

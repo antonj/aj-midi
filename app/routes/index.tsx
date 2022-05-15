@@ -9,9 +9,10 @@ import {
   useSongTicker,
 } from "../components/use-song-context";
 import { clamp } from "../util/map";
+import styles from "./index.css";
 
 export function links() {
-  return [...keyboardLinks()];
+  return [{ rel: "stylesheet", href: styles }, ...keyboardLinks()];
 }
 
 function useMidi(path: string) {
@@ -103,12 +104,12 @@ function Song(props: { song: Midi }) {
   });
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="bg-secondary flex-1 overflow-hidden">
+    <div data-index>
+      <div className="track">
         <Track song={m} />
       </div>
 
-      <div className="w-full h-60 outline-black">
+      <div className="keyboard">
         <Keyboard song={m} />
       </div>
     </div>

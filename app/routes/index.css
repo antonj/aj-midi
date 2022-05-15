@@ -1,0 +1,15 @@
+[data-index] {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+
+[data-index] > .track {
+ flex: 1;
+ overflow: hidden;
+}
+
+[data-index] > .keyboard {
+  height: calc(10vh + 50px);
+}
