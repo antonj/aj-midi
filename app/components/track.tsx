@@ -11,6 +11,7 @@ import {
   toMidiTone,
   whiteIndexInOctave,
 } from "../util/music";
+import { useBoundingClientRect } from "./use-bounding-client-rect";
 import {
   SongSettingsExtended,
   useSettings,
@@ -22,15 +23,12 @@ const blackWidthRatio = 0.6;
 
 export function Track({ song }: { song: Midi }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const [{ width, height }, wrapperRef] =
+    useBoundingClientRect<HTMLDivElement>();
   const settings = useSettings();
 
   useSongTicker(song, (tick, songCtx) => {
-    const canv = canvasRef.current;
-    if (!canv) {
-      return;
-    }
-    const ctx = canv.getContext("2d");
+    const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) {
       return;
     }
@@ -38,33 +36,16 @@ export function Track({ song }: { song: Midi }) {
   });
 
   useEffect(() => {
-    const canv = canvasRef.current;
-    if (!canv) {
-      return;
-    }
-    const ctx = canv.getContext("2d");
+    const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) {
       return;
     }
-
-    const handleResize = () => {
-      const rect = wrapperRef.current?.getBoundingClientRect();
-      if (!rect) {
-        return;
-      }
-      const dpr = window.devicePixelRatio || 1;
-
-      ctx.canvas.height = rect.height * dpr;
-      ctx.canvas.width = rect.width * dpr;
-      ctx.canvas.style.width = rect.width + "px";
-      ctx.canvas.style.height = rect.height + "px";
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    const dpr = window.devicePixelRatio || 1;
+    ctx.canvas.height = height * dpr;
+    ctx.canvas.width = width * dpr;
+    ctx.canvas.style.width = width + "px";
+    ctx.canvas.style.height = height + "px";
+  }, [width, height]);
 
   const dragRef = useRef(false);
 

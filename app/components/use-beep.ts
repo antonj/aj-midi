@@ -65,7 +65,7 @@ function beep(
   return gainNode;
 }
 
-function noteToFreq(midi: number, tuning = 440) {
+export function noteToFreq(midi: number, tuning = 440) {
   return Math.pow(2, (midi - 69) / 12) * tuning;
 }
 
@@ -75,11 +75,11 @@ export function useBeep() {
     ctxRef.current =
       typeof window !== "undefined" ? new AudioContext() : undefined;
   }
-  return (durationMs: number, frequency: number) => {
+  return (durationMs: number, midiNote: number) => {
     const ctx = ctxRef.current;
     if (!ctx) {
       return () => null;
     }
-    beep(ctx, durationMs, noteToFreq(frequency), 0.01, "sawtooth");
+    beep(ctx, durationMs, noteToFreq(midiNote), 0.01, "sawtooth");
   };
 }

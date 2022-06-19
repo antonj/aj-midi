@@ -5,6 +5,7 @@ import { persist } from "zustand/middleware";
 import { useRequestAnimationFrame } from "./use-request-animation-frame";
 import { midiToOctave } from "../util/music";
 import { roundTo } from "../util/map";
+import { usePrevious } from "./usePrevious";
 
 export type SongSettings = {
   speed: number;
@@ -39,7 +40,6 @@ export const useSettings = create<SongSettings>(
 export type SongSettingsExtended = SongSettings & {
   song: Midi;
   msPerTick: number;
-  tick: number;
   octaves: Array<number>;
   ticksPerBar: number;
   tickEnd: number;
@@ -79,49 +79,37 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
     return octaves;
   }, [song]);
 
-  const songRef = useRef<SongSettingsExtended>({
+  const tickRef = useRef(ctx.tickStart);
+
+  const ctxExtended: SongSettingsExtended = {
     ...ctx,
     song,
     octaves,
     msPerTick,
     ticksPerBar,
-    tickEnd: song.durationTicks,
-    tick: ctx.tickStart,
-  });
-  if (ctx.tickStart !== songRef.current.tickStart) {
-    // seek
-    songRef.current.tick = ctx.tickStart;
-  }
-  songRef.current = {
-    ...songRef.current,
-    song,
-    octaves,
-    ticksPerBar,
-    ...ctx,
-    msPerTick,
+    tickEnd:
+      ctx.repeatBars === 0
+        ? song.durationTicks
+        : roundTo(
+            Math.max(0, ctx.tickStart) + ctx.repeatBars * ticksPerBar,
+            ticksPerBar
+          ),
   };
 
-  // repeat bars
-  if (songRef.current.repeatBars > 0) {
-    songRef.current.tickEnd = roundTo(
-      Math.max(0, songRef.current.tickStart) +
-        songRef.current.repeatBars * ticksPerBar,
-      ticksPerBar
-    );
+  const prevStart = usePrevious(ctx.tickStart);
+  // seek
+  if (ctx.tickStart !== prevStart) {
+    tickRef.current = ctx.tickStart;
   }
 
   useRequestAnimationFrame((deltaMs) => {
-    let tick = songRef.current.tick + deltaMs / songRef.current.msPerTick;
-    if (
-      tick > songRef.current.tickEnd &&
-      songRef.current.tickStart < songRef.current.tickEnd
-    ) {
+    let tick = tickRef.current + deltaMs / msPerTick;
+
+    if (tick > ctxExtended.tickEnd && ctx.tickStart < ctxExtended.tickEnd) {
       // reset to start
-      tick =
-        roundTo(songRef.current.tickStart, songRef.current.ticksPerBar) -
-        songRef.current.ticksPerBar;
+      tick = roundTo(ctx.tickStart, ticksPerBar) - ticksPerBar;
     }
-    songRef.current.tick = tick;
-    onTick(songRef.current.tick, songRef.current);
+    tickRef.current = tick;
+    onTick(tickRef.current, ctxExtended);
   });
 }

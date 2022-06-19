@@ -97,9 +97,9 @@ function Song(props: { song: Midi }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [m]);
 
-  useSongTicker(m, (_, ctx) => {
+  useSongTicker(m, (tick) => {
     if (!changing.current) {
-      timeRef.current.time = ctx.tick;
+      timeRef.current.time = tick;
     }
   });
 

@@ -3,8 +3,8 @@ import { useMemo, useState } from "react";
 import { isBlack, midiToOctave, notes, toMidiTone } from "../util/music";
 
 import styles from "./keyboard.css";
-import { useBeep } from "./use-beep";
 import { useSongTicker } from "./use-song-context";
+import { useSongSound } from "./use-song-sounds";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
@@ -38,21 +38,15 @@ export function Keyboard({ song }: { song: Midi }) {
 
   const [sPressed, setPressed] = useState(new Set<number>());
   const [sFuture, setFuture] = useState(new Set<number>());
-  const beep = useBeep();
+  useSongSound(song);
 
   useSongTicker(song, (tick, settings) => {
-    const changes = new Set<{
-      midi: number;
-      duration: number;
-      durationTicks: number;
-    }>();
     const pressed = new Set<number>();
     const future = new Set<number>();
     for (const n of settings.song.tracks[0].notes ?? []) {
       // current
       if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
         pressed.add(n.midi);
-        changes.add(n);
       }
       // future
       if (tick < n.ticks && tick > n.ticks - settings.tickWindow) {
@@ -66,9 +60,6 @@ export function Keyboard({ song }: { song: Midi }) {
         }
         return curr;
       });
-      for (const t of changes) {
-        beep(t.durationTicks * settings.msPerTick, t.midi);
-      }
     }
     if (!eqSet(future, sFuture)) {
       setFuture((curr) => {
