@@ -1,4 +1,5 @@
 import { Midi } from "@tonejs/midi";
+import { Note } from "@tonejs/midi/dist/Note";
 import { useEffect, useRef } from "react";
 import { noteToFreq } from "./use-beep";
 import { useSettings, useSongTicker } from "./use-song-context";
@@ -16,11 +17,11 @@ export function useSongSound(song: Midi) {
   }, [settings.speed]);
 
   useSongTicker(song, (tick, ctx) => {
-    const pressed = new Set<number>();
+    const pressed = new Map<number, Note>();
     for (const n of ctx.song.tracks[0].notes ?? []) {
       // current
       if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
-        pressed.add(n.midi);
+        pressed.set(n.midi, n);
       }
     }
     player.current.setTones(pressed);
@@ -44,10 +45,10 @@ class Player {
     this.gain.gain.setTargetAtTime(volume, this.ctx.currentTime, fadeSeconds);
   }
 
-  setTones(midiNotes: Set<number>) {
+  setTones(midiNotes: Map<number, Note>) {
     // diff, start stop current notes
-    for (const note of midiNotes) {
-      if (!this.playing.has(note)) {
+    for (const [key, note] of midiNotes) {
+      if (!this.playing.has(key)) {
         this.start(note);
       }
     }
@@ -58,8 +59,8 @@ class Player {
     }
   }
 
-  private start(midiNote: number) {
-    if (this.playing.has(midiNote)) {
+  private start(midiNote: Note) {
+    if (this.playing.has(midiNote.midi)) {
       return;
     }
     var oscillator = this.ctx.createOscillator();
@@ -69,16 +70,19 @@ class Player {
     gainNode.connect(this.gain);
 
     gainNode.gain.value = 0;
-    let volume = 0.8;
+    let volume = midiNote.velocity;
 
     const fadeTimeSeconds = 0.05;
     const startSeconds = this.ctx.currentTime;
     // fade in
     gainNode.gain.setTargetAtTime(volume, startSeconds, fadeTimeSeconds);
-    oscillator.frequency.value = noteToFreq(midiNote);
-    oscillator.type = "square";
+    oscillator.frequency.value = noteToFreq(midiNote.midi);
+    // oscillator.type = "sine";
+    // oscillator.type = "square";
+    // oscillator.type = "sawtooth";
+    oscillator.type = "triangle";
     oscillator.start();
-    this.playing.set(midiNote, [gainNode, oscillator]);
+    this.playing.set(midiNote.midi, [gainNode, oscillator]);
   }
   private stop(midiNote: number, node: GainNode, osc: OscillatorNode) {
     this.playing.delete(midiNote);
