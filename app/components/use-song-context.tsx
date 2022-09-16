@@ -12,10 +12,12 @@ export type SongSettings = {
   tickStart: number;
   repeatBars: number;
   tickWindow: number;
+  volume: number;
   setStart(tickStart: number): void;
   setRepeatBars(bars: number): void;
   setTickWindow(tickWindow: number): void;
   setSpeed(start: number): void;
+  setVolume(volume: number): void;
 };
 
 export const useSettings = create<SongSettings>(
@@ -25,7 +27,9 @@ export const useSettings = create<SongSettings>(
       tickStart: 0,
       repeatBars: 0,
       tickWindow: 600,
+      volume: 0,
       setSpeed: (speed: number) => set((s) => ({ ...s, speed })),
+      setVolume: (volume: number) => set((s) => ({ ...s, volume })),
       setTickWindow: (tickWindow: number) => set((s) => ({ ...s, tickWindow })),
       setStart: (tickStart: number) =>
         set((s) => ({ ...s, tickStart: Math.floor(tickStart) })),
@@ -33,6 +37,11 @@ export const useSettings = create<SongSettings>(
     }),
     {
       name: "song-settings",
+      partialize: (state) =>
+        // omit volume from persist
+        Object.fromEntries(
+          Object.entries(state).filter(([key]) => !["volume"].includes(key))
+        ),
     }
   )
 );

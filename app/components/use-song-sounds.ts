@@ -16,6 +16,10 @@ export function useSongSound(song: Midi) {
     }
   }, [settings.speed]);
 
+  useEffect(() => {
+    player.current.setVolume(settings.volume);
+  }, [settings.volume]);
+
   useSongTicker(song, (tick, ctx) => {
     const pressed = new Map<number, Note>();
     for (const n of ctx.song.tracks[0].notes ?? []) {

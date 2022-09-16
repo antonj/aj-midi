@@ -72,8 +72,11 @@ function Song(props: { song: Midi }) {
       return;
     }
     let time = timeRef.current;
-    let obj = params.current;
+    let obj = { ...params.current, sound: false };
     const gui = new GUI();
+    gui.add(obj, "sound").onChange(() => {
+      settings.setVolume(obj.sound ? 1 : 0);
+    });
     gui.add(obj, "speed", 0, 10, 0.05).onChange(() => {
       settings.setSpeed(obj.speed);
     });
