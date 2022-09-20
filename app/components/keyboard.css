@@ -4,8 +4,8 @@
 }
 
 [data-keyboard] {
-  --color-text-primary: transparent;
-  --color-text-secondary: transparent;
+  --color-text-primary: black;
+  --color-text-secondary: black;
   position: relative;
   width: 100%;
   height: 100%;

@@ -3,38 +3,22 @@ import { useMemo, useState } from "react";
 import { isBlack, midiToOctave, notes, toMidiTone } from "../util/music";
 
 import styles from "./keyboard.css";
-import { useSongTicker } from "./use-song-context";
+import { useOctaves, useSongTicker } from "./use-song-context";
 import { useSongSound } from "./use-song-sounds";
+import { useToneDetector } from "./use-tone-detector";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
 }
 
-function eqSet<T>(as: Set<T>, bs: Set<T>) {
+export function eqSet<T>(as: Set<T>, bs: Set<T>) {
   if (as.size !== bs.size) return false;
   for (var a of as) if (!bs.has(a)) return false;
   return true;
 }
 
 export function Keyboard({ song }: { song: Midi }) {
-  const { low, high } = useMemo(() => {
-    let low = Number.MAX_VALUE;
-    let high = Number.MIN_VALUE;
-    for (const n of song.tracks[0].notes ?? []) {
-      if (n.midi < low) {
-        low = n.midi;
-      }
-      if (n.midi > high) {
-        high = n.midi;
-      }
-    }
-    return { low: midiToOctave(low), high: midiToOctave(high) };
-  }, [song]);
-
-  const numOctaves = high.octave - low.octave + 1;
-  const ovtaves = Array.from({ length: numOctaves }).map(
-    (_, i) => low.octave + i
-  );
+  const ovtaves = useOctaves(song);
 
   const [sPressed, setPressed] = useState(new Set<number>());
   const [sFuture, setFuture] = useState(new Set<number>());
@@ -71,12 +55,15 @@ export function Keyboard({ song }: { song: Midi }) {
     }
   });
 
+  // const tones = useToneDetector(song);
+  // const sDetected = new Set(tones);
+
   return (
     <div data-keyboard>
-      {ovtaves.map((octave) => (
+      {ovtaves.octaves.map((o) => (
         <Octave
-          key={octave}
-          octaveIndex={octave}
+          key={o}
+          octaveIndex={o}
           pressedMidiTone={sPressed}
           pressedMidiToneFuture={sFuture}
         />

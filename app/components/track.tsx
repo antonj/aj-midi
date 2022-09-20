@@ -163,7 +163,7 @@ function draw(
 
     const oct = midiToOctave(midi);
     if (oct.octave % 2 == 0) {
-      ctx.fillStyle = "rgba(150, 140, 100, 0.1)";
+      ctx.fillStyle = "rgba(150, 140, 100, 0.15)";
     } else {
       ctx.fillStyle = "rgba(150, 140, 100, 0.3)";
     }

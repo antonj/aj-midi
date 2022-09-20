@@ -29,12 +29,17 @@ function useMidi(path: string) {
 
 export default function Index() {
   const [file, setFile] = useState<string>("/static/midi/moon.midi");
+  //const [file, setFile] = useState<string>("/static/midi/elise.midi");
+  // const [file, setFile] = useState<string>(
+  //   "/static/midi/blue-danube-waltz-strauss.midi"
+  // );
+
   const m = useMidi(file);
+
   if (!m) {
     return null;
   }
   console.log(m);
-
   return (
     <div className="flex flex-col h-s-screen">
       <input

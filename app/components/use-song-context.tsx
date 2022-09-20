@@ -3,7 +3,7 @@ import { Midi } from "@tonejs/midi";
 import create from "zustand";
 import { persist } from "zustand/middleware";
 import { useRequestAnimationFrame } from "./use-request-animation-frame";
-import { midiToOctave } from "../util/music";
+import { midiToOctave, toMidiTone } from "../util/music";
 import { roundTo } from "../util/map";
 import { usePrevious } from "./usePrevious";
 
@@ -61,14 +61,8 @@ export function useSongTicker(song: Midi, cb: TickerCallback) {
 
 type TickerCallback = (tick: number, songCtx: SongSettingsExtended) => void;
 
-function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
-  const ppq = song.header.ppq;
-  let bpm = song.header.tempos[0].bpm;
-  let msPerTick = (bpm * ppq) / (60 * 1000);
-  msPerTick /= ctx.speed;
-  const ticksPerBar = song.header.timeSignatures[0].timeSignature[0] * ppq;
-
-  const octaves = useMemo(() => {
+export function useOctaves(song: Midi) {
+  return useMemo(() => {
     let low = Number.MAX_VALUE;
     let high = Number.MIN_VALUE;
     for (const n of song.tracks[0].notes ?? []) {
@@ -85,15 +79,26 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
     const octaves = Array.from({ length: numOctaves }).map(
       (_, i) => lowOctave + i
     );
-    return octaves;
+    const min = toMidiTone(lowOctave, 0);
+    const max = toMidiTone(highOctave, 11);
+    return { octaves, low, high, min, max };
   }, [song]);
+}
+
+function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
+  const ppq = song.header.ppq;
+  let bpm = song.header.tempos[0].bpm;
+  let msPerTick = (bpm * ppq) / (60 * 1000);
+  msPerTick /= ctx.speed;
+  const ticksPerBar = song.header.timeSignatures[0].timeSignature[0] * ppq;
+  const octaves = useOctaves(song);
 
   const tickRef = useRef(ctx.tickStart);
 
   const ctxExtended: SongSettingsExtended = {
     ...ctx,
     song,
-    octaves,
+    octaves: octaves.octaves,
     msPerTick,
     ticksPerBar,
     tickEnd:
