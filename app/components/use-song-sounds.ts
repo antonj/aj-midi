@@ -1,7 +1,7 @@
 import { Midi } from "@tonejs/midi";
 import { Note } from "@tonejs/midi/dist/Note";
 import { useEffect, useRef } from "react";
-import { noteToFreq } from "./use-beep";
+import { noteToFreq } from "../util/music";
 import { useSettings, useSongTicker } from "./use-song-context";
 
 export function useSongSound(song: Midi) {

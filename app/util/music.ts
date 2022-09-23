@@ -47,6 +47,10 @@ export function midiToOctave(midiTone: number) {
   return { octave, index };
 }
 
+export function noteToFreq(midi: number, tuning = 440) {
+  return Math.pow(2, (midi - 69) / 12) * tuning;
+}
+
 export function whiteIndexInOctave(index: number) {
   /*
    |   |x|  |x|   |   |x|  |x|  |x|   |

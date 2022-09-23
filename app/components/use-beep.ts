@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { noteToFreq } from "../util/music";
 
 function isValidNumber(x: number) {
   if (x === 0) {
@@ -63,10 +64,6 @@ function beep(
     gainNode.disconnect();
   };
   return gainNode;
-}
-
-export function noteToFreq(midi: number, tuning = 440) {
-  return Math.pow(2, (midi - 69) / 12) * tuning;
 }
 
 export function useBeep() {
