@@ -79,6 +79,9 @@ function Song(props: { song: Midi }) {
     let time = timeRef.current;
     let obj = { ...params.current, sound: false };
     const gui = new GUI();
+    gui.add(obj, "detect").onChange(() => {
+      settings.setDetect(obj.detect);
+    });
     gui.add(obj, "sound").onChange(() => {
       settings.setVolume(obj.sound ? 1 : 0);
     });
