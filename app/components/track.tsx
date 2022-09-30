@@ -151,7 +151,7 @@ function draw(
   const numWhites = octaves.length * numWhiteInOctate;
 
   const tickWindow = songCtx.tickWindow; // ticks shown in height
-  const minTick = tick - tickWindow / 2;
+  const minTick = tick;
   const maxTick = tick + tickWindow;
   const whiteWidthPx = w / numWhites;
   const blackWidthPx = blackWidthRatio * whiteWidthPx;

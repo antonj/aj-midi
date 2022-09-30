@@ -10,6 +10,7 @@ import {
 } from "../components/use-song-context";
 import { clamp } from "../util/map";
 import styles from "./index.css";
+import { useSearchParams } from "remix";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }, ...keyboardLinks()];
@@ -27,21 +28,26 @@ function useMidi(path: string) {
   return x;
 }
 
-export default function Index() {
-  const [file, setFile] = useState<string>("/static/midi/moon.midi");
-  //const [file, setFile] = useState<string>("/static/midi/elise.midi");
-  // const [file, setFile] = useState<string>(
-  //   "/static/midi/blue-danube-waltz-strauss.midi"
-  // );
+function SongPicker() {
+  const [file, setFile] = useState<string>("");
 
-  const m = useMidi(file);
-
-  if (!m) {
-    return null;
+  if (file) {
+    return <SongHej file={file} />;
   }
-  console.log(m);
+
   return (
-    <div className="flex flex-col h-s-screen">
+    <div>
+      {[
+        "/static/midi/moon.midi",
+        "static/midi/elise.midi",
+        "/static/midi/blue-danube-waltz-strauss.midi",
+      ].map((url) => {
+        return (
+          <a key={url} href={`/?file=${url}`} className="block">
+            {url}
+          </a>
+        );
+      })}
       <input
         type="file"
         accept="audio/midi"
@@ -52,9 +58,30 @@ export default function Index() {
           }
         }}
       />
+    </div>
+  );
+}
+
+function SongHej({ file }: { file: string }) {
+  const m = useMidi(file);
+  if (!m) {
+    return null;
+  }
+  return (
+    <div className="flex flex-col h-s-screen">
       <Song song={m} />
     </div>
   );
+}
+
+export default function Index() {
+  const [searchParams] = useSearchParams();
+  const file = searchParams.get("file");
+
+  if (file) {
+    return <SongHej file={file} />;
+  }
+  return <SongPicker />;
 }
 
 function Song(props: { song: Midi }) {
