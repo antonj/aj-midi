@@ -38,13 +38,17 @@ function SongPicker() {
   return (
     <div>
       {[
-        "/static/midi/moon.midi",
-        "static/midi/elise.midi",
-        "/static/midi/blue-danube-waltz-strauss.midi",
-      ].map((url) => {
+        { name: "Moon", url: "/static/midi/moon.midi" },
+        { name: "Elise", url: "static/midi/elise.midi" },
+        { name: "Waltz", url: "/static/midi/blue-danube-waltz-strauss.midi" },
+        { name: "Super Mario", url: "https://bitmidi.com/uploads/72257.mid" },
+        { name: "Jingle Bells", url: "https://bitmidi.com/uploads/35143.mid" },
+        { name: "Still Dre", url: "https://bitmidi.com/uploads/41197.mid" },
+        { name: "Tetris", url: "https://bitmidi.com/uploads/100444.mid" },
+      ].map((s) => {
         return (
-          <a key={url} href={`/?file=${url}`} className="block">
-            {url}
+          <a key={s.url} href={`/?file=${s.url}`} className="block">
+            {s.name}
           </a>
         );
       })}
@@ -133,7 +137,7 @@ function Song(props: { song: Midi }) {
       .listen();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [m, settings]);
+  }, [m]);
 
   useSongTicker(m, (tick) => {
     if (!changing.current) {

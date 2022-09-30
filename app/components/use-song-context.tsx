@@ -93,7 +93,7 @@ export function useOctaves(song: Midi) {
 
 function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
   const ppq = song.header.ppq;
-  let bpm = song.header.tempos[0].bpm;
+  let bpm = song.header.tempos[0]?.bpm || 120;
   let msPerTick = (bpm * ppq) / (60 * 1000);
   msPerTick /= ctx.speed;
   const ticksPerBar = song.header.timeSignatures[0].timeSignature[0] * ppq;
