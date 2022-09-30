@@ -112,7 +112,7 @@ function Song(props: { song: Midi }) {
     gui.add(obj, "sound").onChange(() => {
       settings.setVolume(obj.sound ? 1 : 0);
     });
-    gui.add(obj, "speed", 0, 10, 0.05).onChange(() => {
+    gui.add(obj, "speed", 0, 2, 0.02).onChange(() => {
       settings.setSpeed(obj.speed);
     });
     gui.add(obj, "tickWindow", 0, 20000, 5).onChange(() => {
@@ -122,10 +122,10 @@ function Song(props: { song: Midi }) {
       settings.setRepeatBars(obj.repeatBars);
     });
     gui
-      .add(time, "time", -1920, m.durationTicks, 1)
+      .add(time, "time", -500, m.durationTicks, 1)
       .onChange((v: number) => {
         changing.current = true;
-        settings.setStart(clamp(v, -1920, m.durationTicks));
+        settings.setStart(clamp(v, -500, m.durationTicks));
       })
       .onFinishChange(() => {
         changing.current = false;
@@ -133,7 +133,7 @@ function Song(props: { song: Midi }) {
       .listen();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [m]);
+  }, [m, settings]);
 
   useSongTicker(m, (tick) => {
     if (!changing.current) {
