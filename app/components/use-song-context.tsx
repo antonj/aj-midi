@@ -127,7 +127,11 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
 
     if (tick > ctxExtended.tickEnd && ctx.tickStart < ctxExtended.tickEnd) {
       // reset to start
-      tick = roundTo(ctx.tickStart, ticksPerBar) - ticksPerBar;
+      if (ctxExtended.repeatBars > 0) {
+        tick = ctxExtended.tickEnd - (ctxExtended.repeatBars + 1) * ticksPerBar;
+      } else {
+        tick = roundTo(ctx.tickStart, ticksPerBar) - ticksPerBar;
+      }
     }
     tickRef.current = tick;
     onTick(tickRef.current, ctxExtended);
