@@ -3,12 +3,15 @@ import { useEffect, useRef, useState } from "react";
 import { PianoMessageData } from "../../public/audio-worklet";
 import { useOctaves } from "./use-song-context";
 
-export function useToneDetector(song: Midi) {
+export function useToneDetector(on: boolean, song: Midi) {
   const detector = useRef<SoundDetector>();
   const o = useOctaves(song);
   const [connected, setConnected] = useState(false);
   const [tones, setTones] = useState<Array<number>>([]);
   useEffect(() => {
+    if (!on) {
+      return;
+    }
     detector.current = new SoundDetector((data) => {
       let a: number[] = [];
       for (let i = 0; i < data.length; i++) {
@@ -32,15 +35,17 @@ export function useToneDetector(song: Midi) {
     detector.current.connect().then(() => {
       setConnected(true);
     });
-  }, [o]);
+    return () => {
+      detector.current?.disconnect();
+      detector.current = undefined;
+    };
+  }, [o, on]);
 
   useEffect(() => {
     if (!connected) {
       return;
     }
 
-    console.log(o.min, o.max);
-    console.log(o.max - o.min);
     detector.current?.sendMessage({
       kind: "tuning",
       keysNum: o.max - o.min + 1,
@@ -56,24 +61,27 @@ export function useToneDetector(song: Midi) {
 
 class SoundDetector {
   ctx: AudioContext;
-  levels: Float32Array;
   pianolizer?: AudioWorkletNode;
   initWorklet: Promise<void>;
+  src?: MediaStreamAudioSourceNode;
+  micStream?: MediaStream;
+  stopped: boolean;
 
   constructor(listener: (d: Float32Array) => void) {
     this.ctx = new AudioContext();
-    this.levels = new Float32Array(61);
-    const fetchText = (url: string) =>
-      fetch(url).then((response) => response.text());
-    this.initWorklet = fetchText("/audio-worklet.js")
+    this.stopped = false;
+    this.initWorklet = fetch("/audio-worklet.js")
+      .then((r) => r.text())
       .then((src) => {
         const blob = new Blob([src], { type: "application/javascript" });
         return this.ctx.audioWorklet.addModule(URL.createObjectURL(blob));
       })
       .then(() => {
         this.pianolizer = new AudioWorkletNode(this.ctx, "audio-worklet");
+        console.log("hello worklet");
         this.pianolizer.port.onmessage = (event: { data: Float32Array }) => {
           // TODO: use SharedArrayBuffer for syncing levels
+          console.log("hello");
           listener(event.data);
         };
       });
@@ -81,6 +89,17 @@ class SoundDetector {
 
   sendMessage(msg: PianoMessageData) {
     this.pianolizer?.port.postMessage(msg);
+  }
+
+  disconnect() {
+    console.log("disconnect");
+    this.stopped = true;
+    this.micStream?.getTracks().forEach((t) => {
+      t.stop();
+      console.log("stop track", t);
+    });
+    this.src?.disconnect();
+    this.pianolizer?.disconnect();
   }
 
   async connect() {
@@ -93,13 +112,16 @@ class SoundDetector {
           console.warn("not initialized");
           return;
         }
-        let src = this.ctx.createMediaStreamSource(stream);
-        src.connect(this.pianolizer);
+        if (this.stopped) {
+          this.disconnect();
+        }
+        this.micStream = stream;
+        this.src = this.ctx.createMediaStreamSource(stream);
+        this.src.connect(this.pianolizer);
       })
       .catch((error) => window.alert("Audio input access denied: " + error));
   }
 
-  // audioSource.connect(audioContext.destination);
   // pianolizer.parameters.get("smooth").value = parseFloat(
   //   smoothingInput.value
   // );

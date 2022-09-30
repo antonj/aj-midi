@@ -13,11 +13,13 @@ export type SongSettings = {
   repeatBars: number;
   tickWindow: number;
   volume: number;
+  detect: boolean;
   setStart(tickStart: number): void;
   setRepeatBars(bars: number): void;
   setTickWindow(tickWindow: number): void;
   setSpeed(start: number): void;
   setVolume(volume: number): void;
+  setDetect(detect: boolean): void;
 };
 
 export const useSettings = create<SongSettings>(
@@ -28,19 +30,23 @@ export const useSettings = create<SongSettings>(
       repeatBars: 0,
       tickWindow: 600,
       volume: 0,
+      detect: false as boolean,
       setSpeed: (speed: number) => set((s) => ({ ...s, speed })),
       setVolume: (volume: number) => set((s) => ({ ...s, volume })),
       setTickWindow: (tickWindow: number) => set((s) => ({ ...s, tickWindow })),
       setStart: (tickStart: number) =>
         set((s) => ({ ...s, tickStart: Math.floor(tickStart) })),
       setRepeatBars: (repeatBars: number) => set((s) => ({ ...s, repeatBars })),
+      setDetect: (detect: boolean) => set((s) => ({ ...s, detect })),
     }),
     {
       name: "song-settings",
       partialize: (state) =>
         // omit volume from persist
         Object.fromEntries(
-          Object.entries(state).filter(([key]) => !["volume"].includes(key))
+          Object.entries(state).filter(
+            ([key]) => !["volume", "detect"].includes(key)
+          )
         ),
     }
   )

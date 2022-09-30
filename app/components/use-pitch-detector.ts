@@ -45,12 +45,6 @@ export function usePitchDetector(song: Midi) {
       pitchFork: 440,
       referenceKey: 69 - o.min, // A4 midi 69, index of 69 from 0
     });
-    // this.sendMessage({
-    // 	kind: "tuning",
-    // 	keysNum: 61,
-    // 	pitchFork: 440,
-    // 	referenceKey: 33, // A4 // midi 69
-    //   });
   }, [o, connected]);
   return tones;
 }
