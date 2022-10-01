@@ -251,10 +251,11 @@ function draw(
   const minTickMiniPx = 0;
   const maxTickMiniPx = songCtx.song.durationTicks;
 
+  // overlay non repeating parts of song
   if (songCtx.repeatBars > 0) {
-    const startBar = roundTo(songCtx.tickStart, songCtx.ticksPerBar);
-    const top = map(songCtx.tickEnd, minTick, maxTick, h, 0);
-    const bottom = map(startBar, minTick, maxTick, h, 0);
+    //const startBar = roundTo(songCtx.tickStart, songCtx.ticksPerBar);
+    const top = map(songCtx.tickEnd, minTick, maxTick, h, 0, true);
+    const bottom = map(songCtx.tickRepeatStart, minTick, maxTick, h, 0, true);
     ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
     ctx.fillRect(miniRightPx, 0, w, top);
     ctx.fillRect(miniRightPx, bottom, w, h);
@@ -276,9 +277,14 @@ function draw(
 
     // fill repeat bars
     if (songCtx.repeatBars > 0) {
-      const startBar = roundTo(songCtx.tickStart, songCtx.ticksPerBar);
       const top = map(songCtx.tickEnd, minTickMiniPx, maxTickMiniPx, h, 0);
-      const bottom = map(startBar, minTickMiniPx, maxTickMiniPx, h, 0);
+      const bottom = map(
+        songCtx.tickRepeatStart,
+        minTickMiniPx,
+        maxTickMiniPx,
+        h,
+        0
+      );
       ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
       ctx.fillRect(miniLeftPx, 0, miniWidthPx, top);
       ctx.fillRect(miniLeftPx, bottom, miniWidthPx, h);

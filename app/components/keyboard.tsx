@@ -29,11 +29,20 @@ export function Keyboard({ song }: { song: Midi }) {
     const future = new Set<number>();
     for (const n of settings.song.tracks[0].notes ?? []) {
       // current
-      if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
+      if (
+        tick > n.ticks &&
+        tick < n.ticks + n.durationTicks &&
+        tick > settings.tickRepeatStart
+      ) {
         pressed.add(n.midi);
       }
       // future
-      if (tick < n.ticks && tick > n.ticks - settings.tickWindow) {
+      if (
+        tick < n.ticks &&
+        tick > n.ticks - settings.tickWindow &&
+        n.ticks > settings.tickRepeatStart && // do not show things that are before repeat start
+        n.ticks < settings.tickEnd // do not show things that are after repeat end
+      ) {
         future.add(n.midi);
       }
     }

@@ -63,6 +63,7 @@ export type SongSettingsExtended = SongSettings & {
   octaves: Array<number>;
   ticksPerBar: number;
   tickEnd: number;
+  tickRepeatStart: number;
 };
 
 export function useSongTicker(song: Midi, cb: TickerCallback) {
@@ -106,19 +107,22 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
 
   const tickRef = useRef(ctx.tickStart);
 
+  const tickEnd =
+    ctx.repeatBars === 0
+      ? song.durationTicks
+      : roundTo(
+          Math.max(0, ctx.tickStart) + ctx.repeatBars * ticksPerBar,
+          ticksPerBar
+        );
+
   const ctxExtended: SongSettingsExtended = {
     ...ctx,
     song,
     octaves: octaves.octaves,
     msPerTick,
     ticksPerBar,
-    tickEnd:
-      ctx.repeatBars === 0
-        ? song.durationTicks
-        : roundTo(
-            Math.max(0, ctx.tickStart) + ctx.repeatBars * ticksPerBar,
-            ticksPerBar
-          ),
+    tickEnd,
+    tickRepeatStart: tickEnd - ctx.repeatBars * ticksPerBar,
   };
 
   const prevStart = usePrevious(ctx.tickStart);
@@ -133,9 +137,7 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
     if (tick > ctxExtended.tickEnd && ctx.tickStart < ctxExtended.tickEnd) {
       // reset to start
       if (ctxExtended.repeatBars > 0) {
-        tick =
-          ctxExtended.tickEnd -
-          (ctxExtended.repeatBars + ctxExtended.repeatBarsWarmup) * ticksPerBar;
+        tick = ctxExtended.tickRepeatStart - ctx.repeatBarsWarmup * ticksPerBar;
       } else {
         tick = roundTo(ctx.tickStart, ticksPerBar) - ticksPerBar;
       }
