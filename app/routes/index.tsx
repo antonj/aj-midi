@@ -122,8 +122,11 @@ function Song(props: { song: Midi }) {
     gui.add(obj, "tickWindow", 0, 20000, 5).onChange(() => {
       settings.setTickWindow(obj.tickWindow);
     });
-    gui.add(obj, "repeatBars", 0, 50, 1).onChange(() => {
+    gui.add(obj, "repeatBars", 0, 8, 1).onChange(() => {
       settings.setRepeatBars(obj.repeatBars);
+    });
+    gui.add(obj, "repeatBarsWarmup", 0, 8, 1).onChange(() => {
+      settings.setRepeatBarsWarmup(obj.repeatBarsWarmup);
     });
     gui
       .add(time, "time", -500, m.durationTicks, 1)

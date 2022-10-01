@@ -215,7 +215,7 @@ function draw(
     ctx.stroke();
   }
 
-  // ticks per bar
+  // bar lines
   for (
     let barTick = 0;
     barTick < maxTick;
@@ -227,9 +227,19 @@ function draw(
     if (barTick > maxTick) {
       break;
     }
+
     ctx.lineWidth = 2;
-    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-    const y = map(barTick, minTick, maxTick, h, 0);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    // at bar
+    let y = map(barTick, minTick, maxTick, h, 0);
+    ctx.fillRect(-1, y, w, 2);
+    // half bar previous
+    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+    y = map(barTick - songCtx.ticksPerBar / 2, minTick, maxTick, h, 0);
+    ctx.fillRect(-1, y, w, 2);
+    // half bar next
+    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+    y = map(barTick + songCtx.ticksPerBar / 2, minTick, maxTick, h, 0);
     ctx.fillRect(-1, y, w, 2);
   }
 

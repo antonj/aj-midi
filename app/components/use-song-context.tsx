@@ -11,11 +11,13 @@ export type SongSettings = {
   speed: number;
   tickStart: number;
   repeatBars: number;
+  repeatBarsWarmup: number;
   tickWindow: number;
   volume: number;
   detect: boolean;
   setStart(tickStart: number): void;
   setRepeatBars(bars: number): void;
+  setRepeatBarsWarmup(bars: number): void;
   setTickWindow(tickWindow: number): void;
   setSpeed(start: number): void;
   setVolume(volume: number): void;
@@ -28,6 +30,7 @@ export const useSettings = create<SongSettings>(
       speed: 1,
       tickStart: 0,
       repeatBars: 0,
+      repeatBarsWarmup: 1,
       tickWindow: 600,
       volume: 0,
       detect: false as boolean,
@@ -37,6 +40,8 @@ export const useSettings = create<SongSettings>(
       setStart: (tickStart: number) =>
         set((s) => ({ ...s, tickStart: Math.floor(tickStart) })),
       setRepeatBars: (repeatBars: number) => set((s) => ({ ...s, repeatBars })),
+      setRepeatBarsWarmup: (repeatBarsWarmup: number) =>
+        set((s) => ({ ...s, repeatBarsWarmup })),
       setDetect: (detect: boolean) => set((s) => ({ ...s, detect })),
     }),
     {
@@ -128,7 +133,9 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
     if (tick > ctxExtended.tickEnd && ctx.tickStart < ctxExtended.tickEnd) {
       // reset to start
       if (ctxExtended.repeatBars > 0) {
-        tick = ctxExtended.tickEnd - (ctxExtended.repeatBars + 1) * ticksPerBar;
+        tick =
+          ctxExtended.tickEnd -
+          (ctxExtended.repeatBars + ctxExtended.repeatBarsWarmup) * ticksPerBar;
       } else {
         tick = roundTo(ctx.tickStart, ticksPerBar) - ticksPerBar;
       }
