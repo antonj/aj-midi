@@ -55,9 +55,6 @@ export function Keyboard({ song }: { song: Midi }) {
     }
   });
 
-  // const tones = useToneDetector(song);
-  // const sDetected = new Set(tones);
-
   return (
     <div data-keyboard>
       {ovtaves.octaves.map((o) => (
