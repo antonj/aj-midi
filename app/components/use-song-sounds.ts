@@ -1,26 +1,32 @@
-import { Midi } from "@tonejs/midi";
-import { Note } from "@tonejs/midi/dist/Note";
 import { useEffect, useRef } from "react";
 import { noteToFreq } from "../util/music";
 import { useSettings, useSongTicker } from "./use-song-context";
 
-export function useSongSound(song: Midi) {
+export type Note = {
+  /**
+   * The notes MIDI value.
+   */
+  midi: number;
+  /**
+   * The normalized velocity (0-1).
+   */
+  velocity: number;
+};
+
+export function useSongSound() {
   const player = useRef(new Player());
-  const settings = useSettings();
+  const volume = useSettings((s) => s.volume);
+  const speed = useSettings((s) => s.speed);
 
   useEffect(() => {
-    if (settings.speed === 0) {
+    if (speed === 0) {
       player.current.setVolume(0);
     } else {
-      player.current.setVolume(1);
+      player.current.setVolume(volume);
     }
-  }, [settings.speed]);
+  }, [speed, volume]);
 
-  useEffect(() => {
-    player.current.setVolume(settings.volume);
-  }, [settings.volume]);
-
-  useSongTicker(song, (tick, ctx) => {
+  useSongTicker((tick, ctx) => {
     const pressed = new Map<number, Note>();
     for (const n of ctx.song.tracks[0].notes ?? []) {
       // current
@@ -32,7 +38,7 @@ export function useSongSound(song: Midi) {
   });
 }
 
-class Player {
+export class Player {
   ctx: AudioContext;
   playing: Map<number, [GainNode, OscillatorNode]>;
   gain: GainNode;

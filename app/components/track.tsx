@@ -15,14 +15,17 @@ import { useBoundingClientRect } from "./use-bounding-client-rect";
 import {
   SongSettingsExtended,
   useSettings,
+  useSongCtx,
   useSongTicker,
 } from "./use-song-context";
+import { Note } from "./use-song-sounds";
 import { useToneDetector } from "./use-tone-detector";
 
 const miniMapWidthRatio = 0.1;
 const blackWidthRatio = 0.6;
 
-export function Track({ song }: { song: Midi }) {
+export function Track() {
+  const { song } = useSongCtx();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [{ width, height }, wrapperRef] =
     useBoundingClientRect<HTMLDivElement>();
@@ -32,7 +35,7 @@ export function Track({ song }: { song: Midi }) {
   const sDetected = new Set(tones);
   const tickToneRef = useRef(new Map<number, Set<number>>());
 
-  useSongTicker(song, (tick, songCtx) => {
+  useSongTicker((tick, songCtx) => {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) {
       return;
@@ -341,12 +344,15 @@ function draw(
     }
     ctx.fillRect(x, y, noteWidth, noteHeight);
     ctx.strokeRect(x, y, noteWidth, noteHeight);
-    //ctx.fillText("" + n.midi, x, y, 100);
 
-    // draw current tick line
-    ctx.fillStyle = "gold";
-    ctx.fillRect(miniWidthPx, map(tick, minTick, maxTick, h, 0), w, 2);
+    // midi text
+    // ctx.fillText("" + n.midi, x, y, 100);
   }
+  ctx.fillStyle = "black";
+
+  // draw current tick line
+  ctx.fillStyle = "gold";
+  ctx.fillRect(miniWidthPx, map(tick, minTick, maxTick, h, 0), w, 2);
 
   for (const [t, ns] of pressed) {
     const noteHeight = h / tickWindow;

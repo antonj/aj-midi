@@ -3,9 +3,10 @@ import { useMemo, useState } from "react";
 import { isBlack, midiToOctave, notes, toMidiTone } from "../util/music";
 
 import styles from "./keyboard.css";
-import { useOctaves, useSongTicker } from "./use-song-context";
+import { useOctaves, useSongCtx, useSongTicker } from "./use-song-context";
 import { useSongSound } from "./use-song-sounds";
 import { useToneDetector } from "./use-tone-detector";
+import { useMidiInput } from "./use-web-midi";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
@@ -17,14 +18,19 @@ export function eqSet<T>(as: Set<T>, bs: Set<T>) {
   return true;
 }
 
-export function Keyboard({ song }: { song: Midi }) {
-  const ovtaves = useOctaves(song);
+export function Keyboard() {
+  const { octaves } = useSongCtx();
 
   const [sPressed, setPressed] = useState(new Set<number>());
   const [sFuture, setFuture] = useState(new Set<number>());
-  useSongSound(song);
+  useSongSound();
 
-  useSongTicker(song, (tick, settings) => {
+  const midiPressedMap = useMidiInput();
+  const midiPressed = useMemo(() => {
+    return new Set(midiPressedMap.keys());
+  }, [midiPressedMap]);
+
+  useSongTicker((tick, settings) => {
     const pressed = new Set<number>();
     const future = new Set<number>();
     for (const n of settings.song.tracks[0].notes ?? []) {
@@ -66,11 +72,12 @@ export function Keyboard({ song }: { song: Midi }) {
 
   return (
     <div data-keyboard>
-      {ovtaves.octaves.map((o) => (
+      {octaves.map((o) => (
         <Octave
           key={o}
           octaveIndex={o}
-          pressedMidiTone={sPressed}
+          pressedMidiTone={midiPressed}
+          pressedMidiToneFacit={sPressed}
           pressedMidiToneFuture={sFuture}
         />
       ))}
@@ -81,10 +88,12 @@ export function Keyboard({ song }: { song: Midi }) {
 function Octave({
   octaveIndex,
   pressedMidiTone,
+  pressedMidiToneFacit,
   pressedMidiToneFuture,
 }: {
   octaveIndex: number;
   pressedMidiTone: Set<number>;
+  pressedMidiToneFacit: Set<number>;
   pressedMidiToneFuture: Set<number>;
 }) {
   return (
@@ -100,6 +109,9 @@ function Octave({
                 "key-white " +
                 (pressedMidiTone.has(toMidiTone(octaveIndex, i))
                   ? "key-pressed "
+                  : "") +
+                (pressedMidiToneFacit.has(toMidiTone(octaveIndex, i))
+                  ? "key-pressed-facit "
                   : "") +
                 (pressedMidiToneFuture.has(toMidiTone(octaveIndex, i))
                   ? "key-pressed-future "
@@ -117,6 +129,9 @@ function Octave({
                   "key-black " +
                   (pressedMidiTone.has(toMidiTone(octaveIndex, i + 1))
                     ? "key-pressed "
+                    : "") +
+                  (pressedMidiToneFacit.has(toMidiTone(octaveIndex, i + 1))
+                    ? "key-pressed-facit "
                     : "") +
                   (pressedMidiToneFuture.has(toMidiTone(octaveIndex, i + 1))
                     ? "key-pressed-future "

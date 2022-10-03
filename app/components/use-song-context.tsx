@@ -1,4 +1,10 @@
-import { useMemo, useRef } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useMemo,
+  useRef,
+} from "react";
 import { Midi } from "@tonejs/midi";
 import create from "zustand";
 import { persist } from "zustand/middleware";
@@ -6,6 +12,52 @@ import { useRequestAnimationFrame } from "./use-request-animation-frame";
 import { midiToOctave, toMidiTone } from "../util/music";
 import { roundTo } from "../util/map";
 import { usePrevious } from "./usePrevious";
+
+type SongCtx = {
+  song: Midi;
+  bpm: number;
+  msPerTick: number;
+  ticksPerBar: number;
+  octaves: Array<number>;
+};
+
+const SongContext = createContext<SongCtx | null>(null);
+
+export function SongProvider({
+  song,
+  children,
+}: {
+  song: Midi;
+  children: ReactNode;
+}) {
+  const speed = useSettings((s) => s.speed);
+  console.log("speed", speed);
+  const octaves = useOctaves(song);
+  const ctx = useMemo<SongCtx>(() => {
+    let bpm = song.header.tempos[0]?.bpm || 120;
+    const ppq = song.header.ppq;
+    let msPerTick = (bpm * ppq) / (60 * 1000);
+    msPerTick /= speed;
+    const ticksPerBar = song.header.timeSignatures[0].timeSignature[0] * ppq;
+    return {
+      song,
+      bpm,
+      msPerTick,
+      ticksPerBar,
+      octaves: octaves.octaves,
+    };
+  }, [song, speed, octaves]);
+
+  return <SongContext.Provider value={ctx}>{children}</SongContext.Provider>;
+}
+
+export function useSongCtx() {
+  const ctx = useContext(SongContext);
+  if (!ctx) {
+    throw new Error("context must be defined");
+  }
+  return ctx;
+}
 
 export type SongSettings = {
   speed: number;
@@ -15,6 +67,8 @@ export type SongSettings = {
   tickWindow: number;
   volume: number;
   detect: boolean;
+  song: Midi | null;
+  setSong(song: Midi): void;
   setStart(tickStart: number): void;
   setRepeatBars(bars: number): void;
   setRepeatBarsWarmup(bars: number): void;
@@ -24,7 +78,7 @@ export type SongSettings = {
   setDetect(detect: boolean): void;
 };
 
-export const useSettings = create<SongSettings>(
+export const useSettings = create(
   persist(
     (set) => ({
       speed: 1,
@@ -34,6 +88,8 @@ export const useSettings = create<SongSettings>(
       tickWindow: 600,
       volume: 0,
       detect: false as boolean,
+      song: null,
+      setSong: (song: Midi) => set((s) => ({ ...s, song })),
       setSpeed: (speed: number) => set((s) => ({ ...s, speed })),
       setVolume: (volume: number) => set((s) => ({ ...s, volume })),
       setTickWindow: (tickWindow: number) => set((s) => ({ ...s, tickWindow })),
@@ -66,11 +122,6 @@ export type SongSettingsExtended = SongSettings & {
   tickRepeatStart: number;
 };
 
-export function useSongTicker(song: Midi, cb: TickerCallback) {
-  const ctx = useSettings();
-  useTicker(song, ctx, cb);
-}
-
 type TickerCallback = (tick: number, songCtx: SongSettingsExtended) => void;
 
 export function useOctaves(song: Midi) {
@@ -97,19 +148,21 @@ export function useOctaves(song: Midi) {
   }, [song]);
 }
 
-function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
-  const ppq = song.header.ppq;
-  let bpm = song.header.tempos[0]?.bpm || 120;
-  let msPerTick = (bpm * ppq) / (60 * 1000);
-  msPerTick /= ctx.speed;
-  const ticksPerBar = song.header.timeSignatures[0].timeSignature[0] * ppq;
-  const octaves = useOctaves(song);
+export function useSongTicker(onTick: TickerCallback) {
+  const song = useSongCtx();
+  const ctx = useSettings();
+  const {
+    msPerTick,
+    octaves,
+    ticksPerBar,
+    song: { durationTicks },
+  } = song;
 
   const tickRef = useRef(ctx.tickStart);
 
   const tickEnd =
     ctx.repeatBars === 0
-      ? song.durationTicks
+      ? durationTicks
       : roundTo(
           Math.max(0, ctx.tickStart) + ctx.repeatBars * ticksPerBar,
           ticksPerBar
@@ -117,8 +170,8 @@ function useTicker(song: Midi, ctx: SongSettings, onTick: TickerCallback) {
 
   const ctxExtended: SongSettingsExtended = {
     ...ctx,
-    song,
-    octaves: octaves.octaves,
+    song: song.song,
+    octaves,
     msPerTick,
     ticksPerBar,
     tickEnd,

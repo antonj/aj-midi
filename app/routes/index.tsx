@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { Track } from "../components/track";
 import { Keyboard, links as keyboardLinks } from "../components/keyboard";
 import {
+  SongProvider,
   SongSettings,
   useSettings,
+  useSongCtx,
   useSongTicker,
 } from "../components/use-song-context";
 import { clamp } from "../util/map";
@@ -73,7 +75,7 @@ function SongHej({ file }: { file: string }) {
   }
   return (
     <div className="flex flex-col h-s-screen">
-      <Song song={m} />
+      <SongWrapper song={m} />
     </div>
   );
 }
@@ -88,15 +90,18 @@ export default function Index() {
   return <SongPicker />;
 }
 
-function Song(props: { song: Midi }) {
-  const m = props.song;
-  const settings = useSettings();
+function SongWrapper(props: { song: Midi }) {
+  return (
+    <SongProvider song={props.song}>
+      <Song />
+    </SongProvider>
+  );
+}
 
-  useEffect(() => {
-    if (!m) {
-      return;
-    }
-  }, [settings, m]);
+function Song() {
+  const song = useSongCtx();
+  const m = song.song;
+  const settings = useSettings();
 
   let params = useRef<SongSettings>(settings);
   params.current = settings;
@@ -142,7 +147,7 @@ function Song(props: { song: Midi }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [m]);
 
-  useSongTicker(m, (tick) => {
+  useSongTicker((tick) => {
     if (!changing.current) {
       timeRef.current.time = tick;
     }
@@ -151,11 +156,11 @@ function Song(props: { song: Midi }) {
   return (
     <div data-index>
       <div className="track">
-        <Track song={m} />
+        <Track />
       </div>
 
       <div className="keyboard">
-        <Keyboard song={m} />
+        <Keyboard />
       </div>
     </div>
   );
