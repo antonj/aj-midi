@@ -19,6 +19,10 @@ type SongCtx = {
   msPerTick: number;
   ticksPerBar: number;
   octaves: Array<number>;
+  tickConnections: Map<
+    { tick: number; midi: number },
+    { tick: number; midi: number }
+  >;
 };
 
 const SongContext = createContext<SongCtx | null>(null);
@@ -31,7 +35,6 @@ export function SongProvider({
   children: ReactNode;
 }) {
   const speed = useSettings((s) => s.speed);
-  console.log("speed", speed);
   const octaves = useOctaves(song);
   const ctx = useMemo<SongCtx>(() => {
     let bpm = song.header.tempos[0]?.bpm || 120;
@@ -39,11 +42,44 @@ export function SongProvider({
     let msPerTick = (bpm * ppq) / (60 * 1000);
     msPerTick /= speed;
     const ticksPerBar = song.header.timeSignatures[0].timeSignature[0] * ppq;
+
+    console.log(song);
+    const tickConnections = new Map<
+      { tick: number; midi: number },
+      { tick: number; midi: number }
+    >();
+    // calculate parallell notes
+    const notes = song.tracks[0].notes;
+    const length = notes.length;
+    for (let i = 0; i < length; i++) {
+      const n = notes[i];
+      const time = n.ticks;
+      // look 12 notes ahead
+      for (let y = i + 1; y < i + 24 && y < length; y++) {
+        const next = notes[y];
+        const nextTime = next.ticks;
+        const diff = nextTime - time;
+        const timeDiff = next.time - n.time;
+        if (timeDiff < 0.01) {
+          tickConnections.set(
+            { tick: n.ticks, midi: n.midi },
+            { tick: next.ticks, midi: next.midi }
+          );
+          // console.log("========");
+          // console.log("timediff", timeDiff);
+          // console.log("diff", diff);
+          console.log(n.midi, n.ticks);
+          console.log(next.midi, next.ticks);
+        }
+      }
+    }
+
     return {
       song,
       bpm,
       msPerTick,
       ticksPerBar,
+      tickConnections,
       octaves: octaves.octaves,
     };
   }, [song, speed, octaves]);
@@ -114,10 +150,7 @@ export const useSettings = create(
 );
 
 export type SongSettingsExtended = SongSettings & {
-  song: Midi;
-  msPerTick: number;
-  octaves: Array<number>;
-  ticksPerBar: number;
+  songCtx: SongCtx;
   tickEnd: number;
   tickRepeatStart: number;
 };
@@ -149,14 +182,13 @@ export function useOctaves(song: Midi) {
 }
 
 export function useSongTicker(onTick: TickerCallback) {
-  const song = useSongCtx();
+  const songCtx = useSongCtx();
   const ctx = useSettings();
   const {
     msPerTick,
-    octaves,
     ticksPerBar,
     song: { durationTicks },
-  } = song;
+  } = songCtx;
 
   const tickRef = useRef(ctx.tickStart);
 
@@ -170,10 +202,7 @@ export function useSongTicker(onTick: TickerCallback) {
 
   const ctxExtended: SongSettingsExtended = {
     ...ctx,
-    song: song.song,
-    octaves,
-    msPerTick,
-    ticksPerBar,
+    songCtx,
     tickEnd,
     tickRepeatStart: tickEnd - ctx.repeatBars * ticksPerBar,
   };

@@ -28,7 +28,7 @@ export function useSongSound() {
 
   useSongTicker((tick, ctx) => {
     const pressed = new Map<number, Note>();
-    for (const n of ctx.song.tracks[0].notes ?? []) {
+    for (const n of ctx.songCtx.song.tracks[0].notes ?? []) {
       // current
       if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
         pressed.set(n.midi, n);
