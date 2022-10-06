@@ -111,7 +111,7 @@ function Song() {
 
   let changing = useRef(false);
   useEffect(() => {
-    let time = timeRef.current;
+    let bar = timeRef.current;
     let obj = { ...params.current, sound: false };
     const gui = new GUI();
     gui.add(obj, "detect").onChange(() => {
@@ -123,17 +123,24 @@ function Song() {
     gui.add(obj, "speed", 0, 2, 0.02).onChange(() => {
       settings.setSpeed(obj.speed);
     });
-    gui.add(obj, "tickWindow", 0, 20000, 5).onChange(() => {
-      settings.setTickWindow(obj.tickWindow);
-    });
+    gui
+      .add(obj, "tickWindow", 0, 20000, 5)
+      .name("window")
+      .onChange(() => {
+        settings.setTickWindow(obj.tickWindow);
+      });
     gui.add(obj, "repeatBars", 0, 8, 1).onChange(() => {
       settings.setRepeatBars(obj.repeatBars);
     });
-    gui.add(obj, "repeatBarsWarmup", 0, 8, 1).onChange(() => {
-      settings.setRepeatBarsWarmup(obj.repeatBarsWarmup);
-    });
     gui
-      .add(time, "time", -1, durationTicks / ticksPerBar, 1)
+      .add(obj, "repeatBarsWarmup", 0, 8, 1)
+      .name("warmup")
+      .onChange(() => {
+        settings.setRepeatBarsWarmup(obj.repeatBarsWarmup);
+      });
+    gui
+      .add(bar, "time", -1, durationTicks / ticksPerBar, 1)
+      .name("bar")
       .onChange((v: number) => {
         changing.current = true;
         settings.setStart(clamp(v * ticksPerBar, -1, durationTicks));
