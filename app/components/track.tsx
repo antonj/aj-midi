@@ -59,6 +59,7 @@ export function Track() {
 
   const seek: PointerEventHandler<HTMLCanvasElement> = useCallback(
     (ev) => {
+      ev.preventDefault();
       let rect = ev.currentTarget.getBoundingClientRect();
       let y = map(ev.clientY, rect.top, rect.bottom, 0, 1);
       let yy = map(y, 1, 0, 0, song.durationTicks);
@@ -94,8 +95,9 @@ export function Track() {
   );
 
   return (
-    <div className="w-full h-full" ref={wrapperRef}>
+    <div className="w-full h-full touch-none" ref={wrapperRef}>
       <canvas
+        className="w-full h-full touch-none"
         ref={canvasRef}
         onPointerDown={down}
         onPointerMove={move}

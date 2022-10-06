@@ -100,18 +100,17 @@ function SongWrapper(props: { song: Midi }) {
 
 function Song() {
   const song = useSongCtx();
-  const m = song.song;
   const settings = useSettings();
 
   let params = useRef<SongSettings>(settings);
   params.current = settings;
   let timeRef = useRef({ time: 0 });
 
+  const { durationTicks } = song.song;
+  const { ticksPerBar } = song;
+
   let changing = useRef(false);
   useEffect(() => {
-    if (!m) {
-      return;
-    }
     let time = timeRef.current;
     let obj = { ...params.current, sound: false };
     const gui = new GUI();
@@ -134,10 +133,10 @@ function Song() {
       settings.setRepeatBarsWarmup(obj.repeatBarsWarmup);
     });
     gui
-      .add(time, "time", -500, m.durationTicks, 1)
+      .add(time, "time", -1, durationTicks / ticksPerBar, 1)
       .onChange((v: number) => {
         changing.current = true;
-        settings.setStart(clamp(v, -500, m.durationTicks));
+        settings.setStart(clamp(v * ticksPerBar, -1, durationTicks));
       })
       .onFinishChange(() => {
         changing.current = false;
@@ -145,11 +144,11 @@ function Song() {
       .listen();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [m]);
+  }, [durationTicks, ticksPerBar]);
 
-  useSongTicker((tick) => {
+  useSongTicker((tick, ctx) => {
     if (!changing.current) {
-      timeRef.current.time = tick;
+      timeRef.current.time = Math.floor(tick / ticksPerBar);
     }
   });
 
