@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { map } from "../util/map";
 import { noteToFreq } from "../util/music";
 import { useSettings, useSongTicker } from "./use-song-context";
 
@@ -42,11 +43,15 @@ export class Player {
   ctx: AudioContext;
   playing: Map<number, [GainNode, OscillatorNode]>;
   gain: GainNode;
+  compressor: DynamicsCompressorNode;
   constructor() {
     this.ctx = new AudioContext();
     this.playing = new Map();
     this.gain = this.ctx.createGain();
     this.gain.gain.value = 0.8;
+
+    this.compressor = new DynamicsCompressorNode(this.ctx);
+    this.compressor.connect(this.gain);
     this.gain.connect(this.ctx.destination);
   }
 
@@ -77,7 +82,7 @@ export class Player {
     var gainNode = this.ctx.createGain();
 
     oscillator.connect(gainNode);
-    gainNode.connect(this.gain);
+    gainNode.connect(this.compressor);
 
     gainNode.gain.value = 0;
     let volume = midiNote.velocity;
