@@ -1,6 +1,5 @@
-import { Midi } from "@tonejs/midi";
 import { PointerEventHandler, useCallback, useEffect, useRef } from "react";
-import { map, roundTo } from "../util/map";
+import { map } from "../util/map";
 import {
   isBlack,
   isWhite,
@@ -155,7 +154,7 @@ function draw(
   const numWhites = octaves.length * numWhiteInOctate;
 
   const tickWindow = songExt.tickWindow; // ticks shown in height
-  const minTick = songExt.detect ? tick - tickWindow / 2 : tick;
+  const minTick = songExt.detect ? tick - tickWindow / 2 : tick; // - tickWindow / 4;
   const maxTick = tick + tickWindow;
   const whiteWidthPx = w / numWhites;
   const blackWidthPx = blackWidthRatio * whiteWidthPx;
@@ -307,6 +306,7 @@ function draw(
       );
       const y = map(n.ticks, minTickMiniPx, maxTickMiniPx, h, 0) - noteHeight; // ticks // flip y axis
       let noteWidth;
+
       if (isBlack(note)) {
         ctx.fillStyle = "black";
         noteWidth = blackWidthMini;
@@ -329,9 +329,9 @@ function draw(
   for (const n of songExt.songCtx.song.tracks[0].notes) {
     const note = midiToNote(n.midi);
     let noteWidth;
-    const noteHeight = h / (tickWindow / n.durationTicks);
     let x = xInPiano(n.midi, octaves, 0, w, whiteWidthPx);
-    const y = map(n.ticks, minTick, maxTick, h, 0) - noteHeight; // ticks // flip y axis
+    const yTop = map(n.ticks + n.durationTicks, minTick, maxTick, h, 0);
+    const yBottom = map(n.ticks, minTick, maxTick, h, 0);
     if (isBlack(note)) {
       ctx.fillStyle = "black";
       noteWidth = blackWidthPx;
@@ -343,8 +343,14 @@ function draw(
       noteWidth = whiteWidthPx;
       x = x - whiteWidthPx / 2;
     }
-    ctx.fillRect(x, y, noteWidth, noteHeight);
-    ctx.strokeRect(x, y, noteWidth, noteHeight);
+
+    const isOn = tick >= n.ticks && tick <= n.ticks + n.durationTicks;
+    if (isOn) {
+      ctx.fillStyle = "gold";
+    }
+    const noteHeight = Math.abs(yTop - yBottom);
+    ctx.fillRect(x, yTop, noteWidth, noteHeight);
+    ctx.strokeRect(x, yTop, noteWidth, noteHeight);
 
     // midi text
     // ctx.fillText("" + n.midi, x, y, 100);
@@ -367,7 +373,7 @@ function draw(
 
   // draw current tick line
   ctx.fillStyle = "gold";
-  ctx.fillRect(miniWidthPx, map(tick, minTick, maxTick, h, 0), w, 2);
+  ctx.fillRect(miniWidthPx, map(tick, minTick, maxTick, h, 0), w, 4);
 
   for (const [t, ns] of pressed) {
     const noteHeight = h / tickWindow;
