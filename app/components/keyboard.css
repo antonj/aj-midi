@@ -12,6 +12,7 @@
   display: flex;
   color: var(--color-text-primary);
   border-top: 2px solid gold;
+  font-size: xx-small;
 }
 
 [data-keyboard] .octave {

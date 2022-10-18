@@ -1,4 +1,10 @@
-import { PointerEventHandler, useCallback, useEffect, useRef } from "react";
+import {
+  PointerEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { map } from "../util/map";
 import {
   isBlack,
@@ -11,6 +17,7 @@ import {
   whiteIndexInOctave,
 } from "../util/music";
 import { useBoundingClientRect } from "./use-bounding-client-rect";
+import { useGestureDetector } from "./use-gesture-detector";
 import {
   SongSettingsExtended,
   useSettings,
@@ -24,7 +31,9 @@ const blackWidthRatio = 0.6;
 
 export function Track() {
   const { song } = useSongCtx();
+  const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  canvasRef.current = canvasEl;
   const [{ width, height }, wrapperRef] =
     useBoundingClientRect<HTMLDivElement>();
   const settings = useSettings();
@@ -32,12 +41,14 @@ export function Track() {
   const tones = useToneDetector(settings.detect, song);
   const sDetected = new Set(tones);
   const tickToneRef = useRef(new Map<number, Set<number>>());
+  const tickRef = useRef(0);
 
   useSongTicker((tick, songCtx) => {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) {
       return;
     }
+    tickRef.current = tick;
     tickToneRef.current.set(tick, sDetected);
     draw(ctx, tick, songCtx, tickToneRef.current);
   });
@@ -54,53 +65,29 @@ export function Track() {
     ctx.canvas.style.height = height + "px";
   }, [width, height]);
 
-  const dragRef = useRef(false);
-
-  const seek: PointerEventHandler<HTMLCanvasElement> = useCallback(
-    (ev) => {
-      ev.preventDefault();
-      let rect = ev.currentTarget.getBoundingClientRect();
-      let y = map(ev.clientY, rect.top, rect.bottom, 0, 1);
-      let yy = map(y, 1, 0, 0, song.durationTicks);
-      settings.setStart(yy);
-    },
-    [settings, song.durationTicks]
-  );
-
-  const down: PointerEventHandler<HTMLCanvasElement> = useCallback(
-    (ev) => {
-      let rect = ev.currentTarget.getBoundingClientRect();
-      let x = map(ev.clientX, rect.left, rect.right, 0, 1);
-      if (x > miniMapWidthRatio) {
-        return;
-      }
-      dragRef.current = true;
-      ev.currentTarget.setPointerCapture(ev.pointerId);
-      seek(ev);
-    },
-    [seek]
-  );
-  const up: PointerEventHandler<HTMLCanvasElement> = useCallback((ev) => {
-    ev.currentTarget.releasePointerCapture(ev.pointerId);
-    dragRef.current = false;
-  }, []);
-  const move: PointerEventHandler<HTMLCanvasElement> = useCallback(
-    (ev) => {
-      if (dragRef.current) {
-        seek(ev);
-      }
-    },
-    [seek]
-  );
+  useGestureDetector(canvasEl, (ev) => {
+    switch (ev.kind) {
+      case "drag":
+        ev.data.event.preventDefault();
+        let x = map(ev.data.x, 0, ev.data.width, 0, 1);
+        if (x < miniMapWidthRatio) {
+          console.log(ev.data.y, ev.data.height);
+          let y = map(ev.data.y, 0, ev.data.height, 0, 1);
+          let yy = map(y, 1, 0, 0, song.durationTicks, true);
+          settings.setStart(yy);
+        } else {
+          let dt = map(ev.data.dy, 0, height, 0, settings.tickWindow);
+          settings.setStart(tickRef.current + dt);
+        }
+        break;
+    }
+  });
 
   return (
     <div className="w-full h-full touch-none" ref={wrapperRef}>
       <canvas
-        className="w-full h-full touch-none"
-        ref={canvasRef}
-        onPointerDown={down}
-        onPointerMove={move}
-        onPointerUp={up}
+        className="w-full h-full touch-none select-none"
+        ref={setCanvasEl}
       />
     </div>
   );
