@@ -204,7 +204,9 @@ export function useSongTicker(onTick: TickerCallback) {
     ...ctx,
     songCtx,
     tickEnd,
-    tickRepeatStart: tickEnd - ctx.repeatBars * ticksPerBar,
+    tickRepeatStart: !ctx.repeatBars
+      ? 0
+      : tickEnd - ctx.repeatBars * ticksPerBar,
   };
 
   const prevStart = usePrevious(ctx.tickStart);
