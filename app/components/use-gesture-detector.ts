@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { GestureDetector, GestureEvent } from "../util/gesture_detector";
+import { GestureDetector, GestureEvent } from "../util/gesture-detector";
 
 export function useGestureDetector(
   el: HTMLElement | null,

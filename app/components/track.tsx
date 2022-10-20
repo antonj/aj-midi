@@ -1,10 +1,4 @@
-import {
-  PointerEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import { map } from "../util/map";
 import {
   isBlack,
@@ -16,6 +10,7 @@ import {
   toMidiTone,
   whiteIndexInOctave,
 } from "../util/music";
+import { Scroller } from "../util/scroller";
 import { useBoundingClientRect } from "./use-bounding-client-rect";
 import { useGestureDetector } from "./use-gesture-detector";
 import {
@@ -42,12 +37,14 @@ export function Track() {
   const sDetected = new Set(tones);
   const tickToneRef = useRef(new Map<number, Set<number>>());
   const tickRef = useRef(0);
+  const scrollerRef = useRef(Scroller());
 
   useSongTicker((tick, songCtx) => {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) {
       return;
     }
+
     tickRef.current = tick;
     tickToneRef.current.set(tick, sDetected);
     draw(ctx, tick, songCtx, tickToneRef.current);
@@ -66,12 +63,12 @@ export function Track() {
   }, [width, height]);
 
   useGestureDetector(canvasEl, (ev) => {
+    scrollerRef.current.forceFinished(true);
     switch (ev.kind) {
       case "drag":
         ev.data.event.preventDefault();
         let x = map(ev.data.x, 0, ev.data.width, 0, 1);
         if (x < miniMapWidthRatio) {
-          console.log(ev.data.y, ev.data.height);
           let y = map(ev.data.y, 0, ev.data.height, 0, 1);
           let yy = map(y, 1, 0, 0, song.durationTicks, true);
           settings.setStart(yy);
@@ -79,6 +76,23 @@ export function Track() {
           let dt = map(ev.data.dy, 0, height, 0, settings.tickWindow);
           settings.setStart(tickRef.current + dt);
         }
+        break;
+      case "fling":
+        let prevY = 0;
+        scrollerRef.current.fling(0, prevY, 0, ev.data.vy * 1000);
+        function anim() {
+          const scrolling = scrollerRef.current.computeScrollOffset();
+          if (scrolling) {
+            const y = scrollerRef.current.getCurrY();
+            let dy = y - prevY;
+            prevY = y;
+            let dt = map(dy, 0, height, 0, settings.tickWindow);
+            settings.setStart(tickRef.current + dt);
+            requestAnimationFrame(anim);
+          }
+        }
+        requestAnimationFrame(anim);
+
         break;
     }
   });

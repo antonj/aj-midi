@@ -25,7 +25,7 @@ type GestureData = {
 export type GestureEvent =
   | {
       kind: "fling";
-      data: GestureData;
+      data: GestureData & { vx: number; vy: number };
     }
   | {
       kind: "drag";
@@ -111,6 +111,8 @@ export class GestureDetector {
     }
     this.ev_down = ev;
     this.elem.setPointerCapture(ev.pointerId);
+    this.velo.clear();
+    this.velo.add(ev);
     this.callback({
       kind: "down",
       data: {
@@ -129,7 +131,7 @@ export class GestureDetector {
     if (ev.pointerId !== this.ev_down.pointerId) {
       return;
     }
-
+    this.velo.add(ev);
     const bounds = this.elem.getBoundingClientRect();
     this.callback({
       kind: "drag",
@@ -157,23 +159,32 @@ export class GestureDetector {
     if (ev.pointerId !== this.ev_down.pointerId) {
       return;
     }
+    console.log({ y: ev.y, yy: this.ev_prev.y });
     this.elem.releasePointerCapture(ev.pointerId);
     const bounds = this.elem.getBoundingClientRect();
+    const data = {
+      x: ev.x,
+      y: ev.y,
+      dx: ev.x - this.ev_prev.x,
+      dy: ev.y - this.ev_prev.y,
+      totaldx: ev.x - this.ev_down.x,
+      totaldy: ev.y - this.ev_down.y,
+      event_down: this.ev_down,
+      event_prev: this.ev_prev,
+      event: ev,
+      timestamp: ev.timeStamp,
+      width: bounds.width,
+      height: bounds.height,
+    };
     this.callback({
       kind: "up",
+      data,
+    });
+    this.callback({
+      kind: "fling",
       data: {
-        x: ev.x,
-        y: ev.y,
-        dx: ev.x - this.ev_prev.x,
-        dy: ev.y - this.ev_prev.y,
-        totaldx: ev.x - this.ev_down.x,
-        totaldy: ev.y - this.ev_down.y,
-        event_down: this.ev_down,
-        event_prev: this.ev_prev,
-        event: ev,
-        timestamp: ev.timeStamp,
-        width: bounds.width,
-        height: bounds.height,
+        ...data,
+        ...this.velo.velo(),
       },
     });
     this.ev_down = undefined;
