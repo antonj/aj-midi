@@ -159,7 +159,6 @@ export class GestureDetector {
     if (ev.pointerId !== this.ev_down.pointerId) {
       return;
     }
-    console.log({ y: ev.y, yy: this.ev_prev.y });
     this.elem.releasePointerCapture(ev.pointerId);
     const bounds = this.elem.getBoundingClientRect();
     const data = {

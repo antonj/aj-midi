@@ -11,7 +11,7 @@ import { persist } from "zustand/middleware";
 import { useRequestAnimationFrame } from "./use-request-animation-frame";
 import { midiToOctave, toMidiTone } from "../util/music";
 import { roundTo } from "../util/map";
-import { usePrevious } from "./usePrevious";
+import { usePrevious } from "./use-previous";
 
 type SongCtx = {
   song: Midi;
@@ -43,7 +43,6 @@ export function SongProvider({
     msPerTick /= speed;
     const ticksPerBar = song.header.timeSignatures[0].timeSignature[0] * ppq;
 
-    console.log(song);
     const tickConnections = new Map<
       { tick: number; midi: number },
       { tick: number; midi: number }
@@ -53,23 +52,15 @@ export function SongProvider({
     const length = notes.length;
     for (let i = 0; i < length; i++) {
       const n = notes[i];
-      const time = n.ticks;
       // look 12 notes ahead
       for (let y = i + 1; y < i + 24 && y < length; y++) {
         const next = notes[y];
-        const nextTime = next.ticks;
-        const diff = nextTime - time;
         const timeDiff = next.time - n.time;
         if (timeDiff < 0.01) {
           tickConnections.set(
             { tick: n.ticks, midi: n.midi },
             { tick: next.ticks, midi: next.midi }
           );
-          // console.log("========");
-          // console.log("timediff", timeDiff);
-          // console.log("diff", diff);
-          console.log(n.midi, n.ticks);
-          console.log(next.midi, next.ticks);
         }
       }
     }

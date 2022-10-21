@@ -1,18 +1,12 @@
-import GUI from "lil-gui";
 import { Midi } from "@tonejs/midi";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Track } from "../components/track";
 import { Keyboard, links as keyboardLinks } from "../components/keyboard";
-import {
-  SongProvider,
-  SongSettings,
-  useSettings,
-  useSongCtx,
-  useSongTicker,
-} from "../components/use-song-context";
-import { clamp } from "../util/map";
+import { SongProvider } from "../components/use-song-context";
+
 import styles from "./index.css";
 import { useSearchParams } from "remix";
+import { Settings } from "~/components/settings";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }, ...keyboardLinks()];
@@ -34,7 +28,7 @@ function SongPicker() {
   const [file, setFile] = useState<string>("");
 
   if (file) {
-    return <SongHej file={file} />;
+    return <Song file={file} />;
   }
 
   return (
@@ -68,15 +62,25 @@ function SongPicker() {
   );
 }
 
-function SongHej({ file }: { file: string }) {
+function Song({ file }: { file: string }) {
   const m = useMidi(file);
   if (!m) {
     return null;
   }
   return (
-    <div className="flex flex-col h-s-screen">
-      <SongWrapper song={m} />
-    </div>
+    <SongProvider song={m}>
+      <Settings />
+      <div className="flex flex-col h-s-screen">
+        <div data-index>
+          <div className="track">
+            <Track />
+          </div>
+          <div className="keyboard">
+            <Keyboard />
+          </div>
+        </div>
+      </div>
+    </SongProvider>
   );
 }
 
@@ -85,89 +89,7 @@ export default function Index() {
   const file = searchParams.get("file");
 
   if (file) {
-    return <SongHej file={file} />;
+    return <Song file={file} />;
   }
   return <SongPicker />;
-}
-
-function SongWrapper(props: { song: Midi }) {
-  return (
-    <SongProvider song={props.song}>
-      <Song />
-    </SongProvider>
-  );
-}
-
-function Song() {
-  const song = useSongCtx();
-  const settings = useSettings();
-
-  let params = useRef<SongSettings>(settings);
-  params.current = settings;
-  let timeRef = useRef({ time: 0 });
-
-  const { durationTicks } = song.song;
-  const { ticksPerBar } = song;
-
-  let changing = useRef(false);
-  useEffect(() => {
-    let bar = timeRef.current;
-    let obj = { ...params.current, sound: false };
-    const gui = new GUI();
-    gui.add(obj, "detect").onChange(() => {
-      settings.setDetect(obj.detect);
-    });
-    gui.add(obj, "sound").onChange(() => {
-      settings.setVolume(obj.sound ? 1 : 0);
-    });
-    gui.add(obj, "speed", 0, 2, 0.02).onChange(() => {
-      settings.setSpeed(obj.speed);
-    });
-    gui
-      .add(obj, "tickWindow", 0, 20000, 5)
-      .name("window")
-      .onChange(() => {
-        settings.setTickWindow(obj.tickWindow);
-      });
-    gui.add(obj, "repeatBars", 0, 8, 1).onChange(() => {
-      settings.setRepeatBars(obj.repeatBars);
-    });
-    gui
-      .add(obj, "repeatBarsWarmup", 0, 8, 1)
-      .name("warmup")
-      .onChange(() => {
-        settings.setRepeatBarsWarmup(obj.repeatBarsWarmup);
-      });
-    gui
-      .add(bar, "time", -1, durationTicks / ticksPerBar, 1)
-      .name("bar")
-      .onChange((v: number) => {
-        changing.current = true;
-        settings.setStart(clamp(v * ticksPerBar, -1, durationTicks));
-      })
-      .onFinishChange(() => {
-        changing.current = false;
-      })
-      .listen();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [durationTicks, ticksPerBar]);
-
-  useSongTicker((tick, ctx) => {
-    if (!changing.current) {
-      timeRef.current.time = Math.floor(tick / ticksPerBar);
-    }
-  });
-
-  return (
-    <div data-index>
-      <div className="track">
-        <Track />
-      </div>
-
-      <div className="keyboard">
-        <Keyboard />
-      </div>
-    </div>
-  );
 }
