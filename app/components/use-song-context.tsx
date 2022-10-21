@@ -36,44 +36,54 @@ export function SongProvider({
 }) {
   const speed = useSettings((s) => s.speed);
   const octaves = useOctaves(song);
-  const ctx = useMemo<SongCtx>(() => {
-    let bpm = song.header.tempos[0]?.bpm || 120;
-    const ppq = song.header.ppq;
-    let msPerTick = (bpm * ppq) / (60 * 1000);
-    msPerTick /= speed;
-    const ticksPerBar = song.header.timeSignatures[0].timeSignature[0] * ppq;
 
-    const tickConnections = new Map<
-      { tick: number; midi: number },
-      { tick: number; midi: number }
-    >();
-    // calculate parallell notes
-    const notes = song.tracks[0].notes;
-    const length = notes.length;
-    for (let i = 0; i < length; i++) {
-      const n = notes[i];
-      // look 12 notes ahead
-      for (let y = i + 1; y < i + 24 && y < length; y++) {
-        const next = notes[y];
-        const timeDiff = next.time - n.time;
-        if (timeDiff < 0.01) {
-          tickConnections.set(
-            { tick: n.ticks, midi: n.midi },
-            { tick: next.ticks, midi: next.midi }
-          );
+  const tickConnections = useMemo(
+    function calcParallelNotes() {
+      const result = new Map<
+        { tick: number; midi: number },
+        { tick: number; midi: number }
+      >();
+      const notes = song.tracks[0].notes;
+      const length = notes.length;
+      for (let i = 0; i < length; i++) {
+        const n = notes[i];
+        // look 12 notes ahead
+        for (let y = i + 1; y < i + 24 && y < length; y++) {
+          const next = notes[y];
+          const timeDiff = next.time - n.time;
+          if (timeDiff < 0.01) {
+            result.set(
+              { tick: n.ticks, midi: n.midi },
+              { tick: next.ticks, midi: next.midi }
+            );
+          }
         }
       }
-    }
 
-    return {
-      song,
-      bpm,
-      msPerTick,
-      ticksPerBar,
-      tickConnections,
-      octaves: octaves.octaves,
-    };
-  }, [song, speed, octaves]);
+      return result;
+    },
+    [song]
+  );
+
+  const ctx = useMemo<SongCtx>(
+    function ctxMemo() {
+      let bpm = song.header.tempos[0]?.bpm || 120;
+      const ppq = song.header.ppq;
+      let msPerTick = (bpm * ppq) / (60 * 1000);
+      msPerTick /= speed;
+      const ticksPerBar = song.header.timeSignatures[0].timeSignature[0] * ppq;
+
+      return {
+        song,
+        bpm,
+        msPerTick,
+        ticksPerBar,
+        tickConnections,
+        octaves: octaves.octaves,
+      };
+    },
+    [song, speed, octaves, tickConnections]
+  );
 
   return <SongContext.Provider value={ctx}>{children}</SongContext.Provider>;
 }
