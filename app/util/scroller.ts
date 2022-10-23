@@ -106,7 +106,7 @@ export function Scroller(
   /** private boolean */
   var mFinished: boolean = false;
   /** private Interpolator */
-  var mInterpolator: (x: number) => number;
+  var mInterpolator: ((x: number) => number) | undefined;
   /** private boolean */
   var mFlywheel: boolean;
 
@@ -206,16 +206,15 @@ export function Scroller(
    * null, the default (viscous) interpolator will be used. Specify whether or
    * not to support progressive "flywheel" behavior in flinging.
    */
-  {
-    mFinished = true;
-    mInterpolator = interpolator;
-    // mPpi = context.getResources().getDisplayMetrics().density * 160.0f;
-    mPpi = 1 * 160;
-    mDeceleration = computeDeceleration(mFlingFriction);
-    mFlywheel = true; //flywheel; NOTE always flywheel
 
-    mPhysicalCoeff = computeDeceleration(0.84); // look and feel tuning
-  }
+  mFinished = true;
+  mInterpolator = interpolator;
+  // mPpi = context.getResources().getDisplayMetrics().density * 160.0f;
+  mPpi = 1 * 160;
+  mDeceleration = computeDeceleration(mFlingFriction);
+  mFlywheel = true; //flywheel; NOTE always flywheel
+
+  mPhysicalCoeff = computeDeceleration(0.84); // look and feel tuning
 
   /**
    * @param {Number} friction - float
@@ -580,6 +579,7 @@ export function Scroller(
       minY?: number,
       maxY?: number
     ) {
+      mPpi = window.devicePixelRatio * 160;
       minX = minX === undefined ? -Number.MAX_VALUE : minX;
       minY = minY === undefined ? -Number.MAX_VALUE : minY;
       maxX = maxX === undefined ? Number.MAX_VALUE : maxX;
