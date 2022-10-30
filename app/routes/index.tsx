@@ -34,7 +34,9 @@ function SongPicker() {
   return (
     <div>
       {[
-        { name: "Moon", url: "/static/midi/moon.midi" },
+        { name: "Moon 1", url: "/static/midi/moon_1.midi" },
+        { name: "Moon 2", url: "/static/midi/moon_2.midi" },
+        { name: "Moon 3", url: "/static/midi/moon_3.midi" },
         { name: "Elise", url: "static/midi/elise.midi" },
         { name: "Waltz", url: "/static/midi/blue-danube-waltz-strauss.midi" },
         { name: "Super Mario", url: "https://bitmidi.com/uploads/72257.mid" },
@@ -67,6 +69,7 @@ function Song({ file }: { file: string }) {
   if (!m) {
     return null;
   }
+  console.log(m);
   return (
     <SongProvider song={m}>
       <Settings />

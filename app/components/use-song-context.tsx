@@ -12,6 +12,8 @@ import { useRequestAnimationFrame } from "./use-request-animation-frame";
 import { midiToOctave, toMidiTone } from "../util/music";
 import { roundTo } from "../util/map";
 import { usePrevious } from "./use-previous";
+import { Instrument } from "@tonejs/midi/dist/Instrument";
+import { merge } from "rxjs";
 
 type SongCtx = {
   song: Midi;
@@ -34,6 +36,20 @@ export function SongProvider({
   song: Midi;
   children: ReactNode;
 }) {
+  const pianoTracks = song.tracks.filter(
+    (t) => t.instrument.family === "piano"
+  );
+  let merged = pianoTracks[0].notes;
+  for (let i = 1; i < pianoTracks.length; i++) {
+    merged = merged.concat(pianoTracks[i].notes);
+  }
+  merged = merged.filter(Boolean);
+  console.log("merged", merged);
+
+  const t = pianoTracks[0];
+  t.notes = merged;
+  merged.sort((a, b) => a.ticks - b.ticks);
+  song.tracks[0] = t;
   const speed = useSettings((s) => s.speed);
   const octaves = useOctaves(song);
 

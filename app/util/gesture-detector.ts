@@ -7,42 +7,41 @@
  * @return undefined
  */
 
-type GestureData = {
+type GestureBase = {
   x: number;
   y: number;
-  dx: number;
-  dy: number;
-  totaldx: number;
-  totaldy: number;
   event_down: PointerEvent;
-  event_prev: PointerEvent;
   event: PointerEvent;
   timestamp: number;
   width: number;
   height: number;
 };
+type GestureMove = GestureBase & {
+  event_prev: PointerEvent;
+  dx: number;
+  dy: number;
+  vx: number;
+  vy: number;
+  totaldx: number;
+  totaldy: number;
+};
 
 export type GestureEvent =
   | {
-      kind: "fling";
-      data: GestureData & { vx: number; vy: number };
+      kind: "down";
+      data: GestureBase;
     }
   | {
       kind: "drag";
-      data: GestureData;
+      data: GestureMove;
     }
   | {
       kind: "up";
-      data: GestureData;
+      data: GestureMove;
     }
   | {
-      kind: "down";
-      data: {
-        x: number;
-        y: number;
-        event: PointerEvent;
-        timestamp: number;
-      };
+      kind: "fling";
+      data: GestureMove;
     };
 
 class VelocityTracker {
@@ -104,6 +103,34 @@ export class GestureDetector {
     return this;
   }
 
+  private getGestureBase(ev: PointerEvent, down: PointerEvent): GestureBase {
+    const bounds = this.elem.getBoundingClientRect();
+    return {
+      x: ev.x,
+      y: ev.y,
+      event_down: down,
+      event: ev,
+      timestamp: ev.timeStamp,
+      width: bounds.width,
+      height: bounds.height,
+    };
+  }
+  private getGestureMove(
+    ev: PointerEvent,
+    down: PointerEvent,
+    prev: PointerEvent
+  ): GestureMove {
+    return {
+      ...this.getGestureBase(ev, down),
+      dx: ev.x - prev.x,
+      dy: ev.y - prev.y,
+      totaldx: ev.x - down.x,
+      totaldy: ev.y - down.y,
+      event_prev: prev,
+      ...this.velo.velo(),
+    };
+  }
+
   down(ev: PointerEvent) {
     if (this.ev_down) {
       // ignore we are only trackng one finger
@@ -115,12 +142,7 @@ export class GestureDetector {
     this.velo.add(ev);
     this.callback({
       kind: "down",
-      data: {
-        x: ev.x,
-        y: ev.y,
-        timestamp: ev.timeStamp,
-        event: ev,
-      },
+      data: this.getGestureBase(ev, ev),
     });
     this.ev_prev = ev;
   }
@@ -132,23 +154,9 @@ export class GestureDetector {
       return;
     }
     this.velo.add(ev);
-    const bounds = this.elem.getBoundingClientRect();
     this.callback({
       kind: "drag",
-      data: {
-        x: ev.x,
-        y: ev.y,
-        dx: ev.x - this.ev_prev.x,
-        dy: ev.y - this.ev_prev.y,
-        totaldx: ev.x - this.ev_down.x,
-        totaldy: ev.y - this.ev_down.y,
-        event_down: this.ev_down,
-        event_prev: this.ev_prev,
-        event: ev,
-        timestamp: ev.timeStamp,
-        width: bounds.width,
-        height: bounds.height,
-      },
+      data: this.getGestureMove(ev, this.ev_down, this.ev_prev),
     });
     this.ev_prev = ev;
   }
@@ -160,31 +168,14 @@ export class GestureDetector {
       return;
     }
     this.elem.releasePointerCapture(ev.pointerId);
-    const bounds = this.elem.getBoundingClientRect();
-    const data = {
-      x: ev.x,
-      y: ev.y,
-      dx: ev.x - this.ev_prev.x,
-      dy: ev.y - this.ev_prev.y,
-      totaldx: ev.x - this.ev_down.x,
-      totaldy: ev.y - this.ev_down.y,
-      event_down: this.ev_down,
-      event_prev: this.ev_prev,
-      event: ev,
-      timestamp: ev.timeStamp,
-      width: bounds.width,
-      height: bounds.height,
-    };
+    const data = this.getGestureMove(ev, this.ev_down, this.ev_prev);
     this.callback({
       kind: "up",
       data,
     });
     this.callback({
       kind: "fling",
-      data: {
-        ...data,
-        ...this.velo.velo(),
-      },
+      data,
     });
     this.ev_down = undefined;
     this.ev_prev = undefined;

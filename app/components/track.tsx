@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { map } from "../util/map";
+import { AjScroller } from "../util/aj-scroller";
+import { clamp, map } from "../util/map";
 import {
   isBlack,
   isWhite,
@@ -64,35 +65,66 @@ export function Track() {
 
   useGestureDetector(canvasEl, (ev) => {
     scrollerRef.current.forceFinished(true);
+    let x = map(ev.data.x, 0, ev.data.width, 0, 1);
     switch (ev.kind) {
       case "drag":
-        ev.data.event.preventDefault();
-        let x = map(ev.data.x, 0, ev.data.width, 0, 1);
-        if (x < miniMapWidthRatio) {
-          let y = map(ev.data.y, 0, ev.data.height, 0, 1);
-          let yy = map(y, 1, 0, 0, song.durationTicks, true);
-          settings.setStart(yy);
-        } else {
-          let dt = map(ev.data.dy, 0, height, 0, settings.tickWindow);
-          settings.setStart(tickRef.current + dt);
+        {
+          ev.data.event.preventDefault();
+          //let x = map(ev.data.x, 0, ev.data.width, 0, 1);
+          if (x < miniMapWidthRatio) {
+            let y = map(ev.data.y, 0, ev.data.height, 0, 1);
+            let yy = map(y, 1, 0, 0, song.durationTicks, true);
+            settings.setStart(yy);
+          } else {
+            let dt = map(ev.data.dy, 0, height, 0, settings.tickWindow);
+            settings.setStart(tickRef.current + dt);
+          }
         }
         break;
       case "fling":
-        let prevY = 0;
-        scrollerRef.current.fling(0, prevY, 0, ev.data.vy * 1000);
-        function anim() {
-          const scrolling = scrollerRef.current.computeScrollOffset();
-          if (scrolling) {
-            const y = scrollerRef.current.getCurrY();
-            let dy = y - prevY;
-            prevY = y;
-            let dt = map(dy, 0, height, 0, settings.tickWindow);
-            settings.setStart(tickRef.current + dt);
+        {
+          let prevY = 0;
+          const simpleScroller = false;
+          if (!simpleScroller) {
+            console.log("fling", ev.data.vy * 1000);
+            scrollerRef.current.fling(0, prevY, 0, ev.data.vy * 1000);
+            console.log("fling final", scrollerRef.current.getFinalY());
+            function anim() {
+              const scrolling = scrollerRef.current.computeScrollOffset();
+              console.log("fling first offset", scrollerRef.current.getCurrY());
+              if (scrolling) {
+                const y = scrollerRef.current.getCurrY();
+                let dy = y - prevY;
+                prevY = y;
+                let dt = map(dy, 0, height, 0, settings.tickWindow);
+
+                const start = tickRef.current + dt;
+                settings.setStart(start);
+                requestAnimationFrame(anim);
+              }
+            }
+            requestAnimationFrame(anim);
+          } else {
+            const ajScroller = new AjScroller();
+            console.log("fling", ev.data.vy);
+            ajScroller.fling(ev.data.vy);
+            console.log("fling final", ajScroller.yFinal);
+            function anim() {
+              const info = ajScroller.computeOffset();
+              console.log("fling first offset", info.y);
+              if (!info.done) {
+                const y = info.y;
+                let dy = y - prevY;
+                prevY = y;
+                let dt = map(dy, 0, height, 0, settings.tickWindow);
+                const start = tickRef.current + dt;
+                settings.setStart(start);
+                requestAnimationFrame(anim);
+              }
+            }
             requestAnimationFrame(anim);
           }
         }
-        requestAnimationFrame(anim);
-
         break;
     }
   });
