@@ -1,11 +1,9 @@
-import { Midi } from "@tonejs/midi";
 import { useMemo, useState } from "react";
-import { isBlack, midiToOctave, notes, toMidiTone } from "../util/music";
+import { isBlack, notes, toMidiTone } from "../util/music";
 
 import styles from "./keyboard.css";
-import { useOctaves, useSongCtx, useSongTicker } from "./use-song-context";
-import { useSongSound } from "./use-song-sounds";
-import { useToneDetector } from "./use-tone-detector";
+import { useSongCtx, useSongTicker } from "./use-song-context";
+
 import { useMidiInput } from "./use-web-midi";
 
 export function links() {
@@ -23,7 +21,6 @@ export function Keyboard() {
 
   const [sPressed, setPressed] = useState(new Set<number>());
   const [sFuture, setFuture] = useState(new Set<number>());
-  useSongSound();
 
   const midiPressedMap = useMidiInput();
   const midiPressed = useMemo(() => {

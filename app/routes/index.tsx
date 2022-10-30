@@ -7,6 +7,7 @@ import { SongProvider } from "../components/use-song-context";
 import styles from "./index.css";
 import { useSearchParams } from "remix";
 import { Settings } from "~/components/settings";
+import { useSongSound } from "../components/use-song-sounds";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }, ...keyboardLinks()];
@@ -70,8 +71,10 @@ function Song({ file }: { file: string }) {
     return null;
   }
   console.log(m);
+
   return (
     <SongProvider song={m}>
+      <Sounds />
       <Settings />
       <div className="flex flex-col h-s-screen">
         <div data-index>
@@ -85,6 +88,11 @@ function Song({ file }: { file: string }) {
       </div>
     </SongProvider>
   );
+}
+
+function Sounds() {
+  useSongSound();
+  return null;
 }
 
 export default function Index() {

@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { map } from "../util/map";
 import { noteToFreq } from "../util/music";
 import { useSettings, useSongTicker } from "./use-song-context";
 
@@ -15,9 +14,23 @@ export type Note = {
 };
 
 export function useSongSound() {
-  const player = useRef(new Player());
   const volume = useSettings((s) => s.volume);
   const speed = useSettings((s) => s.speed);
+  const player = useRef<Player>() as React.MutableRefObject<Player>;
+  if (!player.current) {
+    player.current = new Player();
+  }
+
+  useEffect(() => {
+    // safari AudioContext permissions
+    function fixAudioCtxState() {
+      if (player.current.ctx.state === "suspended") {
+        player.current.ctx.resume();
+      }
+    }
+    window.addEventListener("touchstart", fixAudioCtxState);
+    window.addEventListener("click", fixAudioCtxState);
+  }, []);
 
   useEffect(() => {
     if (speed === 0) {
@@ -27,16 +40,28 @@ export function useSongSound() {
     }
   }, [speed, volume]);
 
-  useSongTicker((tick, ctx) => {
-    const pressed = new Map<number, Note>();
-    for (const n of ctx.songCtx.song.tracks[0].notes ?? []) {
-      // current
-      if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
-        pressed.set(n.midi, n);
+  useSongTicker(
+    (tick, ctx) => {
+      const pressed = new Map<number, Note>();
+      for (const n of ctx.songCtx.song.tracks[0].notes ?? []) {
+        // current
+        if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
+          pressed.set(n.midi, n);
+        }
+      }
+      player.current.setTones(pressed);
+    },
+    (state) => {
+      switch (state) {
+        case "started":
+          player.current.ctx.resume();
+          break;
+        case "stopped":
+          player.current.ctx.suspend();
+          break;
       }
     }
-    player.current.setTones(pressed);
-  });
+  );
 }
 
 export class Player {
@@ -48,7 +73,7 @@ export class Player {
     this.ctx = new AudioContext();
     this.playing = new Map();
     this.gain = this.ctx.createGain();
-    this.gain.gain.value = 0.8;
+    this.gain.gain.value = 0.0;
 
     this.compressor = new DynamicsCompressorNode(this.ctx);
     this.compressor.connect(this.gain);

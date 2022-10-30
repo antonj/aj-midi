@@ -12,8 +12,6 @@ import { useRequestAnimationFrame } from "./use-request-animation-frame";
 import { midiToOctave, toMidiTone } from "../util/music";
 import { roundTo } from "../util/map";
 import { usePrevious } from "./use-previous";
-import { Instrument } from "@tonejs/midi/dist/Instrument";
-import { merge } from "rxjs";
 
 type SongCtx = {
   song: Midi;
@@ -198,7 +196,10 @@ export function useOctaves(song: Midi) {
   }, [song]);
 }
 
-export function useSongTicker(onTick: TickerCallback) {
+export function useSongTicker(
+  onTick: TickerCallback,
+  onStateChange?: (state: "started" | "stopped") => void
+) {
   const songCtx = useSongCtx();
   const ctx = useSettings();
   const {
@@ -245,5 +246,5 @@ export function useSongTicker(onTick: TickerCallback) {
     }
     tickRef.current = tick;
     onTick(tickRef.current, ctxExtended);
-  });
+  }, onStateChange);
 }
