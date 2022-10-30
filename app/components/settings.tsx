@@ -28,7 +28,7 @@ export function Settings() {
       settings.setDetect(obj.detect);
     });
     gui.add(obj, "sound").onChange(() => {
-      settings.setVolume(obj.sound ? 1 : 0);
+      settings.setVolume(obj.sound ? 0.5 : 0);
     });
     gui.add(obj, "speed", 0, 2, 0.02).onChange(() => {
       settings.setSpeed(obj.speed);
