@@ -67,18 +67,24 @@ export function Track() {
     scrollerRef.current.forceFinished(true);
     let x = map(ev.data.x, 0, ev.data.width, 0, 1);
     switch (ev.kind) {
+      case "down":
+        ev.data.event.preventDefault();
+        if (x < miniMapWidthRatio) {
+          let y = map(ev.data.y, 0, ev.data.height, 0, 1);
+          let yy = map(y, 1, 0, 0, song.durationTicks, true);
+          settings.setStart(yy);
+        }
+        break;
       case "drag":
-        {
-          ev.data.event.preventDefault();
-          //let x = map(ev.data.x, 0, ev.data.width, 0, 1);
-          if (x < miniMapWidthRatio) {
-            let y = map(ev.data.y, 0, ev.data.height, 0, 1);
-            let yy = map(y, 1, 0, 0, song.durationTicks, true);
-            settings.setStart(yy);
-          } else {
-            let dt = map(ev.data.dy, 0, height, 0, settings.tickWindow);
-            settings.setStart(tickRef.current + dt);
-          }
+        ev.data.event.preventDefault();
+        //let x = map(ev.data.x, 0, ev.data.width, 0, 1);
+        if (x < miniMapWidthRatio) {
+          let y = map(ev.data.y, 0, ev.data.height, 0, 1);
+          let yy = map(y, 1, 0, 0, song.durationTicks, true);
+          settings.setStart(yy);
+        } else {
+          let dt = map(ev.data.dy, 0, height, 0, settings.tickWindow);
+          settings.setStart(tickRef.current + dt);
         }
         break;
       case "fling":
