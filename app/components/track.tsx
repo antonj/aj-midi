@@ -212,9 +212,9 @@ function draw(
 
     const oct = midiToOctave(midi);
     if (oct.octave % 2 == 0) {
-      ctx.fillStyle = "rgba(150, 140, 100, 0.15)";
-    } else {
       ctx.fillStyle = "rgba(150, 140, 100, 0.3)";
+    } else {
+      ctx.fillStyle = "rgba(150, 140, 100, 0.5)";
     }
     ctx.fillRect(x, 0, whiteWidthPx, h);
   }
