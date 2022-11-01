@@ -38,6 +38,8 @@ function SongPicker() {
         { name: "Moon 1", url: "/static/midi/moon_1.midi" },
         { name: "Moon 2", url: "/static/midi/moon_2.midi" },
         { name: "Moon 3", url: "/static/midi/moon_3.midi" },
+        { name: "Visa från Utmyra", url: "static/midi/utmyra.midi" },
+        { name: "Visa från Rättvik", url: "static/midi/rattvik.midi" },
         { name: "Elise", url: "static/midi/elise.midi" },
         { name: "Waltz", url: "/static/midi/blue-danube-waltz-strauss.midi" },
         { name: "Super Mario", url: "https://bitmidi.com/uploads/72257.mid" },
