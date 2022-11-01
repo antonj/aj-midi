@@ -376,11 +376,35 @@ function draw(
       noteWidth = blackWidthPx;
       x = x - noteWidth / 2;
     } else {
-      ctx.strokeStyle = "rgba(0,0,0, 0.4)";
+      ctx.strokeStyle = "rgba(0,0,0, 1)";
       ctx.lineWidth = 1;
       ctx.fillStyle = "white";
-      noteWidth = whiteWidthPx;
-      x = x - whiteWidthPx / 2;
+      if ("sameWidth" in window) {
+        // same width all the time
+        noteWidth = whiteWidthPx;
+        x = x - whiteWidthPx / 2;
+      } else {
+        switch (note) {
+          case "c":
+          case "f":
+            {
+              noteWidth = whiteWidthPx - blackWidthPx / 2;
+              x = x - whiteWidthPx / 2;
+            }
+            break;
+          case "e":
+          case "h":
+            {
+              noteWidth = whiteWidthPx - blackWidthPx / 2;
+              x = x - whiteWidthPx / 2 + blackWidthPx / 2;
+            }
+            break;
+          default: {
+            noteWidth = whiteWidthPx - blackWidthPx;
+            x = x - noteWidth / 2;
+          }
+        }
+      }
     }
 
     const isOn = tick >= n.ticks && tick <= n.ticks + n.durationTicks;
@@ -398,6 +422,7 @@ function draw(
   // draw connections
   ctx.fillStyle = "red";
   ctx.strokeStyle = "red";
+  ctx.lineWidth = 1;
   for (const [t1, t2] of songExt.songCtx.tickConnections) {
     const y1 = map(t1.tick, minTick, maxTick, h, 0) - 1; // ticks // flip y axis
     const y2 = map(t2.tick, minTick, maxTick, h, 0) - 1; // ticks // flip y axis
