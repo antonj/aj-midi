@@ -40,7 +40,7 @@ export function Track() {
   const tickRef = useRef(0);
   const scrollerRef = useRef(Scroller());
 
-  useSongTicker((tick, songCtx) => {
+  useSongTicker(function trackTicker(tick, songCtx) {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) {
       return;
@@ -333,7 +333,7 @@ function draw(
     }
 
     // draw notes
-    for (const n of songExt.songCtx.song.tracks[0].notes) {
+    for (const n of songExt.songCtx.pianoNotes) {
       const note = midiToNote(n.midi);
       const noteHeight = h / (maxTickMiniPx / n.durationTicks);
       let x = xInPiano(
@@ -365,7 +365,7 @@ function draw(
   }
 
   // draw notes
-  for (const n of songExt.songCtx.song.tracks[0].notes) {
+  for (const n of songExt.songCtx.pianoNotes) {
     const note = midiToNote(n.midi);
     let noteWidth;
     let x = xInPiano(n.midi, octaves, 0, w, whiteWidthPx);

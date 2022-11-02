@@ -30,7 +30,7 @@ export function Keyboard() {
   useSongTicker((tick, settings) => {
     const pressed = new Set<number>();
     const future = new Set<number>();
-    for (const n of settings.songCtx.song.tracks[0].notes ?? []) {
+    for (const n of settings.songCtx.pianoNotes ?? []) {
       // current
       if (
         tick > n.ticks &&

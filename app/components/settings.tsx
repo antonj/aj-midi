@@ -63,7 +63,7 @@ export function Settings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [durationTicks, ticksPerBar]);
 
-  useSongTicker((tick) => {
+  useSongTicker(function settingsTicker(tick) {
     if (!changing.current) {
       timeRef.current.time = Math.floor(tick / ticksPerBar);
     }

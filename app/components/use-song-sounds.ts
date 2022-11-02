@@ -41,7 +41,7 @@ export function useSongSound() {
   }, [speed, volume]);
 
   useSongTicker(
-    (tick, ctx) => {
+    function soundSongTicker(tick, ctx) {
       const pressed = new Map<number, Note>();
       for (const n of ctx.songCtx.song.tracks[0].notes ?? []) {
         // current

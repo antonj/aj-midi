@@ -6,17 +6,19 @@ import React, {
   useRef,
 } from "react";
 import { Midi } from "@tonejs/midi";
+import { Note } from "@tonejs/midi/dist/Note";
 import create from "zustand";
 import { persist } from "zustand/middleware";
 import { useRequestAnimationFrame } from "./use-request-animation-frame";
 import { midiToOctave, toMidiTone } from "../util/music";
 import { roundTo } from "../util/map";
 import { usePrevious } from "./use-previous";
+import { useSongSound } from "./use-song-sounds";
 
 type SongCtx = {
   song: Midi;
   bpm: number;
-  msPerTick: number;
+  pianoNotes: Array<Note>;
   ticksPerBar: number;
   octaves: Array<number>;
   tickConnections: Map<
@@ -27,16 +29,14 @@ type SongCtx = {
 
 const SongContext = createContext<SongCtx | null>(null);
 
-export function SongProvider({
-  song,
-  children,
-}: {
-  song: Midi;
-  children: ReactNode;
-}) {
+function getMergedPianoNotes(song: Midi) {
   const pianoTracks = song.tracks.filter(
     (t) => t.instrument.family === "piano"
   );
+  if (pianoTracks.length === 0) {
+    // ignore instrument just use the first available track
+    return song.tracks[0].notes;
+  }
   let merged = pianoTracks[0].notes;
   for (let i = 1; i < pianoTracks.length; i++) {
     merged = merged.concat(pianoTracks[i].notes);
@@ -44,12 +44,20 @@ export function SongProvider({
   merged = merged.filter(Boolean);
   console.log("merged", merged);
 
-  const t = pianoTracks[0];
-  t.notes = merged;
   merged.sort((a, b) => a.ticks - b.ticks);
-  song.tracks[0] = t;
-  const speed = useSettings((s) => s.speed);
+  return merged;
+}
+
+export function SongProvider({
+  song,
+  children,
+}: {
+  song: Midi;
+  children: ReactNode;
+}) {
   const octaves = useOctaves(song);
+
+  const pianoNotes = useMemo(() => getMergedPianoNotes(song), [song]);
 
   const tickConnections = useMemo(
     function calcParallelNotes() {
@@ -57,13 +65,12 @@ export function SongProvider({
         { tick: number; midi: number },
         { tick: number; midi: number }
       >();
-      const notes = song.tracks[0].notes;
-      const length = notes.length;
+      const length = pianoNotes.length;
       for (let i = 0; i < length; i++) {
-        const n = notes[i];
+        const n = pianoNotes[i];
         // look 12 notes ahead
         for (let y = i + 1; y < i + 24 && y < length; y++) {
-          const next = notes[y];
+          const next = pianoNotes[y];
           const timeDiff = next.time - n.time;
           if (timeDiff < 0.01) {
             result.set(
@@ -76,27 +83,25 @@ export function SongProvider({
 
       return result;
     },
-    [song]
+    [pianoNotes]
   );
 
   const ctx = useMemo<SongCtx>(
     function ctxMemo() {
       let bpm = song.header.tempos[0]?.bpm || 120;
-      const ppq = song.header.ppq;
-      let msPerTick = (bpm * ppq) / (60 * 1000);
-      msPerTick /= speed;
-      const ticksPerBar = song.header.timeSignatures[0].timeSignature[0] * ppq;
+      const ticksPerBar =
+        song.header.timeSignatures[0].timeSignature[0] * song.header.ppq;
 
       return {
         song,
         bpm,
-        msPerTick,
         ticksPerBar,
         tickConnections,
+        pianoNotes,
         octaves: octaves.octaves,
       };
     },
-    [song, speed, octaves, tickConnections]
+    [song, octaves, pianoNotes, tickConnections]
   );
 
   return <SongContext.Provider value={ctx}>{children}</SongContext.Provider>;
@@ -203,9 +208,12 @@ export function useSongTicker(
   const songCtx = useSongCtx();
   const ctx = useSettings();
   const {
-    msPerTick,
     ticksPerBar,
-    song: { durationTicks },
+    bpm,
+    song: {
+      durationTicks,
+      header: { ppq },
+    },
   } = songCtx;
 
   const tickRef = useRef(ctx.tickStart);
@@ -234,6 +242,8 @@ export function useSongTicker(
   }
 
   useRequestAnimationFrame((deltaMs) => {
+    let msPerTick = (bpm * ppq) / (60 * 1000);
+    msPerTick /= ctx.speed;
     let tick = tickRef.current + deltaMs / msPerTick;
 
     if (tick > ctxExtended.tickEnd && ctx.tickStart < ctxExtended.tickEnd) {
