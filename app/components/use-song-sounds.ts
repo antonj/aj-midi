@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { noteToFreq } from "../util/music";
-import { useSettings, useSongTicker } from "./use-song-context";
+import { useSettings } from "./context-settings";
+import { useSongTicker } from "./use-song-ticker";
 
 export type Note = {
   /**

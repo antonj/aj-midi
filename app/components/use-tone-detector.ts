@@ -1,9 +1,10 @@
 import { Midi } from "@tonejs/midi";
 import { useEffect, useRef, useState } from "react";
 import { PianoMessageData } from "../../public/audio-worklet";
-import { useOctaves } from "./use-song-context";
+import { useOctaves } from "./use-octaves";
 
 export function useToneDetector(on: boolean, song: Midi) {
+  console.log("useTOneDete");
   const detector = useRef<SoundDetector>();
   const o = useOctaves(song);
   const [connected, setConnected] = useState(false);

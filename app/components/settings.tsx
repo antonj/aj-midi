@@ -1,15 +1,12 @@
 import GUI from "lil-gui";
 import { useEffect, useRef } from "react";
 import { clamp } from "../util/map";
-import {
-  SongSettings,
-  useSettings,
-  useSongCtx,
-  useSongTicker,
-} from "./use-song-context";
+import { SongSettings, useSettings } from "./context-settings";
+import { useSongCtx } from "./context-song";
+import { useSongTicker } from "./use-song-ticker";
 
 export function Settings() {
-  const settings = useSettings();
+  const settings = useSettings((s) => s);
   const song = useSongCtx();
 
   let params = useRef<SongSettings>(settings);

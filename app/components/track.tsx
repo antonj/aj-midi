@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AjScroller } from "../util/aj-scroller";
-import { clamp, map } from "../util/map";
+import { map } from "../util/map";
 import {
   isBlack,
   isWhite,
@@ -14,13 +14,10 @@ import {
 import { Scroller } from "../util/scroller";
 import { useBoundingClientRect } from "./use-bounding-client-rect";
 import { useGestureDetector } from "./use-gesture-detector";
-import {
-  SongSettingsExtended,
-  useSettings,
-  useSongCtx,
-  useSongTicker,
-} from "./use-song-context";
+import { useSongCtx } from "./context-song";
 import { useToneDetector } from "./use-tone-detector";
+import { useSettings } from "./context-settings";
+import { SongSettingsExtended, useSongTicker } from "./use-song-ticker";
 
 const miniMapWidthRatio = 0.1;
 const blackWidthRatio = 0.6;
@@ -32,9 +29,11 @@ export function Track() {
   canvasRef.current = canvasEl;
   const [{ width, height }, wrapperRef] =
     useBoundingClientRect<HTMLDivElement>();
-  const settings = useSettings();
+  const detect = useSettings((s) => s.detect);
+  const tickWindow = useSettings((s) => s.tickWindow);
+  const setStart = useSettings((s) => s.setStart);
 
-  const tones = useToneDetector(settings.detect, song);
+  const tones = useToneDetector(detect, song);
   const sDetected = new Set(tones);
   const tickToneRef = useRef(new Map<number, Set<number>>());
   const tickRef = useRef(0);
@@ -72,7 +71,7 @@ export function Track() {
         if (x < miniMapWidthRatio) {
           let y = map(ev.data.y, 0, ev.data.height, 0, 1);
           let yy = map(y, 1, 0, 0, song.durationTicks, true);
-          settings.setStart(yy);
+          setStart(yy);
         }
         break;
       case "drag":
@@ -81,10 +80,10 @@ export function Track() {
         if (x < miniMapWidthRatio) {
           let y = map(ev.data.y, 0, ev.data.height, 0, 1);
           let yy = map(y, 1, 0, 0, song.durationTicks, true);
-          settings.setStart(yy);
+          setStart(yy);
         } else {
-          let dt = map(ev.data.dy, 0, height, 0, settings.tickWindow);
-          settings.setStart(tickRef.current + dt);
+          let dt = map(ev.data.dy, 0, height, 0, tickWindow);
+          setStart(tickRef.current + dt);
         }
         break;
       case "fling":
@@ -102,10 +101,10 @@ export function Track() {
                 const y = scrollerRef.current.getCurrY();
                 let dy = y - prevY;
                 prevY = y;
-                let dt = map(dy, 0, height, 0, settings.tickWindow);
+                let dt = map(dy, 0, height, 0, tickWindow);
 
                 const start = tickRef.current + dt;
-                settings.setStart(start);
+                setStart(start);
                 requestAnimationFrame(anim);
               }
             }
@@ -122,9 +121,9 @@ export function Track() {
                 const y = info.y;
                 let dy = y - prevY;
                 prevY = y;
-                let dt = map(dy, 0, height, 0, settings.tickWindow);
+                let dt = map(dy, 0, height, 0, tickWindow);
                 const start = tickRef.current + dt;
-                settings.setStart(start);
+                setStart(start);
                 requestAnimationFrame(anim);
               }
             }

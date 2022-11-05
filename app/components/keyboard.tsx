@@ -2,9 +2,10 @@ import { useMemo, useState } from "react";
 import { isBlack, notes, toMidiTone } from "../util/music";
 
 import styles from "./keyboard.css";
-import { useSongCtx, useSongTicker } from "./use-song-context";
+import { useSongCtx } from "./context-song";
 
 import { useMidiInput } from "./use-web-midi";
+import { useSongTicker } from "./use-song-ticker";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];

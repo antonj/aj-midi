@@ -2,7 +2,7 @@ import { Midi } from "@tonejs/midi";
 import { useEffect, useState } from "react";
 import { Track } from "../components/track";
 import { Keyboard, links as keyboardLinks } from "../components/keyboard";
-import { SongProvider } from "../components/use-song-context";
+import { SongProvider } from "../components/context-song";
 
 import styles from "./index.css";
 import { useSearchParams } from "remix";
@@ -69,13 +69,28 @@ function SongPicker() {
 
 function Song({ file }: { file: string }) {
   const m = useMidi(file);
+  const [searchParams] = useSearchParams();
   if (!m) {
     return null;
   }
   console.log(m);
+  const startBar = searchParams.get("start");
+  const repeatBar = searchParams.get("repeat");
+  const warmup = searchParams.get("warmup");
+  const tickWindow = searchParams.get("window");
+  const speed = searchParams.get("speed");
 
   return (
-    <SongProvider song={m}>
+    <SongProvider
+      song={m}
+      initialSettings={{
+        repeatBar: repeatBar ? parseInt(repeatBar) : 0,
+        startBar: startBar ? parseInt(startBar) : -1,
+        tickWindow: tickWindow ? parseInt(tickWindow) : 0,
+        speed: speed ? parseFloat(speed) : 1,
+        warmupBar: warmup ? parseInt(warmup) : 0,
+      }}
+    >
       <Sounds />
       <Settings />
       <div className="flex flex-col h-s-screen">
