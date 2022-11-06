@@ -1,15 +1,15 @@
 import { createContext, ReactNode, useContext, useMemo } from "react";
 import { Midi } from "@tonejs/midi";
 import { Note } from "@tonejs/midi/dist/Note";
-import { getOctaves } from "./use-octaves";
 import { SettingsInitial, SettingsProvider } from "./context-settings";
+import { midiToOctave, toMidiTone } from "~/util/music";
 
 export type SongCtx = {
   song: Midi;
   bpm: number;
   pianoNotes: Array<Note>;
   ticksPerBar: number;
-  octaves: Array<number>;
+  octaves: ReturnType<typeof getOctaves>;
   tickConnections: Map<
     { tick: number; midi: number },
     { tick: number; midi: number }
@@ -17,6 +17,28 @@ export type SongCtx = {
 };
 
 const SongContext = createContext<SongCtx | null>(null);
+
+function getOctaves(notes: { midi: number }[]) {
+  let low = Number.MAX_VALUE;
+  let high = Number.MIN_VALUE;
+  for (const n of notes) {
+    if (n.midi < low) {
+      low = n.midi;
+    }
+    if (n.midi > high) {
+      high = n.midi;
+    }
+  }
+  const lowOctave = midiToOctave(low).octave;
+  const highOctave = midiToOctave(high).octave;
+  const numOctaves = highOctave - lowOctave + 1;
+  const octaves = Array.from({ length: numOctaves }).map(
+    (_, i) => lowOctave + i
+  );
+  const min = toMidiTone(lowOctave, 0);
+  const max = toMidiTone(highOctave, 11);
+  return { octaves, low, high, min, max };
+}
 
 function getMergedPianoNotes(song: Midi) {
   const pianoTracks = song.tracks.filter(
@@ -37,6 +59,30 @@ function getMergedPianoNotes(song: Midi) {
   return merged;
 }
 
+function calcParallelNotes(notes: Note[]) {
+  const result = new Map<
+    { tick: number; midi: number },
+    { tick: number; midi: number }
+  >();
+  const length = notes.length;
+  for (let i = 0; i < length; i++) {
+    const n = notes[i];
+    // look 12 notes ahead
+    for (let y = i + 1; y < i + 24 && y < length; y++) {
+      const next = notes[y];
+      const timeDiff = next.time - n.time;
+      if (timeDiff < 0.01) {
+        result.set(
+          { tick: n.ticks, midi: n.midi },
+          { tick: next.ticks, midi: next.midi }
+        );
+      }
+    }
+  }
+
+  return result;
+}
+
 export function SongProvider({
   song,
   initialSettings,
@@ -46,43 +92,15 @@ export function SongProvider({
   initialSettings: SettingsInitial;
   children: ReactNode;
 }) {
-  const pianoNotes = useMemo(() => getMergedPianoNotes(song), [song]);
-  console.log("provider");
-
-  const tickConnections = useMemo(
-    function calcParallelNotes() {
-      const result = new Map<
-        { tick: number; midi: number },
-        { tick: number; midi: number }
-      >();
-      const length = pianoNotes.length;
-      for (let i = 0; i < length; i++) {
-        const n = pianoNotes[i];
-        // look 12 notes ahead
-        for (let y = i + 1; y < i + 24 && y < length; y++) {
-          const next = pianoNotes[y];
-          const timeDiff = next.time - n.time;
-          if (timeDiff < 0.01) {
-            result.set(
-              { tick: n.ticks, midi: n.midi },
-              { tick: next.ticks, midi: next.midi }
-            );
-          }
-        }
-      }
-
-      return result;
-    },
-    [pianoNotes]
-  );
-
   const ctx = useMemo<SongCtx>(
     function ctxMemo() {
+      console.log("provider memo");
       let bpm = song.header.tempos[0]?.bpm || 120;
       const ticksPerBar =
         song.header.timeSignatures[0].timeSignature[0] * song.header.ppq;
-
-      const octaves = getOctaves(song);
+      const pianoNotes = getMergedPianoNotes(song);
+      const octaves = getOctaves(pianoNotes);
+      const tickConnections = calcParallelNotes(pianoNotes);
 
       return {
         song,
@@ -90,10 +108,10 @@ export function SongProvider({
         ticksPerBar,
         tickConnections,
         pianoNotes,
-        octaves: octaves.octaves,
+        octaves,
       };
     },
-    [song, pianoNotes, tickConnections]
+    [song]
   );
 
   return (

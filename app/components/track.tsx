@@ -33,7 +33,7 @@ export function Track() {
   const tickWindow = useSettings((s) => s.tickWindow);
   const setStart = useSettings((s) => s.setStart);
 
-  const tones = useToneDetector(detect, song);
+  const tones = useToneDetector(detect);
   const sDetected = new Set(tones);
   const tickToneRef = useRef(new Map<number, Set<number>>());
   const tickRef = useRef(0);
@@ -175,7 +175,7 @@ function draw(
   const w = canvas.width;
   const h = canvas.height;
   ctx.clearRect(0, 0, w, h);
-  const octaves = songExt.songCtx.octaves;
+  const { octaves } = songExt.songCtx.octaves;
 
   // | |x| | |x| |  |  |
   // | 2-- | 5-- |  |  |

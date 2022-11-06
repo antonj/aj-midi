@@ -1,12 +1,10 @@
-import { Midi } from "@tonejs/midi";
 import { useEffect, useRef, useState } from "react";
 import { PianoMessageData } from "../../public/audio-worklet";
-import { useOctaves } from "./use-octaves";
+import { useSongCtx } from "./context-song";
 
-export function useToneDetector(on: boolean, song: Midi) {
-  console.log("useTOneDete");
+export function useToneDetector(on: boolean) {
   const detector = useRef<SoundDetector>();
-  const o = useOctaves(song);
+  const { octaves } = useSongCtx();
   const [connected, setConnected] = useState(false);
   const [tones, setTones] = useState<Array<number>>([]);
   useEffect(() => {
@@ -40,7 +38,7 @@ export function useToneDetector(on: boolean, song: Midi) {
       detector.current?.disconnect();
       detector.current = undefined;
     };
-  }, [o, on]);
+  }, [octaves, on]);
 
   useEffect(() => {
     if (!connected) {
@@ -49,14 +47,14 @@ export function useToneDetector(on: boolean, song: Midi) {
 
     detector.current?.sendMessage({
       kind: "tuning",
-      keysNum: o.max - o.min + 1,
+      keysNum: octaves.max - octaves.min + 1,
       pitchFork: 440,
-      referenceKey: 69 - o.min, // A4 midi 69, index of 69 from 0
+      referenceKey: 69 - octaves.min, // A4 midi 69, index of 69 from 0
     });
-  }, [o, connected]);
+  }, [octaves.max, octaves.min, connected]);
   return tones.map((i) => {
     // map index to midi tone
-    return i + o.min;
+    return i + octaves.min;
   });
 }
 

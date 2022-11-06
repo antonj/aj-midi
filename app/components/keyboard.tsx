@@ -18,7 +18,9 @@ export function eqSet<T>(as: Set<T>, bs: Set<T>) {
 }
 
 export function Keyboard() {
-  const { octaves } = useSongCtx();
+  const {
+    octaves: { octaves },
+  } = useSongCtx();
 
   const [sPressed, setPressed] = useState(new Set<number>());
   const [sFuture, setFuture] = useState(new Set<number>());
