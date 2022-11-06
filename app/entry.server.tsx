@@ -13,7 +13,11 @@ export default function handleRequest(
   );
 
   const url = new URL(request.url);
-  if (url.hostname !== "localhost" && !url.protocol.startsWith("https")) {
+  if (
+    url.hostname !== "localhost" &&
+    !url.hostname.startsWith("192") &&
+    !url.protocol.startsWith("https")
+  ) {
     return redirect(url.toString(), {
       status: 301,
       headers: {

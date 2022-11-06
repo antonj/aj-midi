@@ -24,3 +24,7 @@ export function clamp(n: number, low: number, high: number) {
 export function roundTo(x: number, roundTo: number) {
   return Math.round(x / roundTo) * roundTo;
 }
+
+export function signum(num: number) {
+  return num ? (num < 0 ? -1 : 1) : 0;
+}

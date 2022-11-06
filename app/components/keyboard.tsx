@@ -118,10 +118,11 @@ function Octave({
                   : "")
               }
             >
-              {t}
-              {octaveIndex}
-              <br />
-              {toMidiTone(octaveIndex, i)}
+              <span>
+                {t}
+                {octaveIndex}
+              </span>
+              {/* {toMidiTone(octaveIndex, i)} */}
             </button>
             {isBlack(notes[i + 1]) ? (
               <button
@@ -138,9 +139,8 @@ function Octave({
                     : "")
                 }
               >
-                {notes[i + 1]}
-                <br />
-                {toMidiTone(octaveIndex, i + 1)}
+                <span>{notes[i + 1]}</span>
+                {/* {toMidiTone(octaveIndex, i + 1)} */}
               </button>
             ) : null}
           </div>
