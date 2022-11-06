@@ -85,11 +85,9 @@ function calcParallelNotes(notes: Note[]) {
 
 export function SongProvider({
   song,
-  initialSettings,
   children,
 }: {
   song: Midi;
-  initialSettings: SettingsInitial;
   children: ReactNode;
 }) {
   const ctx = useMemo<SongCtx>(
@@ -116,9 +114,7 @@ export function SongProvider({
 
   return (
     <SongContext.Provider value={ctx}>
-      <SettingsProvider ctx={ctx} initalSettings={initialSettings}>
-        {children}
-      </SettingsProvider>
+      <SettingsProvider ctx={ctx}>{children}</SettingsProvider>
     </SongContext.Provider>
   );
 }

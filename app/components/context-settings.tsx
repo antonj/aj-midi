@@ -30,15 +30,13 @@ export const SettingsContext = createContext<SettingsStore | null>(null);
 export function SettingsProvider({
   children,
   ctx,
-  initalSettings,
 }: {
   children: ReactNode;
   ctx: SongCtx;
-  initalSettings: SettingsInitial;
 }) {
   const storeRef = useRef<SettingsStore>();
   if (!storeRef.current) {
-    storeRef.current = createSettingsStore(ctx.song, initalSettings);
+    storeRef.current = createSettingsStore(ctx.song);
   }
   return (
     <SettingsContext.Provider value={storeRef.current}>
@@ -64,7 +62,7 @@ export type SettingsInitial = {
   tickWindow: number;
 };
 
-function createSettingsStore(song: Midi, settings: SettingsInitial) {
+function createSettingsStore(song: Midi) {
   console.log(window.location.href);
   const ticksPerBar =
     song.header.timeSignatures[0].timeSignature[0] * song.header.ppq;
@@ -78,6 +76,23 @@ function createSettingsStore(song: Midi, settings: SettingsInitial) {
       song.durationTicks
     );
   }
+
+  // intial settings from  query params
+  const url = new URL(window.location.href);
+  const searchParams = url.searchParams;
+  const startBar = searchParams.get("start");
+  const repeatBar = searchParams.get("repeat");
+  const warmup = searchParams.get("warmup");
+  const tickWindow = searchParams.get("window");
+  const speed = searchParams.get("speed");
+
+  const settings: SettingsInitial = {
+    repeatBar: repeatBar ? parseInt(repeatBar) : 0,
+    startBar: startBar ? parseInt(startBar) : -1,
+    tickWindow: tickWindow ? parseInt(tickWindow) : ticksPerBar * 4,
+    speed: speed ? parseFloat(speed) : 1,
+    warmupBar: warmup ? parseInt(warmup) : 0,
+  };
 
   return createStore<SongSettings>()((set, get) => {
     function updateQuery() {
@@ -99,7 +114,7 @@ function createSettingsStore(song: Midi, settings: SettingsInitial) {
       tickStart: barToTick(settings.startBar),
       repeatBars: settings.repeatBar,
       repeatBarsWarmup: settings.warmupBar,
-      tickWindow: settings.tickWindow || ticksPerBar * 4,
+      tickWindow: settings.tickWindow,
       volume: 0,
       detect: false as boolean,
       song: song,
