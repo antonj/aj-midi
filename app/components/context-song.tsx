@@ -85,6 +85,8 @@ function calcParallelNotes(notes: Note[]): Map<
       result.set(t1, r);
     }
     r.push(n);
+    // sort to have lower midi tones first
+    notes.sort((a, b) => a.midi - b.midi);
     if (r.length === 2) {
       parallel.set(t1, r);
     }
