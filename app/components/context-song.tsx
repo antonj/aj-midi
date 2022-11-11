@@ -1,8 +1,9 @@
 import { createContext, ReactNode, useContext, useMemo } from "react";
 import { Midi } from "@tonejs/midi";
 import { Note } from "@tonejs/midi/dist/Note";
-import { SettingsInitial, SettingsProvider } from "./context-settings";
+import { SettingsProvider } from "./context-settings";
 import { midiToOctave, toMidiTone } from "~/util/music";
+import { floorTo } from "~/util/map";
 
 export type SongCtx = {
   song: Midi;
@@ -11,8 +12,8 @@ export type SongCtx = {
   ticksPerBar: number;
   octaves: ReturnType<typeof getOctaves>;
   tickConnections: Map<
-    { tick: number; midi: number },
-    { tick: number; midi: number }
+    number, // time roundDown
+    Note[] // <midi, note>
   >;
 };
 
@@ -59,28 +60,36 @@ function getMergedPianoNotes(song: Midi) {
   return merged;
 }
 
-function calcParallelNotes(notes: Note[]) {
+function getParallelKey(n: Note) {
+  return floorTo(n.time, 0.01);
+}
+function calcParallelNotes(notes: Note[]): Map<
+  number, // time roundDown
+  Note[] // <midi, note>
+> {
   const result = new Map<
-    { tick: number; midi: number },
-    { tick: number; midi: number }
+    number, // time roundDown
+    Note[] // <midi, note>
   >();
-  const length = notes.length;
-  for (let i = 0; i < length; i++) {
-    const n = notes[i];
-    // look 12 notes ahead
-    for (let y = i + 1; y < i + 24 && y < length; y++) {
-      const next = notes[y];
-      const timeDiff = next.time - n.time;
-      if (timeDiff < 0.01) {
-        result.set(
-          { tick: n.ticks, midi: n.midi },
-          { tick: next.ticks, midi: next.midi }
-        );
-      }
+  const parallel = new Map<
+    number, // time roundDown
+    Note[] // <midi, note>
+  >();
+
+  // Note -> [Note, Note, Note]
+  for (const n of notes) {
+    const t1 = getParallelKey(n);
+    let r = result.get(t1);
+    if (!r) {
+      r = new Array<Note>();
+      result.set(t1, r);
+    }
+    r.push(n);
+    if (r.length === 2) {
+      parallel.set(t1, r);
     }
   }
-
-  return result;
+  return parallel;
 }
 
 export function SongProvider({

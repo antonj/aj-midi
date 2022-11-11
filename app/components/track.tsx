@@ -22,6 +22,17 @@ import { SongSettingsExtended, useSongTicker } from "./use-song-ticker";
 const miniMapWidthRatio = 0.1;
 const blackWidthRatio = 0.6;
 
+function mapRound(
+  n: number,
+  start1: number,
+  stop1: number,
+  start2: number,
+  stop2: number,
+  withinBounds = false
+) {
+  return Math.round(map(n, start1, stop1, start2, stop2, withinBounds));
+}
+
 export function Track() {
   const { song } = useSongCtx();
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
@@ -162,7 +173,7 @@ function xInPiano(
   if (isWhite(note)) {
     x = x + whiteWidth / 2;
   }
-  return x;
+  return Math.round(x);
 }
 
 function draw(
@@ -194,8 +205,8 @@ function draw(
   const tickWindow = songExt.tickWindow; // ticks shown in height
   const minTick = songExt.detect ? tick - tickWindow / 2 : tick; // - tickWindow / 4;
   const maxTick = tick + tickWindow;
-  const whiteWidthPx = w / numWhites;
-  const blackWidthPx = blackWidthRatio * whiteWidthPx;
+  const whiteWidthPx = Math.round(w / numWhites);
+  const blackWidthPx = Math.round(blackWidthRatio * whiteWidthPx);
 
   ctx.font = "18px helvetica";
 
@@ -215,7 +226,8 @@ function draw(
     } else {
       ctx.fillStyle = "rgba(150, 140, 100, 0.5)";
     }
-    ctx.fillRect(x, 0, whiteWidthPx, h);
+    ctx.fillRect(Math.round(x), 0, whiteWidthPx, h);
+    //ctx.fillRect(x, 0, whiteWidthPx, h);
   }
   // draw bg blacks
   for (let midi = minMidi; midi <= maxMidi; midi++) {
@@ -226,7 +238,7 @@ function draw(
     let x = xInPiano(midi, octaves, 0, w, whiteWidthPx);
     x = x - blackWidthPx / 2;
     ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-    ctx.fillRect(x, 0, blackWidthPx, h);
+    ctx.fillRect(Math.round(x), 0, blackWidthPx, h);
   }
 
   // lines
@@ -249,6 +261,7 @@ function draw(
       default:
         continue;
     }
+    x = Math.round(x);
     ctx.beginPath();
     ctx.moveTo(x, 0);
     ctx.lineTo(x, h);
@@ -272,20 +285,33 @@ function draw(
     ctx.lineWidth = 2;
     ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
     // at bar
-    let y = map(barTick, minTick, maxTick, h, 0);
+    let y = mapRound(barTick, minTick, maxTick, h, 0);
     ctx.fillRect(-1, y, w, 2);
     // half bar previous
     ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-    y = map(barTick - songExt.songCtx.ticksPerBar / 2, minTick, maxTick, h, 0);
+    y = mapRound(
+      barTick - songExt.songCtx.ticksPerBar / 2,
+      minTick,
+      maxTick,
+      h,
+      0
+    );
+
     ctx.fillRect(-1, y, w, 2);
     // half bar next
     ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-    y = map(barTick + songExt.songCtx.ticksPerBar / 2, minTick, maxTick, h, 0);
+    y = mapRound(
+      barTick + songExt.songCtx.ticksPerBar / 2,
+      minTick,
+      maxTick,
+      h,
+      0
+    );
     ctx.fillRect(-1, y, w, 2);
   }
 
   const miniLeftPx = 0;
-  const miniRightPx = miniLeftPx + w * miniMapWidthRatio;
+  const miniRightPx = Math.round(miniLeftPx + w * miniMapWidthRatio);
   const miniWidthPx = miniRightPx - miniLeftPx;
   const whiteWidthMini = miniWidthPx / numWhites;
   const blackWidthMini = blackWidthRatio * whiteWidthMini;
@@ -295,8 +321,16 @@ function draw(
   // overlay non repeating parts of song
   if (songExt.repeatBars > 0) {
     //const startBar = roundTo(songCtx.tickStart, songCtx.ticksPerBar);
-    const top = map(songExt.tickEnd, minTick, maxTick, h, 0, true);
-    const bottom = map(songExt.tickRepeatStart, minTick, maxTick, h, 0, true);
+    const top = mapRound(songExt.tickEnd, minTick, maxTick, h, 0, true);
+    const bottom = mapRound(
+      songExt.tickRepeatStart,
+      minTick,
+      maxTick,
+      h,
+      0,
+      true
+    );
+
     ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
     ctx.fillRect(miniRightPx, 0, w, top);
     ctx.fillRect(miniRightPx, bottom, w, h);
@@ -312,14 +346,14 @@ function draw(
     ) {
       ctx.lineWidth = 2;
       ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-      const y = map(barTick, minTickMiniPx, maxTickMiniPx, h, 0);
+      const y = mapRound(barTick, minTickMiniPx, maxTickMiniPx, h, 0);
       ctx.fillRect(miniLeftPx, y, miniWidthPx, 1);
     }
 
     // fill repeat bars
     if (songExt.repeatBars > 0) {
-      const top = map(songExt.tickEnd, minTickMiniPx, maxTickMiniPx, h, 0);
-      const bottom = map(
+      const top = mapRound(songExt.tickEnd, minTickMiniPx, maxTickMiniPx, h, 0);
+      const bottom = mapRound(
         songExt.tickRepeatStart,
         minTickMiniPx,
         maxTickMiniPx,
@@ -342,7 +376,8 @@ function draw(
         miniRightPx,
         whiteWidthMini
       );
-      const y = map(n.ticks, minTickMiniPx, maxTickMiniPx, h, 0) - noteHeight; // ticks // flip y axis
+      const y =
+        mapRound(n.ticks, minTickMiniPx, maxTickMiniPx, h, 0) - noteHeight; // ticks // flip y axis
       let noteWidth;
 
       if (isBlack(note)) {
@@ -354,12 +389,12 @@ function draw(
         noteWidth = whiteWidthMini;
         x = x - whiteWidthMini / 2;
       }
-      ctx.fillRect(x, y, noteWidth, noteHeight);
+      ctx.fillRect(Math.round(x), y, noteWidth, noteHeight);
     }
 
     // draw progress line
     ctx.fillStyle = "gold";
-    let y = map(tick, minTickMiniPx, maxTickMiniPx, h, 0);
+    let y = mapRound(tick, minTickMiniPx, maxTickMiniPx, h, 0);
     ctx.fillRect(miniLeftPx, y - 1, miniWidthPx, 2);
   }
 
@@ -368,8 +403,8 @@ function draw(
     const note = midiToNote(n.midi);
     let noteWidth;
     let x = xInPiano(n.midi, octaves, 0, w, whiteWidthPx);
-    const yTop = map(n.ticks + n.durationTicks, minTick, maxTick, h, 0);
-    const yBottom = map(n.ticks, minTick, maxTick, h, 0);
+    const yTop = mapRound(n.ticks + n.durationTicks, minTick, maxTick, h, 0);
+    const yBottom = mapRound(n.ticks, minTick, maxTick, h, 0);
     if (isBlack(note)) {
       ctx.fillStyle = "black";
       noteWidth = blackWidthPx;
@@ -411,6 +446,7 @@ function draw(
       ctx.fillStyle = "gold";
     }
     const noteHeight = Math.abs(yTop - yBottom);
+    x = Math.round(x);
     ctx.fillRect(x, yTop, noteWidth, noteHeight);
     ctx.strokeRect(x, yTop, noteWidth, noteHeight);
 
@@ -419,42 +455,45 @@ function draw(
   }
 
   // draw connections
-  ctx.fillStyle = "red";
   ctx.strokeStyle = "red";
   ctx.lineWidth = 1;
-  for (const [t1, t2] of songExt.songCtx.tickConnections) {
-    const y1 = map(t1.tick, minTick, maxTick, h, 0) - 1; // ticks // flip y axis
-    const y2 = map(t2.tick, minTick, maxTick, h, 0) - 1; // ticks // flip y axis
-    let x1 = xInPiano(t1.midi, octaves, 0, w, whiteWidthPx);
-    let x2 = xInPiano(t2.midi, octaves, 0, w, whiteWidthPx);
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.closePath();
-    ctx.stroke();
+  for (const [_, notes] of songExt.songCtx.tickConnections) {
+    for (let i = 0; i < notes.length - 1; i++) {
+      const t1 = notes[i];
+      const t2 = notes[i + 1];
+      const y1 = mapRound(t1.ticks, minTick, maxTick, h, 0) - 1; // ticks // flip y axis
+      const y2 = mapRound(t2.ticks, minTick, maxTick, h, 0) - 1; // ticks // flip y axis
+      let x1 = xInPiano(t1.midi, octaves, 0, w, whiteWidthPx);
+      let x2 = xInPiano(t2.midi, octaves, 0, w, whiteWidthPx);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.closePath();
+      ctx.stroke();
+    }
   }
 
   // draw current tick line
   ctx.fillStyle = "gold";
-  ctx.fillRect(miniWidthPx, map(tick, minTick, maxTick, h, 0), w, 4);
+  ctx.fillRect(miniWidthPx, mapRound(tick, minTick, maxTick, h, 0), w, 4);
 
   for (const [t, ns] of pressed) {
     const noteHeight = h / tickWindow;
     for (const n of ns) {
       const note = midiToNote(n);
       let x = xInPiano(n, octaves, 0, w, whiteWidthPx);
-      const y = map(t, minTick, maxTick, h, 0);
+      const y = mapRound(t, minTick, maxTick, h, 0);
       let noteWidth;
       if (isBlack(note)) {
-        ctx.fillStyle = "red";
+        ctx.fillStyle = "blue";
         noteWidth = blackWidthPx;
         x = x - noteWidth / 2;
       } else {
-        ctx.fillStyle = "red";
+        ctx.fillStyle = "green";
         noteWidth = whiteWidthPx;
         x = x - whiteWidthPx / 2;
       }
-      ctx.fillRect(x, y, noteWidth, noteHeight);
+      ctx.fillRect(Math.round(x), y, noteWidth, noteHeight);
     }
   }
 }

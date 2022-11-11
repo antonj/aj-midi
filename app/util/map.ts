@@ -25,6 +25,13 @@ export function roundTo(x: number, roundTo: number) {
   return Math.round(x / roundTo) * roundTo;
 }
 
+export function floorTo(x: number, floorTo: number) {
+  return Math.floor(x / floorTo) * floorTo;
+}
+export function ceilTo(x: number, ceilTo: number) {
+  return Math.ceil(x / ceilTo) * ceilTo;
+}
+
 export function signum(num: number) {
   return num ? (num < 0 ? -1 : 1) : 0;
 }
