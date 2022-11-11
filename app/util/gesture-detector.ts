@@ -75,14 +75,17 @@ class VelocityTracker {
 
 export class GestureDetector {
   elem: HTMLElement;
-  callback: (ev: GestureEvent) => void;
+  callback: (ev: GestureEvent, self: GestureDetector) => void;
   is_dragging: boolean = false;
   events: Array<PointerEvent> = [];
   ev_down?: PointerEvent;
   ev_prev?: PointerEvent;
   velo: VelocityTracker;
 
-  constructor(elem: HTMLElement, callback: (ev: GestureEvent) => void) {
+  constructor(
+    elem: HTMLElement,
+    callback: (ev: GestureEvent, self: GestureDetector) => void
+  ) {
     this.elem = elem;
     this.callback = callback;
     this.velo = new VelocityTracker();
@@ -134,16 +137,44 @@ export class GestureDetector {
   down(ev: PointerEvent) {
     if (this.ev_down) {
       // ignore we are only trackng one finger
+      // zoom
+      // two finger track
+      // two finger, zoom
+      // three finger, ignore?
+      // [x1,y1] - [x2,y2], one of them moves means zoom
+      // three of them?
+      // if one finger releases what does that do to the rest
+
+      // const gd = new GestureDetector(this.elem, (event, self) => {
+      //   switch (event.kind) {
+      //     case "drag":
+      //       {
+      //         console.log("zoom", event.data.y);
+      //       }
+      //       break;
+      //     case "up":
+      //       {
+      //         console.log("zoom up", event.data.y);
+      //         self.deattach();
+      //       }
+      //       break;
+      //   }
+      // })
+      //   .attach()
+      //   .down(ev);
       return;
     }
     this.ev_down = ev;
     this.elem.setPointerCapture(ev.pointerId);
     this.velo.clear();
     this.velo.add(ev);
-    this.callback({
-      kind: "down",
-      data: this.getGestureBase(ev, ev),
-    });
+    this.callback(
+      {
+        kind: "down",
+        data: this.getGestureBase(ev, ev),
+      },
+      this
+    );
     this.ev_prev = ev;
   }
   move(ev: PointerEvent) {
@@ -154,10 +185,13 @@ export class GestureDetector {
       return;
     }
     this.velo.add(ev);
-    this.callback({
-      kind: "drag",
-      data: this.getGestureMove(ev, this.ev_down, this.ev_prev),
-    });
+    this.callback(
+      {
+        kind: "drag",
+        data: this.getGestureMove(ev, this.ev_down, this.ev_prev),
+      },
+      this
+    );
     this.ev_prev = ev;
   }
   up(ev: PointerEvent) {
@@ -169,14 +203,20 @@ export class GestureDetector {
     }
     this.elem.releasePointerCapture(ev.pointerId);
     const data = this.getGestureMove(ev, this.ev_down, this.ev_prev);
-    this.callback({
-      kind: "up",
-      data,
-    });
-    this.callback({
-      kind: "fling",
-      data,
-    });
+    this.callback(
+      {
+        kind: "up",
+        data,
+      },
+      this
+    );
+    this.callback(
+      {
+        kind: "fling",
+        data,
+      },
+      this
+    );
     this.ev_down = undefined;
     this.ev_prev = undefined;
   }
