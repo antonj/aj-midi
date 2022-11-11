@@ -53,11 +53,7 @@ function getMergedPianoNotes(song: Midi) {
   for (let i = 1; i < pianoTracks.length; i++) {
     merged = merged.concat(pianoTracks[i].notes);
   }
-  merged = merged.filter(Boolean);
-  console.log("merged", merged);
-
-  merged.sort((a, b) => a.ticks - b.ticks);
-  return merged;
+  return merged.sort((a, b) => a.ticks - b.ticks);
 }
 
 function getParallelKey(n: Note) {
@@ -86,7 +82,9 @@ function calcParallelNotes(notes: Note[]): Map<
     }
     r.push(n);
     // sort to have lower midi tones first
-    notes.sort((a, b) => a.midi - b.midi);
+    if (r.length > 1) {
+      r.sort((a, b) => a.midi - b.midi);
+    }
     if (r.length === 2) {
       parallel.set(t1, r);
     }
