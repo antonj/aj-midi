@@ -251,30 +251,22 @@ function draw(
   const tickWindow = songExt.tickWindow; // ticks shown in height
   const minTick = songExt.detect ? tick - tickWindow / 2 : tick; // - tickWindow / 4;
   const maxTick = tick + tickWindow;
-  const whiteWidthPx = pixelRound(w / numWhites);
-  const blackWidthPx = pixelRound(blackWidthRatio * whiteWidthPx);
+  const whiteWidthPx = w / numWhites;
+  const blackWidthPx = blackWidthRatio * whiteWidthPx;
 
   ctx.font = "18px helvetica";
 
   // background
   {
     // draw bg whites
-    for (let midi = minMidi; midi <= maxMidi; midi++) {
-      const note = midiToNote(midi);
-      if (isBlack(note)) {
-        continue;
-      }
-
-      let x = xCenterInPiano(midi, octaves, 0, w, whiteWidthPx);
-      x = x - whiteWidthPx / 2;
-
-      const oct = midiToOctave(midi);
-      if (oct.octave % 2 == 0) {
-        ctx.fillStyle = "rgba(150, 140, 100, 0.3)";
-      } else {
+    for (let i = 0; i < octaves.length; i++) {
+      if (i % 2 == 0) {
         ctx.fillStyle = "rgba(150, 140, 100, 0.5)";
+      } else {
+        ctx.fillStyle = "rgba(150, 140, 100, 0.3)";
       }
-      ctx.fillRect(pixelRound(x), 0, whiteWidthPx, h);
+      const octaveWidth = whiteWidthPx * 7;
+      ctx.fillRect(pixelRound(i * octaveWidth), 0, octaveWidth, h);
     }
     // draw bg blacks
     for (let midi = minMidi; midi <= maxMidi; midi++) {
@@ -293,20 +285,15 @@ function draw(
       const note = midiToNote(midi);
       let x = xCenterInPiano(midi, octaves, 0, w, whiteWidthPx);
       switch (note) {
-        case "c": {
-          ctx.lineWidth = 2;
-          ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
-          x = x - whiteWidthPx / 2;
-          break;
-        }
         case "f": {
           ctx.lineWidth = 1;
           ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
           x = x - whiteWidthPx / 2;
           break;
         }
-        default:
+        default: {
           continue;
+        }
       }
       x = pixelRound(x);
       ctx.beginPath();

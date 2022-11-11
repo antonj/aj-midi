@@ -2,7 +2,6 @@ import { Midi } from "@tonejs/midi";
 import { createContext, ReactNode, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 import { debounce } from "../util/debounce";
-import { clamp, roundTo } from "../util/map";
 import { SongCtx } from "./context-song";
 
 export type SongSettings = {
