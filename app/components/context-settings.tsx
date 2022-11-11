@@ -54,28 +54,27 @@ export function useSettings<T>(
   return useStore(store, selector, equalityFn);
 }
 
-export type SettingsInitial = {
+type SettingsInitial = {
   speed: number;
-  startBar: number;
+  startTick: number;
   repeatBar: number;
   warmupBar: number;
   tickWindow: number;
 };
 
 function createSettingsStore(song: Midi) {
-  console.log(window.location.href);
   const ticksPerBar =
     song.header.timeSignatures[0].timeSignature[0] * song.header.ppq;
-  function tickToBar(tick: number) {
-    return Math.floor(tick / ticksPerBar);
-  }
-  function barToTick(bar: number) {
-    return clamp(
-      roundTo(bar * ticksPerBar, ticksPerBar),
-      -1 * ticksPerBar,
-      song.durationTicks
-    );
-  }
+  /* function tickToBar(tick: number) {
+   *   return Math.floor(tick / ticksPerBar);
+   * }
+   * function barToTick(bar: number) {
+   *   return clamp(
+   *     roundTo(bar * ticksPerBar, ticksPerBar),
+   *     -1 * ticksPerBar,
+   *     song.durationTicks
+   *   );
+   * } */
 
   // intial settings from  query params
   const url = new URL(window.location.href);
@@ -88,7 +87,7 @@ function createSettingsStore(song: Midi) {
 
   const settings: SettingsInitial = {
     repeatBar: repeatBar ? parseInt(repeatBar) : 0,
-    startBar: startBar ? parseInt(startBar) : -1,
+    startTick: startBar ? parseInt(startBar) : -1,
     tickWindow: tickWindow ? parseInt(tickWindow) : ticksPerBar * 4,
     speed: speed ? parseFloat(speed) : 1,
     warmupBar: warmup ? parseInt(warmup) : 0,
@@ -99,7 +98,7 @@ function createSettingsStore(song: Midi) {
       const url = new URL(window.location.href);
       url.searchParams.set("speed", get().speed.toString());
       url.searchParams.set("window", Math.floor(get().tickWindow).toString());
-      url.searchParams.set("start", tickToBar(get().tickStart).toString());
+      url.searchParams.set("start", get().tickStart.toString());
       url.searchParams.set("repeat", Math.floor(get().repeatBars).toString());
       url.searchParams.set(
         "warmup",
@@ -111,7 +110,7 @@ function createSettingsStore(song: Midi) {
 
     return {
       speed: settings.speed,
-      tickStart: barToTick(settings.startBar),
+      tickStart: settings.startTick,
       repeatBars: settings.repeatBar,
       repeatBarsWarmup: settings.warmupBar,
       tickWindow: settings.tickWindow,
