@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { AjScroller } from "../util/aj-scroller";
 import { map } from "../util/map";
 import {
@@ -12,12 +12,12 @@ import {
   whiteIndexInOctave,
 } from "../util/music";
 import { Scroller } from "../util/scroller";
-import { useBoundingClientRect } from "./use-bounding-client-rect";
 import { useGestureDetector } from "./use-gesture-detector";
 import { useSongCtx } from "./context-song";
 import { useToneDetector } from "./use-tone-detector";
 import { useSettings } from "./context-settings";
 import { SongSettingsExtended, useSongTicker } from "./use-song-ticker";
+import { Canvas } from "./canvas";
 
 const miniMapWidthRatio = 0.1;
 const blackWidthRatio = 0.6;
@@ -39,10 +39,6 @@ function mapRound(
 export function Track() {
   const { song } = useSongCtx();
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  canvasRef.current = canvasEl;
-  const [{ width, height }, wrapperRef] =
-    useBoundingClientRect<HTMLDivElement>();
   const detect = useSettings((s) => s.detect);
   const tickWindow = useSettings((s) => s.tickWindow);
   const setStart = useSettings((s) => s.setStart);
@@ -54,25 +50,14 @@ export function Track() {
   const scrollerRef = useRef(Scroller());
 
   useSongTicker(function trackTicker(tick, songCtx) {
-    const ctx = canvasRef.current?.getContext("2d", { alpha: false });
+    const ctx = canvasEl?.getContext("2d", { alpha: false });
     if (!ctx) {
       return;
     }
-
     tickRef.current = tick;
     tickToneRef.current.set(tick, sDetected);
     draw(ctx, tick, songCtx, tickToneRef.current);
   });
-
-  useEffect(() => {
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) {
-      return;
-    }
-    const dpr = window.devicePixelRatio || 1;
-    ctx.canvas.height = height * dpr;
-    ctx.canvas.width = width * dpr;
-  }, [width, height]);
 
   useGestureDetector(canvasEl, (ev) => {
     scrollerRef.current.forceFinished(true);
@@ -88,13 +73,12 @@ export function Track() {
         break;
       case "drag":
         ev.data.event.preventDefault();
-        //let x = map(ev.data.x, 0, ev.data.width, 0, 1);
         if (x < miniMapWidthRatio) {
           let y = map(ev.data.y, 0, ev.data.height, 0, 1);
           let yy = map(y, 1, 0, 0, song.durationTicks, true);
           setStart(yy);
         } else {
-          let dt = map(ev.data.dy, 0, height, 0, tickWindow);
+          let dt = map(ev.data.dy, 0, ev.data.height, 0, tickWindow);
           setStart(tickRef.current + dt);
         }
         break;
@@ -113,7 +97,7 @@ export function Track() {
                 const y = scrollerRef.current.getCurrY();
                 let dy = y - prevY;
                 prevY = y;
-                let dt = map(dy, 0, height, 0, tickWindow);
+                let dt = map(dy, 0, ev.data.height, 0, tickWindow);
 
                 const start = tickRef.current + dt;
                 setStart(start);
@@ -133,7 +117,7 @@ export function Track() {
                 const y = info.y;
                 let dy = y - prevY;
                 prevY = y;
-                let dt = map(dy, 0, height, 0, tickWindow);
+                let dt = map(dy, 0, ev.data.height, 0, tickWindow);
                 const start = tickRef.current + dt;
                 setStart(start);
                 requestAnimationFrame(anim);
@@ -147,11 +131,8 @@ export function Track() {
   });
 
   return (
-    <div className="w-full h-full touch-none" ref={wrapperRef}>
-      <canvas
-        className="w-full h-full touch-none select-none"
-        ref={setCanvasEl}
-      />
+    <div className="w-full h-full touch-none">
+      <Canvas onCanvas={setCanvasEl} />
     </div>
   );
 }
@@ -258,6 +239,10 @@ function draw(
 
   // background
   {
+    // draw white big bg
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, w, h);
+
     // draw bg whites
     for (let i = 0; i < octaves.length; i++) {
       if (i % 2 == 0) {
@@ -470,7 +455,7 @@ function draw(
   // draw connections
   ctx.strokeStyle = "red";
   ctx.lineWidth = 1;
-  for (const [_, notes] of songExt.songCtx.tickConnections) {
+  for (const [, notes] of songExt.songCtx.tickConnections) {
     for (let i = 0; i < notes.length - 1; i++) {
       const t1 = notes[i];
       const t2 = notes[i + 1];

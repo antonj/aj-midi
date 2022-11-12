@@ -4,7 +4,6 @@ import { Note, Player } from "./use-song-sounds";
 export function useWebMidiDevices() {
   const [devices, setDevices] = useState<Array<WebMidi.MIDIInput>>([]);
   useEffect(() => {
-    console.log(navigator);
     if ("requestMIDIAccess" in navigator) {
       navigator
         .requestMIDIAccess()
