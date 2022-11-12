@@ -21,11 +21,14 @@ export function Settings() {
     let bar = timeRef.current;
     let obj = { ...params.current, sound: false };
     const gui = new GUI();
-    gui.add(obj, "detect").onChange(() => {
-      settings.setDetect(obj.detect);
-    });
     gui.add(obj, "sound").onChange(() => {
       settings.setVolume(obj.sound ? 0.5 : 0);
+    });
+    gui.add(obj, "sheetNotation").onChange(() => {
+      settings.setSheetNotation(obj.sheetNotation);
+    });
+    gui.add(obj, "detect").onChange(() => {
+      settings.setDetect(obj.detect);
     });
     gui.add(obj, "speed", 0, 2, 0.02).onChange(() => {
       settings.setSpeed(obj.speed);

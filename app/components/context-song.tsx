@@ -101,10 +101,11 @@ export function SongProvider({
 }) {
   const ctx = useMemo<SongCtx>(
     function ctxMemo() {
-      console.log("provider memo");
+      console.log("provider", song);
       let bpm = song.header.tempos[0]?.bpm || 120;
       const ticksPerBar =
-        song.header.timeSignatures[0].timeSignature[0] * song.header.ppq;
+        song.header.timeSignatures[0].timeSignature[0] /*[2 4] [4 4]*/ *
+        song.header.ppq; /* ticks per quarter note */
       const pianoNotes = getMergedPianoNotes(song);
       const octaves = getOctaves(pianoNotes);
       const tickConnections = calcParallelNotes(pianoNotes);

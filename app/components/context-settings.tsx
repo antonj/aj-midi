@@ -12,6 +12,7 @@ export type SongSettings = {
   tickWindow: number;
   volume: number;
   detect: boolean;
+  sheetNotation: boolean;
   song: Midi | null;
   setSong(song: Midi): void;
   setStart(tickStart: number): void;
@@ -21,6 +22,7 @@ export type SongSettings = {
   setSpeed(start: number): void;
   setVolume(volume: number): void;
   setDetect(detect: boolean): void;
+  setSheetNotation(sheetNotation: boolean): void;
 };
 
 type SettingsStore = ReturnType<typeof createSettingsStore>;
@@ -115,6 +117,7 @@ function createSettingsStore(song: Midi) {
       tickWindow: settings.tickWindow,
       volume: 0,
       detect: false as boolean,
+      sheetNotation: false as boolean,
       song: song,
       setSong: (song: Midi) => set((s) => ({ ...s, song })),
       setSpeed: (speed: number) =>
@@ -144,6 +147,8 @@ function createSettingsStore(song: Midi) {
           return { ...s, repeatBarsWarmup };
         }),
       setDetect: (detect: boolean) => set((s) => ({ ...s, detect })),
+      setSheetNotation: (sheetNotation: boolean) =>
+        set((s) => ({ ...s, sheetNotation })),
     };
   });
 }

@@ -41,7 +41,12 @@ export function midiToNote(midi: number): Note {
   return notes[index];
 }
 
-export function midiToOctave(midiTone: number) {
+export function midiToOctave(midiTone: number): {
+  /** octave number */
+  octave: number;
+  /** index of midi in octave */
+  index: number;
+} {
   const octave = Math.floor(midiTone / numNotesInOctave) - 1;
   const index = midiTone % numNotesInOctave;
   return { octave, index };

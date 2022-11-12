@@ -54,7 +54,7 @@ export function useSongTicker(
   }
 
   useRequestAnimationFrame((deltaMs) => {
-    let msPerTick = (bpm * ppq) / (60 * 1000);
+    let msPerTick = (60 * 1000) / (bpm * ppq);
     msPerTick /= ctx.speed;
     let tick = tickRef.current + deltaMs / msPerTick;
 

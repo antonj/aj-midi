@@ -121,6 +121,8 @@ function Octave({
               <span>
                 {t}
                 {octaveIndex}
+                <br />
+                {toMidiTone(octaveIndex, i)}
               </span>
               {/* {toMidiTone(octaveIndex, i)} */}
             </button>
