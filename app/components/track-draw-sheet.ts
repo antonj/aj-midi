@@ -82,8 +82,8 @@ export function drawTrackSheet(
   for (const n of lineNotes) {
     const wIndex = whiteIndex(n);
     let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(0,0,0,0.9)";
+    ctx.lineWidth = 0.5;
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(w, y);
@@ -126,16 +126,10 @@ export function drawTrackSheet(
     }
   }
 
-  // let x = 0;
-  // for (let n = 21; n < 109; n++) {
-  //   const wIndex = whiteIndex(n);
-  //   let y = mapRound(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
-  //   x = x + 10;
-  //   ctx.fillStyle = "black";
-  //   ctx.fillRect(x, y - noteHeight / 2, 10, noteHeight);
-  // }
-
   for (const n of songExt.songCtx.pianoNotes) {
+    if (n.ticks < minTick || n.ticks > maxTick) {
+      continue;
+    }
     const wIndex = whiteIndex(n.midi);
     let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
     const x = map(n.ticks, minTick, maxTick, 0, w);
