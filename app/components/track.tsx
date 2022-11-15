@@ -96,7 +96,7 @@ export function Track() {
         break;
       case "drag":
         ev.data.event.preventDefault();
-        if (x < miniMapWidthRatio) {
+        if (x < miniMapWidthRatio && ev.data.event_down.x < miniMapWidthRatio) {
           let y = map(ev.data.y, 0, ev.data.height, 0, 1);
           let yy = map(y, 1, 0, 0, song.durationTicks, true);
           setStart(yy);
