@@ -21,11 +21,27 @@ export function drawTrackSheet(
   ctx.clearRect(0, 0, w, h);
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, w, h);
-  const { octaves } = songExt.songCtx.octaves;
+  const { high, low } = songExt.songCtx.octaves;
 
   const tickWindow = songExt.tickWindow;
-  const minTick = Math.floor(tick);
+  const minTick = Math.floor(tick - tickWindow / 4);
   const maxTick = Math.floor(tick + tickWindow);
+
+  // tickline and bg
+  {
+    const tickX = map(tick, minTick, maxTick, 0, w);
+    // bg to left of tickline
+    ctx.fillStyle = "rgba(150, 140, 100, 0.2)";
+    ctx.fillRect(0, 0, tickX, h);
+    // tickline
+    ctx.strokeStyle = "gold";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(tickX, 0);
+    ctx.lineTo(tickX, h);
+    ctx.stroke();
+    ctx.closePath();
+  }
 
   // | |x| | |x| |  |  |
   // | 2-- | 5-- |  |  |
@@ -39,9 +55,9 @@ export function drawTrackSheet(
 
   // const midiMin = 21; // 88 keys
   // const midiMax = 108; // 88 keys
-  //
-  const midiMin = toMidiTone(octaves[0], 0);
-  const midiMax = toMidiTone(octaves[octaves.length - 1], numNotesInOctave - 1);
+
+  const midiMin = low - 2;
+  const midiMax = high + 2;
 
   const minOctave = midiToOctave(midiMin);
   const whitesInMinOctave =

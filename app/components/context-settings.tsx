@@ -61,6 +61,7 @@ type SettingsInitial = {
   repeatBar: number;
   warmupBar: number;
   tickWindow: number;
+  sheetNotation: boolean;
 };
 
 function createSettingsStore(song: Midi) {
@@ -85,6 +86,7 @@ function createSettingsStore(song: Midi) {
   const warmup = searchParams.get("warmup");
   const tickWindow = searchParams.get("window");
   const speed = searchParams.get("speed");
+  const sheetNotation = searchParams.get("sheet") === "true";
 
   const settings: SettingsInitial = {
     repeatBar: repeatBar ? parseInt(repeatBar) : 0,
@@ -92,6 +94,7 @@ function createSettingsStore(song: Midi) {
     tickWindow: tickWindow ? parseInt(tickWindow) : ticksPerBar * 4,
     speed: speed ? parseFloat(speed) : 1,
     warmupBar: warmup ? parseInt(warmup) : 0,
+    sheetNotation,
   };
 
   return createStore<SongSettings>()((set, get) => {
@@ -101,6 +104,11 @@ function createSettingsStore(song: Midi) {
       url.searchParams.set("window", Math.floor(get().tickWindow).toString());
       url.searchParams.set("start", get().tickStart.toString());
       url.searchParams.set("repeat", Math.floor(get().repeatBars).toString());
+      if (get().sheetNotation) {
+        url.searchParams.set("sheet", "true");
+      } else {
+        url.searchParams.delete("sheet");
+      }
       url.searchParams.set(
         "warmup",
         Math.floor(get().repeatBarsWarmup).toString()
@@ -117,7 +125,7 @@ function createSettingsStore(song: Midi) {
       tickWindow: settings.tickWindow,
       volume: 0,
       detect: false as boolean,
-      sheetNotation: false as boolean,
+      sheetNotation: settings.sheetNotation,
       song: song,
       setSong: (song: Midi) => set((s) => ({ ...s, song })),
       setSpeed: (speed: number) =>
@@ -148,7 +156,10 @@ function createSettingsStore(song: Midi) {
         }),
       setDetect: (detect: boolean) => set((s) => ({ ...s, detect })),
       setSheetNotation: (sheetNotation: boolean) =>
-        set((s) => ({ ...s, sheetNotation })),
+        set((s) => {
+          updateQueryDebounced();
+          return { ...s, sheetNotation };
+        }),
     };
   });
 }
