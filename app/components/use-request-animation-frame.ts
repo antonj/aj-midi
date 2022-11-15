@@ -20,7 +20,7 @@ export const useRequestAnimationFrame = (
     stateChangeRef.current = onStateChange;
   }
 
-  const stopRef = useRef(() => {
+  const stopRef = useRef(function stopRef() {
     if (stateRef.current === "started") {
       stateRef.current = "stopped";
       stateChangeRef.current?.("stopped");

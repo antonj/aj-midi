@@ -7,26 +7,32 @@ import { useSongCtx } from "./context-song";
 import { useToneDetector } from "./use-tone-detector";
 import { useSettings } from "./context-settings";
 import { useSongTicker } from "./use-song-ticker";
-import { drawTrack, miniMapWidthRatio } from "./track-draw";
+import { trackDraw, miniMapWidthRatio } from "./track-draw";
 import { drawTrackSheet } from "./track-draw-sheet";
+import { trackDrawBg } from "./track-draw-bg";
 
-function fixDpr(canvas: HTMLCanvasElement) {
+function fixDpr(canvas: HTMLCanvasElement): boolean {
+  let didChange = false;
   let { width, height } = canvas.getBoundingClientRect();
   const dpr = window.devicePixelRatio || 1;
   width = Math.floor(width * dpr);
   height = Math.floor(height * dpr);
   if (canvas.width !== width) {
     canvas.width = width;
+    didChange = true;
   }
   if (canvas.height !== height) {
     canvas.height = height;
+    didChange = true;
   }
+  return didChange;
 }
 
 export function Track() {
   const { song } = useSongCtx();
   const sheetNotation = useSettings((s) => s.sheetNotation);
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
+  const [canvasBgEl, setCanvasBgEl] = useState<HTMLCanvasElement | null>(null);
   const [canvasSheetEl, setCanvasSheetEl] = useState<HTMLCanvasElement | null>(
     null
   );
@@ -43,29 +49,35 @@ export function Track() {
   useSongTicker(function trackTicker(tick, songCtx) {
     tickRef.current = tick;
     tickToneRef.current.set(tick, sDetected);
-
+    if (canvasBgEl) {
+      let ctx = canvasBgEl.getContext("2d", { alpha: false });
+      if (!ctx) {
+        return;
+      }
+      const changed = fixDpr(canvasBgEl);
+      if (changed) {
+        trackDrawBg(ctx, songCtx);
+      }
+    }
     {
       if (!canvasEl) {
         return;
       }
-      let ctx = canvasEl.getContext("2d", { alpha: false });
+      let ctx = canvasEl.getContext("2d", { alpha: true });
       if (!ctx) {
         return;
       }
       fixDpr(canvasEl);
-      drawTrack(ctx, tick, songCtx, tickToneRef.current);
+      trackDraw(ctx, tick, songCtx, tickToneRef.current);
     }
-    {
-      if (!canvasSheetEl) {
-        return;
-      }
-      const ctxSheet = canvasSheetEl.getContext("2d", { alpha: false });
-      if (!ctxSheet) {
+    if (canvasSheetEl) {
+      let ctx = canvasSheetEl.getContext("2d", { alpha: false });
+      if (!ctx) {
         return;
       }
       fixDpr(canvasSheetEl);
       if (songCtx.sheetNotation) {
-        drawTrackSheet(ctxSheet, tick, songCtx);
+        drawTrackSheet(ctx, tick, songCtx);
       }
     }
   });
@@ -145,12 +157,22 @@ export function Track() {
     <div className="flex flex-col w-full h-full">
       <div className="relative w-full h-full touch-none overflow-hidden">
         <canvas
+          key={"canvas-bg"}
+          className="absolute w-full h-full touch-none select-none"
+          ref={setCanvasBgEl}
+        />
+        <canvas
+          key={"canvas-track"}
           className="absolute w-full h-full touch-none select-none"
           ref={setCanvasEl}
         />
       </div>
       {sheetNotation ? (
-        <canvas className="h-24 bg-secondary" ref={setCanvasSheetEl} />
+        <canvas
+          key={"canvas-sheet"}
+          className="h-24 bg-secondary"
+          ref={setCanvasSheetEl}
+        />
       ) : null}
     </div>
   );

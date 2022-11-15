@@ -1,9 +1,7 @@
 import { map } from "~/util/map";
 import {
   midiToOctave,
-  numNotesInOctave,
   numWhiteInOctate,
-  toMidiTone,
   whiteIndexInOctave,
 } from "../util/music";
 import { SongSettingsExtended } from "./use-song-ticker";

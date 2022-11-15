@@ -30,7 +30,7 @@ export function Keyboard() {
     return new Set(midiPressedMap.keys());
   }, [midiPressedMap]);
 
-  useSongTicker((tick, settings) => {
+  useSongTicker(function keyboardTicker(tick, settings) {
     const pressed = new Set<number>();
     const future = new Set<number>();
     for (const n of settings.songCtx.pianoNotes ?? []) {
