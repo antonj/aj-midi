@@ -136,32 +136,6 @@ export class GestureDetector {
 
   down(ev: PointerEvent) {
     if (this.ev_down) {
-      // ignore we are only trackng one finger
-      // zoom
-      // two finger track
-      // two finger, zoom
-      // three finger, ignore?
-      // [x1,y1] - [x2,y2], one of them moves means zoom
-      // three of them?
-      // if one finger releases what does that do to the rest
-
-      // const gd = new GestureDetector(this.elem, (event, self) => {
-      //   switch (event.kind) {
-      //     case "drag":
-      //       {
-      //         console.log("zoom", event.data.y);
-      //       }
-      //       break;
-      //     case "up":
-      //       {
-      //         console.log("zoom up", event.data.y);
-      //         self.deattach();
-      //       }
-      //       break;
-      //   }
-      // })
-      //   .attach()
-      //   .down(ev);
       return;
     }
     this.ev_down = ev;

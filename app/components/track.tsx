@@ -87,22 +87,27 @@ export function Track() {
     let x = map(ev.data.x, 0, ev.data.width, 0, 1);
     switch (ev.kind) {
       case "down":
-        ev.data.event.preventDefault();
-        if (x < miniMapWidthRatio) {
-          let y = map(ev.data.y, 0, ev.data.height, 0, 1);
-          let yy = map(y, 1, 0, 0, song.durationTicks, true);
-          setStart(yy);
+        {
+          ev.data.event.preventDefault();
+          if (x < miniMapWidthRatio) {
+            let y = map(ev.data.y, 0, ev.data.height, 0, 1);
+            let yy = map(y, 1, 0, 0, song.durationTicks, true);
+            setStart(yy);
+          }
         }
         break;
       case "drag":
-        ev.data.event.preventDefault();
-        if (x < miniMapWidthRatio && ev.data.event_down.x < miniMapWidthRatio) {
-          let y = map(ev.data.y, 0, ev.data.height, 0, 1);
-          let yy = map(y, 1, 0, 0, song.durationTicks, true);
-          setStart(yy);
-        } else {
-          let dt = map(ev.data.dy, 0, ev.data.height, 0, tickWindow);
-          setStart(tickRef.current + dt);
+        {
+          ev.data.event.preventDefault();
+          let x = map(ev.data.event_down.x, 0, ev.data.width, 0, 1);
+          if (x < miniMapWidthRatio) {
+            let y = map(ev.data.y, 0, ev.data.height, 0, 1);
+            let yy = map(y, 1, 0, 0, song.durationTicks, true);
+            setStart(yy);
+          } else {
+            let dt = map(ev.data.dy, 0, ev.data.height, 0, tickWindow);
+            setStart(tickRef.current + dt);
+          }
         }
         break;
       case "fling":
