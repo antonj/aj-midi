@@ -46,7 +46,7 @@ export function xCenterInPiano(
   const oct = midiToOctave(midi);
   const whiteIndex =
     (oct.octave - octaves[0]) * numWhiteInOctate + // white to left of octave
-    whiteIndexInOctave(oct.index); // white index in octave
+    Math.ceil(whiteIndexInOctave(oct.index)); // white index in octave
   const minWhite = 0;
   const maxWhite = octaves.length * numWhiteInOctate;
   let x = map(whiteIndex, minWhite, maxWhite, minXpx, maxXpx); // midi tone
@@ -81,15 +81,15 @@ function leftAndWidth(
     x = x - whiteWidthPx / 2;
   } else {
     switch (note) {
-      case "c":
-      case "f":
+      case "C":
+      case "F":
         {
           noteWidth = whiteWidthPx - blackWidthPx / 2;
           x = x - whiteWidthPx / 2;
         }
         break;
-      case "e":
-      case "h":
+      case "E":
+      case "B":
         {
           noteWidth = whiteWidthPx - blackWidthPx / 2;
           x = x - whiteWidthPx / 2 + blackWidthPx / 2;

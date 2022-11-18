@@ -110,6 +110,13 @@ export function SongProvider({
       const octaves = getOctaves(pianoNotes);
       const tickConnections = calcParallelNotes(pianoNotes);
 
+      //song.header.keySignatures[0].key = "C";
+      //song.header.keySignatures[0].scale = "major";
+      // for (let i = 0, n = 48; i < 60; i++, n++) {
+      //   pianoNotes[i].midi = n;
+      //   pianoNotes[i].ticks = i * 200;
+      // }
+
       return {
         song,
         bpm,

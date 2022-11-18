@@ -1,5 +1,8 @@
 import { map } from "~/util/map";
 import {
+  findKeySignature,
+  keySignatures,
+  midiToNote,
   midiToOctave,
   numWhiteInOctate,
   whiteIndexInOctave,
@@ -16,16 +19,22 @@ export function drawTrackSheet(
   songExt: SongSettingsExtended
 ) {
   const { width: w, height: h } = ctx.canvas;
-  ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, w, h);
   const { high, low } = songExt.songCtx.octaves;
-
   const tickWindow = songExt.tickWindow;
   const minTick = Math.floor(tick - tickWindow / 4);
   const maxTick = Math.floor(tick + tickWindow);
 
+  const ks =
+    findKeySignature(
+      songExt.songCtx.song.header.keySignatures.find(
+        (ks) => tick < 0 || tick >= ks.ticks
+      )
+    ) || keySignatures["C-major"];
+
   // tickline and bg
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, w, h);
   {
     const tickX = map(tick, minTick, maxTick, 0, w);
     // bg to left of tickline
@@ -65,7 +74,7 @@ export function drawTrackSheet(
   function whiteIndex(n: number) {
     const oct = midiToOctave(n);
     return (
-      whiteIndexInOctave(oct.index) +
+      Math.floor(whiteIndexInOctave(oct.index)) +
       (oct.octave === minOctave.octave
         ? -whitesInMinOctaveNotUsed
         : whitesInMinOctave +
@@ -133,8 +142,32 @@ export function drawTrackSheet(
     const x = map(n.ticks, minTick, maxTick, 0, w);
     ctx.fillStyle = "black";
     //ctx.fillRect(x, y - noteHeight / 2, 10, noteHeight);
+
+    let note = midiToNote(n.midi);
+    if (!ks.notes.includes(note)) {
+      //console.log("note in scale", note, ks.notes);
+      const w = 30;
+      const h = 100;
+
+      ctx.save();
+      ctx.translate(x - noteHeight * 1.75, y - noteHeight / 2);
+      ctx.scale(noteHeight / w, noteHeight / h);
+      // 100 100 canvas
+      ctx.fillStyle = "black";
+      let t = 10;
+      let t2 = t / 2;
+      // horisontal
+      ctx.fillRect(0, h * 0.25 - t2, w, t);
+      ctx.fillRect(0, h * 0.75 - t2, w, t);
+      // vertical
+      ctx.fillRect(w * 0.25 - t2 / 2, 0, t / 2, h);
+      ctx.fillRect(w * 0.75 - t2 / 2, 0, t / 2, h);
+
+      ctx.restore();
+    }
+
+    ctx.fillStyle = "black";
     ctx.beginPath();
-    //ctx.arc(x, y, noteHeight / 2, 0, Math.PI * 2);
     ctx.ellipse(
       x,
       y,
@@ -146,8 +179,10 @@ export function drawTrackSheet(
     );
     ctx.fill();
     ctx.closePath();
+
+    const wIndexClef = whiteIndex(staffLinesClef[0]);
     if (
-      wIndex % 2 != 0 && // not on a line
+      wIndex % 2 == wIndexClef % 2 && // not on a line
       (n.midi > staffLinesTreble[staffLinesTreble.length - 1] || // over top staff line
         n.midi < staffLinesClef[0] || // blow bottom staff line
         (n.midi < staffLinesTreble[0] &&

@@ -1,23 +1,122 @@
+import { KeySignatureEvent } from "@tonejs/midi/dist/Header";
+
 export type Note = typeof notes[number];
 
 export const notes = [
-  "c",
-  "c#",
-  "d",
-  "d#",
-  "e",
-  "f",
-  "f#",
-  "g",
-  "g#",
-  "a",
-  "a#",
-  "h",
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
 ] as const;
+
+export const notesWithFlats = [
+  "C",
+  "D",
+  "Db",
+  "D",
+  "Eb",
+  "E",
+  "F",
+  "Gb",
+  "G",
+  "Ab",
+  "A",
+  "Bb",
+  "B",
+] as const;
+type NoteWithFlat = Note | typeof notesWithFlats[number];
+
+type Accidental = "sharp" | "flat";
 
 export const numNotesInOctave = notes.length;
 export const numWhiteInOctate = notes.filter(isWhite).length;
 export const numBlackInOctate = notes.filter(isBlack).length;
+
+type KeyScale = "major" | "minor";
+
+type Key = `${NoteWithFlat}-${KeyScale}`;
+
+const stepsMajorScale = [2, 2, 1, 2, 2, 2, 1];
+const cMidi = 36;
+
+export type KeySignature = {
+  key: Key;
+  startNote: Note;
+  accidental: Accidental;
+  scale: KeyScale;
+  notes: Array<Note>;
+};
+
+export function findKeySignature(kse?: KeySignatureEvent) {
+  if (!kse) {
+    return null;
+  }
+  return keySignatures[`${kse.key}-${kse.scale}` as Key] || null;
+}
+
+export const keySignatures: {
+  [k in Key]: KeySignature;
+} = (function createKeySignatures() {
+  let keySignatures: { [k: string]: KeySignature & { startMidi: number } } = {};
+  // sharp keys signatures
+  for (
+    let startNote = cMidi, i = 0;
+    i < 7 + 5; // all the way around the weel, efter 7 steps we are looking at flat keys
+    i++, startNote = startNote + 7 // seven halfsteps forward is the next major key start https://en.wikipedia.org/wiki/Perfect_fifth
+  ) {
+    const nMajor = midiToNote(startNote);
+    const nMinor = midiToNote(startNote - 3); // minor scales starts 3 steps minor to the major key
+    const keyMajor = nMajor + "-major";
+    const keyMinor = nMinor + "-minor";
+    keySignatures[keyMajor] = {
+      key: keyMajor as Key,
+      startNote: nMajor,
+      startMidi: startNote,
+      scale: "major",
+      accidental: "sharp",
+      notes: [],
+    };
+    keySignatures[keyMinor] = {
+      key: keyMinor as Key,
+      startNote: nMinor,
+      startMidi: startNote - 3,
+      scale: "minor",
+      accidental: "sharp",
+      notes: [],
+    };
+    for (let j = 0, note = startNote; j < numWhiteInOctate; j++) {
+      const n = midiToNote(note);
+      // sharps
+      keySignatures[keyMajor].notes.push(n);
+      keySignatures[keyMinor].notes.push(n);
+      note = note + stepsMajorScale[j];
+    }
+  }
+
+  // Create flats from sharps
+  for (const signature of Object.values(keySignatures)) {
+    if (isBlack(signature.startNote)) {
+      const startNote = midiToNote(signature.startMidi + 1);
+      const keyMajor = (startNote + "b-" + signature.scale) as Key;
+      keySignatures[keyMajor] = {
+        ...signature,
+        key: keyMajor,
+        accidental: "flat",
+      };
+    }
+  }
+
+  console.log(keySignatures);
+  return keySignatures as unknown as { [k in Key]: KeySignature };
+})();
 
 export function isWhite(note?: Note): boolean {
   if (typeof note !== "string") {
@@ -58,32 +157,37 @@ export function noteToFreq(midi: number, tuning = 440) {
 
 export function whiteIndexInOctave(index: number) {
   /*
-   |   |x|  |x|   |   |x|  |x|  |x|   |
-   |   1--  3-    |   6--  7-   10-   | <= index black keys
-   |    |    |    |    |    |    |    |
-   0-   2-   4-   5-   7-   9-  11-  | <= index white keys
-   |====|====|====|====|====|====|====|
-   0    1    2    3    4    5    6    | <= whiteIndex in octavae, black keys has same index as their right white key
+   |    0    1    2    3     4        5    6    7    8    9    10   11
+   |       =====     =====       |       =====     =====     ======       |
+   |         |         |         |         |         |         |          |
+   |=========|=========|=========|=========|========|==========|==========|
+   |    0   0.5   1   1.5   2         3   3.5   4   4.5   5   5.5   6
    */
   switch (index) {
     case 0:
+      return 0;
     case 1:
-      return index;
+      return 0.5;
     case 2:
+      return 1;
     case 3:
-      return index - 1;
+      return 1.5;
     case 4:
+      return 2;
     case 5:
+      return 3;
     case 6:
-      return index - 2;
+      return 3.5;
     case 7:
+      return 4;
     case 8:
-      return index - 3;
+      return 4.5;
     case 9:
+      return 5;
     case 10:
-      return index - 4;
+      return 5.5;
     case 11:
-      return index - 5;
+      return 6;
     default:
       throw new Error("index out of bounds");
   }
