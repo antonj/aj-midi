@@ -175,7 +175,7 @@ export function Track() {
       {sheetNotation ? (
         <canvas
           key={"canvas-sheet"}
-          className="h-24 bg-secondary"
+          className="h-1/3 bg-secondary touch-none select-none"
           ref={setCanvasSheetEl}
         />
       ) : null}

@@ -2,7 +2,12 @@ import { createContext, ReactNode, useContext, useMemo } from "react";
 import { Midi } from "@tonejs/midi";
 import { Note } from "@tonejs/midi/dist/Note";
 import { SettingsProvider } from "./context-settings";
-import { midiToOctave, toMidiTone } from "~/util/music";
+import {
+  midiToOctave,
+  noteToMidi,
+  scaleMajorHalfsteps,
+  toMidiTone,
+} from "~/util/music";
 import { floorTo } from "~/util/map";
 
 export type SongCtx = {
@@ -109,13 +114,6 @@ export function SongProvider({
       const pianoNotes = getMergedPianoNotes(song);
       const octaves = getOctaves(pianoNotes);
       const tickConnections = calcParallelNotes(pianoNotes);
-
-      //song.header.keySignatures[0].key = "C";
-      //song.header.keySignatures[0].scale = "major";
-      // for (let i = 0, n = 48; i < 60; i++, n++) {
-      //   pianoNotes[i].midi = n;
-      //   pianoNotes[i].ticks = i * 200;
-      // }
 
       return {
         song,

@@ -17,6 +17,21 @@ export const notes = [
   "B",
 ] as const;
 
+export const noteToMidi: { [key in Note]: number } = {
+  C: 60,
+  "C#": 61,
+  D: 62,
+  "D#": 63,
+  E: 64,
+  F: 65,
+  "F#": 66,
+  G: 67,
+  "G#": 68,
+  A: 69,
+  "A#": 70,
+  B: 71,
+};
+
 export const notesWithFlats = [
   "C",
   "D",
@@ -40,11 +55,12 @@ export const numNotesInOctave = notes.length;
 export const numWhiteInOctate = notes.filter(isWhite).length;
 export const numBlackInOctate = notes.filter(isBlack).length;
 
-type KeyScale = "major" | "minor";
+export type KeyScale = "major" | "minor";
 
-type Key = `${NoteWithFlat}-${KeyScale}`;
+export type Key = `${NoteWithFlat}-${KeyScale}`;
 
-const stepsMajorScale = [2, 2, 1, 2, 2, 2, 1];
+export const scaleMajorHalfsteps = [2, 2, 1, 2, 2, 2, 1];
+export const scaleMinorHalfsteps = [2, 1, 2, 2, 1, 2, 2];
 const cMidi = 36;
 
 export type KeySignature = {
@@ -54,6 +70,17 @@ export type KeySignature = {
   scale: KeyScale;
   notes: Array<Note>;
 };
+
+// how many halfsteps from to
+export function offsetBetweenNotes(from: Note, to: Note): number {
+  const f = notes.indexOf(from); // 0
+  const t = notes.indexOf(to); // 2
+  const diff = t - f;
+  if (diff >= 0) {
+    return diff;
+  }
+  return notes.length + diff;
+}
 
 export function findKeySignature(kse?: KeySignatureEvent) {
   if (!kse) {
@@ -97,8 +124,13 @@ export const keySignatures: {
       // sharps
       keySignatures[keyMajor].notes.push(n);
       keySignatures[keyMinor].notes.push(n);
-      note = note + stepsMajorScale[j];
+      note = note + scaleMajorHalfsteps[j];
     }
+    // reorder notes of minor scale ot have them in order
+    let a = keySignatures[keyMinor].notes;
+    keySignatures[keyMinor].notes = a
+      .slice(a.indexOf(nMinor))
+      .concat(a.slice(0, a.indexOf(nMinor)));
   }
 
   // Create flats from sharps
@@ -155,6 +187,8 @@ export function noteToFreq(midi: number, tuning = 440) {
   return Math.pow(2, (midi - 69) / 12) * tuning;
 }
 
+// this is the same as index in key signature C-major
+// based on index being the number of halfsteps from the start key C
 export function whiteIndexInOctave(index: number) {
   /*
    |    0    1    2    3     4        5    6    7    8    9    10   11

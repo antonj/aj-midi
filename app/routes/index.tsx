@@ -8,6 +8,7 @@ import styles from "./index.css";
 import { useSearchParams } from "remix";
 import { Settings } from "~/components/settings";
 import { useSongSound } from "../components/use-song-sounds";
+import { createScalesMidi } from "../util/create-scales-midi";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }, ...keyboardLinks()];
@@ -68,10 +69,12 @@ function SongPicker() {
 }
 
 function Song({ file }: { file: string }) {
-  const m = useMidi(file);
+  let m = useMidi(file);
   if (!m) {
     return null;
   }
+
+  //m = createScalesMidi();
 
   return (
     <SongProvider song={m}>
