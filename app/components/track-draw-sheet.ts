@@ -180,8 +180,12 @@ export function drawTrackSheet(
     }
   }
 
+  let ticksPerPx = map(1, 0, tickWindow, 0, w);
   for (const n of songExt.songCtx.pianoNotes) {
-    if (n.ticks < minTick || n.ticks > maxTick) {
+    if (
+      n.ticks < minTick - 20 * ticksPerPx ||
+      n.ticks > maxTick + 20 * ticksPerPx
+    ) {
       continue;
     }
     const wIndex = Math.floor(noteIndex(n.midi, ks)); // TODO we floor here to make every 0.5 note a sharp
