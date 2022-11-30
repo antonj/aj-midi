@@ -158,6 +158,37 @@ export function Track() {
     }
   });
 
+  useGestureDetector(canvasSheetEl, (ev) => {
+    scrollerRef.current.forceFinished(true);
+    switch (ev.kind) {
+      case "drag":
+        {
+          let dt = map(ev.data.dx, 0, ev.data.width, 0, tickWindow);
+          setStart(tickRef.current - dt);
+        }
+        break;
+      case "fling":
+        {
+          let prevX = 0;
+          scrollerRef.current.fling(prevX, 0, -ev.data.vx * 1000, 0);
+          function anim() {
+            if (!scrollerRef.current.computeScrollOffset()) {
+              return;
+            }
+            const x = scrollerRef.current.getCurrX();
+            let dx = x - prevX;
+            prevX = x;
+            let dt = map(dx, 0, ev.data.width, 0, tickWindow);
+            const start = tickRef.current + dt;
+            setStart(start);
+            requestAnimationFrame(anim);
+          }
+          requestAnimationFrame(anim);
+        }
+        break;
+    }
+  });
+
   return (
     <div className="flex flex-col w-full h-full">
       <div className="relative w-full h-full touch-none overflow-hidden">
