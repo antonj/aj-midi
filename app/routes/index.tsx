@@ -1,17 +1,15 @@
 import { Midi } from "@tonejs/midi";
 import { useEffect, useState } from "react";
-import { Track } from "../components/track";
-import { Keyboard, links as keyboardLinks } from "../components/keyboard";
+import { Track, links as trackLinks } from "../components/track";
 import { SongProvider } from "../components/context-song";
 
-import styles from "./index.css";
 import { useSearchParams } from "remix";
 import { Settings } from "~/components/settings";
 import { useSongSound } from "../components/use-song-sounds";
 import { createScalesMidi } from "../util/create-scales-midi";
 
 export function links() {
-  return [{ rel: "stylesheet", href: styles }, ...keyboardLinks()];
+  return [...trackLinks()];
 }
 
 function useMidi(path: string) {
@@ -80,15 +78,8 @@ function Song({ file }: { file: string }) {
     <SongProvider song={m}>
       <Sounds />
       <Settings />
-      <div className="flex flex-col h-s-screen">
-        <div data-index>
-          <div className="track">
-            <Track />
-          </div>
-          <div className="keyboard">
-            <Keyboard />
-          </div>
-        </div>
+      <div className="h-s-screen">
+        <Track />
       </div>
     </SongProvider>
   );

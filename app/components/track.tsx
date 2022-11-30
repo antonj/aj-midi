@@ -10,6 +10,11 @@ import { useSongTicker } from "./use-song-ticker";
 import { trackDraw, miniMapWidthRatio } from "./track-draw";
 import { drawTrackSheet } from "./track-draw-sheet";
 import { trackDrawBg } from "./track-draw-bg";
+import { Keyboard, links as keyboardLinks } from "./keyboard";
+
+export function links() {
+  return keyboardLinks();
+}
 
 function fixDpr(canvas: HTMLCanvasElement): boolean {
   let didChange = false;
@@ -202,6 +207,9 @@ export function Track() {
           className="absolute w-full h-full touch-none select-none"
           ref={setCanvasEl}
         />
+      </div>
+      <div className="h-1/3 bg-primary">
+        <Keyboard />
       </div>
       {sheetNotation ? (
         <canvas
