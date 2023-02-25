@@ -56,7 +56,7 @@ function getMergedPianoNotes(song: Midi) {
     // ignore instrument just use the first available track
     return song.tracks[0].notes;
   }
-  let merged = [...pianoTracks[0].notes];
+  let merged = pianoTracks[0].notes;
   for (let i = 1; i < pianoTracks.length; i++) {
     merged = merged.concat(pianoTracks[i].notes);
   }
