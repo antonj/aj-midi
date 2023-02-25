@@ -208,7 +208,7 @@ export function Track() {
           ref={setCanvasEl}
         />
       </div>
-      <div className="h-1/3 bg-primary">
+      <div className="h-1/6 bg-primary">
         <Keyboard />
       </div>
       {sheetNotation ? (
