@@ -12,19 +12,19 @@ export default function handleRequest(
     <RemixServer context={remixContext} url={request.url} />
   );
 
-  const url = new URL(request.url);
-  if (
-    url.hostname !== "localhost" &&
-    !url.hostname.startsWith("192") &&
-    !url.protocol.startsWith("https")
-  ) {
-    return redirect(url.toString(), {
-      status: 301,
-      headers: {
-        "X-Forwarded-Proto": "https",
-      },
-    });
-  }
+  // const url = new URL(request.url);
+  // if (
+  //   url.hostname !== "localhost" &&
+  //   !url.hostname.startsWith("192") &&
+  //   !url.protocol.startsWith("https")
+  // ) {
+  //   return redirect(url.toString(), {
+  //     status: 301,
+  //     headers: {
+  //       "X-Forwarded-Proto": "https",
+  //     },
+  //   });
+  // }
 
   responseHeaders.set("Content-Type", "text/html");
 
