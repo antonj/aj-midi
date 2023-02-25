@@ -5,9 +5,12 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "remix";
-import type { MetaFunction } from "remix";
-import { LinksFunction } from "@remix-run/react/routeModules";
+} from "@remix-run/react";
+import {
+  LinksFunction,
+  MetaFunction,
+} from "@remix-run/react/dist/routeModules";
+
 import color from "./styles/color.css";
 import tailwind from "./styles/tailwind.css";
 

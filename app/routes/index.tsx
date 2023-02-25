@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { Track, links as trackLinks } from "../components/track";
 import { SongProvider } from "../components/context-song";
 
-import { useSearchParams } from "remix";
 import { Settings } from "~/components/settings";
 import { useSongSound } from "../components/use-song-sounds";
+import { useSearchParams } from "@remix-run/react";
 
 export function links() {
   return [...trackLinks()];

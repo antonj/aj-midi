@@ -1,6 +1,7 @@
+import { RemixServer } from "@remix-run/react";
+import { EntryContext } from "@remix-run/react/dist/entry";
 import { renderToString } from "react-dom/server";
-import { redirect, RemixServer } from "remix";
-import type { EntryContext } from "remix";
+import { redirect } from "@remix-run/node";
 
 export default function handleRequest(
   request: Request,
