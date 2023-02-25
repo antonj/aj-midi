@@ -5,7 +5,6 @@ import {
   scaleMajorHalfsteps,
   scaleMinorHalfsteps,
   Note,
-  Key,
 } from "./music";
 
 export function createScalesMidi(): Midi {

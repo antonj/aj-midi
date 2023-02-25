@@ -146,7 +146,7 @@ export const keySignatures: {
     }
   }
 
-  console.log(keySignatures);
+  //console.log(keySignatures);
   return keySignatures as unknown as { [k in Key]: KeySignature };
 })();
 
