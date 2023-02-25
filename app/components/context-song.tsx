@@ -2,12 +2,7 @@ import { createContext, ReactNode, useContext, useMemo } from "react";
 import { Midi } from "@tonejs/midi";
 import { Note } from "@tonejs/midi/dist/Note";
 import { SettingsProvider } from "./context-settings";
-import {
-  midiToOctave,
-  noteToMidi,
-  scaleMajorHalfsteps,
-  toMidiTone,
-} from "~/util/music";
+import { midiToOctave, toMidiTone } from "~/util/music";
 import { floorTo } from "~/util/map";
 
 export type SongCtx = {
@@ -50,11 +45,18 @@ function getMergedPianoNotes(song: Midi) {
   const pianoTracks = song.tracks.filter(
     (t) => t.instrument.family === "piano"
   );
+  // song.tracks = pianoTracks;
+  // const blob = new Blob([song.toArray()], {
+  //   type: "audio/midi",
+  // });
+  // var url = window.URL.createObjectURL(blob);
+  // window.location.assign(url);
+
   if (pianoTracks.length === 0) {
     // ignore instrument just use the first available track
     return song.tracks[0].notes;
   }
-  let merged = pianoTracks[0].notes;
+  let merged = [...pianoTracks[0].notes];
   for (let i = 1; i < pianoTracks.length; i++) {
     merged = merged.concat(pianoTracks[i].notes);
   }

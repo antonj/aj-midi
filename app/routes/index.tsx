@@ -40,6 +40,15 @@ function SongPicker() {
         { name: "Visa från Utmyra", url: "static/midi/utmyra.midi" },
         { name: "Visa från Rättvik", url: "static/midi/rattvik.midi" },
         { name: "Elise", url: "static/midi/elise.midi" },
+        {
+          name: "A Whiter Shade of Pale",
+          url: "static/midi/a_whiter_shade_of_pale.midi",
+        },
+        {
+          name: "Chopin - Nocturne",
+          url: "static/midi/chopin_nocturneop9nr1.midi",
+        },
+        { name: "Holy Night", url: "static/midi/o_holy_night.midi" },
         { name: "Waltz", url: "/static/midi/blue-danube-waltz-strauss.midi" },
         { name: "Super Mario", url: "https://bitmidi.com/uploads/72257.mid" },
         { name: "Jingle Bells", url: "https://bitmidi.com/uploads/35143.mid" },
