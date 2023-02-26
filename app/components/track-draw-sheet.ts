@@ -26,7 +26,7 @@ export function drawTrackSheet(
   const { high, low } = songExt.songCtx.octaves;
   const tickWindow = songExt.tickWindow;
   const minTick = Math.floor(tick - tickWindow / 4);
-  const maxTick = Math.floor(tick + tickWindow);
+  const maxTick = Math.floor(minTick + tickWindow + tickWindow / 4);
 
   let kse: KeySignatureEvent | undefined;
   for (

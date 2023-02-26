@@ -88,13 +88,11 @@ export function Track() {
   });
 
   useGestureDetector(canvasEl, (ev) => {
-    if (ev.kind !== "move") {
-      scrollerRef.current.forceFinished(true);
-    }
     let x = map(ev.data.x, 0, ev.data.width, 0, 1);
     switch (ev.kind) {
       case "down":
         {
+          scrollerRef.current.forceFinished(true);
           ev.data.event.preventDefault();
           if (x < miniMapWidthRatio) {
             let y = map(ev.data.y, 0, ev.data.height, 0, 1);
@@ -166,10 +164,12 @@ export function Track() {
   });
 
   useGestureDetector(canvasSheetEl, (ev) => {
-    if (ev.kind !== "move") {
-      scrollerRef.current.forceFinished(true);
-    }
     switch (ev.kind) {
+      case "down":
+        {
+          scrollerRef.current.forceFinished(true);
+        }
+        break;
       case "drag":
         {
           let dt = map(ev.data.dx, 0, ev.data.width, 0, tickWindow);
