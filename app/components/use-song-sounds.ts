@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { map } from "~/util/map";
 import { noteToFreq } from "../util/music";
 import { useSettings } from "./context-settings";
 import { useSongTicker } from "./use-song-ticker";
@@ -111,7 +112,7 @@ export class Player {
     gainNode.connect(this.compressor);
 
     gainNode.gain.value = 0;
-    let volume = midiNote.velocity;
+    let volume = midiNote.velocity * map(midiNote.midi, 22, 80, 1, 0.1, true);
 
     const fadeTimeSeconds = 0.05;
     const startSeconds = this.ctx.currentTime;
