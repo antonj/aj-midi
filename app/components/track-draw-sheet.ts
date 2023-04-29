@@ -165,7 +165,8 @@ export function drawTrackSheet(
       ctx.lineWidth = lineWidth * 1.5;
       ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
       // at bar
-      let x = map(barTick, minTick, maxTick, 0, w) - noteHeight; // - noteHeight put the bar lines to the left of the notes
+      let x =
+        map(barTick, minTick, maxTick, 0, w) - songExt.songCtx.ticksPerBar / 64; // - noteHeight put the bar lines to the left of the notes
       ctx.beginPath();
       ctx.moveTo(x, barTopPbx);
       ctx.lineTo(x, barBottomPbx);
