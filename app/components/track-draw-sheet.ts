@@ -36,7 +36,7 @@ export function drawTrackSheet(
   ) {
     const ks = songExt.songCtx.song.header.keySignatures[i];
     // 101 in [ 0 , 100, 200, 300] => 100
-    if (ks.ticks < tick) {
+    if (ks.ticks < Math.max(1, tick)) {
       kse = ks;
       break;
     }
