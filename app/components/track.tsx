@@ -8,7 +8,7 @@ import { useToneDetector } from "./use-tone-detector";
 import { useSettings } from "./context-settings";
 import { useSongTicker } from "./use-song-ticker";
 import { trackDraw, miniMapWidthRatio } from "./track-draw";
-import { drawTrackSheet } from "./track-draw-sheet";
+import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
 import { trackDrawBg } from "./track-draw-bg";
 import { Keyboard, links as keyboardLinks } from "./keyboard";
 
@@ -172,7 +172,13 @@ export function Track() {
         break;
       case "drag":
         {
-          let dt = map(ev.data.dx, 0, ev.data.width, 0, tickWindow);
+          let dt = map(
+            ev.data.dx,
+            0,
+            ev.data.width,
+            0,
+            sheetTickWindow(tickWindow)
+          );
           setStart(tickRef.current - dt);
         }
         break;

@@ -1,21 +1,27 @@
-import { KeySignatureEvent } from "@tonejs/midi/dist/Header";
+import type { KeySignatureEvent } from "@tonejs/midi/dist/Header";
 import { floorTo, map } from "~/util/map";
 import {
   findKeySignature,
-  KeySignature,
   keySignatures,
   midiToNote,
   midiToOctave,
   offsetBetweenNotes,
   whiteIndexInOctave,
 } from "../util/music";
-import { SongSettingsExtended } from "./use-song-ticker";
+import type { KeySignature } from "../util/music";
+import type { SongSettingsExtended } from "./use-song-ticker";
 
 const staffLinesTrebleClef = [64, 67, 71, 74, 77];
 const staffLinesBassClef = [43, 47, 50, 53, 57];
 const staffLineTrebleMiddle = 71;
 const staffLineBassMiddle = 50;
 const lineNotes = staffLinesBassClef.concat(staffLinesTrebleClef);
+const tickHistoryRatio = 1 / 8;
+
+export function sheetTickWindow(tickWindow: number): number {
+  const tickHistory = (tickHistoryRatio * tickWindow) / (1 - tickHistoryRatio);
+  return tickWindow + tickHistory;
+}
 
 export function drawTrackSheet(
   ctx: CanvasRenderingContext2D,
@@ -24,9 +30,9 @@ export function drawTrackSheet(
 ) {
   const { width: w, height: h } = ctx.canvas;
   const { high, low } = songExt.songCtx.octaves;
-  const tickWindow = songExt.tickWindow;
-  const minTick = Math.floor(tick - tickWindow / 4);
-  const maxTick = Math.floor(minTick + tickWindow + tickWindow / 4);
+  const tickWindow = sheetTickWindow(songExt.tickWindow);
+  const minTick = Math.floor(tick - tickWindow * tickHistoryRatio);
+  const maxTick = Math.floor(minTick + tickWindow);
 
   let kse: KeySignatureEvent | undefined;
   for (
@@ -109,18 +115,6 @@ export function drawTrackSheet(
     let midiCOct = midiToOctave(midiC).octave;
 
     const res = midiCOct * 7 + wi + ksI;
-    // if (
-    //   (n == "A#" || n == "C" || n == "C#" || n == "D") &&
-    //   ks.startNote === "C#"
-    // ) {
-    //   console.log("======");
-    //   console.log(midi, n);
-    //   console.log("=>", { wi });
-    //   console.log("=>", { ksI });
-    //   console.log({ midiC });
-    //   console.log({ midiCOct });
-    //   console.log({ res });
-    // }
     return res;
   }
 
@@ -180,12 +174,14 @@ export function drawTrackSheet(
     }
   }
 
+  // draw notes
   let ticksPerPx = map(1, 0, tickWindow, 0, w);
   for (const n of songExt.songCtx.pianoNotes) {
     if (
       n.ticks < minTick - 20 * ticksPerPx ||
       n.ticks > maxTick + 20 * ticksPerPx
     ) {
+      // skip notes that are not in view
       continue;
     }
     const wIndex = Math.floor(noteIndex(n.midi, ks)); // TODO we floor here to make every 0.5 note a sharp
