@@ -44,6 +44,10 @@ export type GestureEvent =
       data: GestureDrag;
     }
   | {
+      kind: "pinch";
+      data: { still: { x: number; y: number }; moving: GestureDrag };
+    }
+  | {
       kind: "up";
       data: GestureDrag;
     }
@@ -60,9 +64,10 @@ class VelocityTracker {
     this.events = [];
     this.index = 0;
   }
-  add(p: PointerEvent) {
+  add(p: PointerEvent): VelocityTracker {
     this.index = (this.index + 1) % this.size;
     this.events[this.index] = p;
+    return this;
   }
   velo() {
     const curr = this.events[this.index];
@@ -81,14 +86,61 @@ class VelocityTracker {
   }
 }
 
+class Pointer {
+  ev_down: PointerEvent;
+  ev_prev: PointerEvent;
+  velo: VelocityTracker;
+  elem: HTMLElement;
+
+  constructor(ev: PointerEvent, elem: HTMLElement) {
+    this.elem = elem;
+    this.ev_down = ev;
+    this.ev_prev = ev;
+    this.velo = new VelocityTracker().add(ev);
+  }
+
+  getGestureBase(ev: PointerEvent): GestureBase {
+    const bounds = this.elem.getBoundingClientRect();
+    return {
+      x: ev.x,
+      y: ev.y,
+      event_down: this.ev_down,
+      event: ev,
+      timestamp: ev.timeStamp,
+      width: bounds.width,
+      height: bounds.height,
+    };
+  }
+  private getGestureDrag(ev: PointerEvent): GestureDrag {
+    return {
+      ...this.getGestureBase(ev),
+      dx: ev.x - this.ev_prev.x,
+      dy: ev.y - this.ev_prev.y,
+      totaldx: ev.x - this.ev_down.x,
+      totaldy: ev.y - this.ev_down.y,
+      event_prev: this.ev_prev,
+      ...this.velo.velo(),
+    };
+  }
+
+  add(ev: PointerEvent): GestureDrag {
+    console.log(ev);
+    if (ev.type !== "pointerup") {
+      this.velo.add(ev);
+    }
+    const r = this.getGestureDrag(ev);
+    this.ev_prev = ev;
+    return r;
+  }
+}
+
 export class GestureDetector {
   elem: HTMLElement;
   callback: (ev: GestureEvent, self: GestureDetector) => void;
-  is_dragging: boolean = false;
-  events: Array<PointerEvent> = [];
-  ev_down?: PointerEvent;
-  ev_prev?: PointerEvent;
-  velo: VelocityTracker;
+  pointers: Map<number, Pointer>;
+
+  // 1 finger = pan
+  // 2 finger = zoom
 
   constructor(
     elem: HTMLElement,
@@ -96,7 +148,7 @@ export class GestureDetector {
   ) {
     this.elem = elem;
     this.callback = callback;
-    this.velo = new VelocityTracker();
+    this.pointers = new Map();
   }
 
   attach() {
@@ -116,81 +168,70 @@ export class GestureDetector {
     return this;
   }
 
-  private getGestureBase(ev: PointerEvent, down: PointerEvent): GestureBase {
-    const bounds = this.elem.getBoundingClientRect();
-    return {
-      x: ev.x,
-      y: ev.y,
-      event_down: down,
-      event: ev,
-      timestamp: ev.timeStamp,
-      width: bounds.width,
-      height: bounds.height,
-    };
-  }
-  private getGestureDrag(
-    ev: PointerEvent,
-    down: PointerEvent,
-    prev: PointerEvent
-  ): GestureDrag {
-    return {
-      ...this.getGestureBase(ev, down),
-      dx: ev.x - prev.x,
-      dy: ev.y - prev.y,
-      totaldx: ev.x - down.x,
-      totaldy: ev.y - down.y,
-      event_prev: prev,
-      ...this.velo.velo(),
-    };
-  }
-
   down(ev: PointerEvent) {
-    if (this.ev_down) {
-      return;
-    }
-    this.ev_down = ev;
+    const p = new Pointer(ev, this.elem);
+    this.pointers.set(ev.pointerId, p);
     this.elem.setPointerCapture(ev.pointerId);
-    this.velo.clear();
-    this.velo.add(ev);
     this.callback(
       {
         kind: "down",
-        data: this.getGestureBase(ev, ev),
+        data: p.getGestureBase(ev),
       },
       this
     );
-    this.ev_prev = ev;
   }
+
   move(ev: PointerEvent) {
     this.callback({ kind: "move", data: ev }, this);
-    if (!this.ev_down || !this.ev_prev) {
-      return;
+    const p = this.pointers.get(ev.pointerId);
+    if (!p) return;
+    const drag = p.add(ev);
+
+    switch (this.pointers.size) {
+      case 1:
+        {
+          this.callback(
+            {
+              kind: "drag",
+              data: drag,
+            },
+            this
+          );
+        }
+        break;
+      case 2:
+        {
+          let op: Pointer | undefined;
+          for (const [id, p] of this.pointers.entries()) {
+            if (id !== ev.pointerId) {
+              op = p;
+            }
+          }
+          if (!op) return;
+          this.callback(
+            {
+              kind: "pinch",
+              data: {
+                still: { x: op.ev_prev.x, y: op.ev_prev.y },
+                moving: drag,
+              },
+            },
+            this
+          );
+        }
+        break;
     }
-    if (ev.pointerId !== this.ev_down.pointerId) {
-      return;
-    }
-    this.velo.add(ev);
-    this.callback(
-      {
-        kind: "drag",
-        data: this.getGestureDrag(ev, this.ev_down, this.ev_prev),
-      },
-      this
-    );
-    this.ev_prev = ev;
   }
   leave(ev: PointerEvent) {
     this.callback({ kind: "leave", data: ev }, this);
   }
   up(ev: PointerEvent) {
-    if (!this.ev_down || !this.ev_prev) {
-      return;
-    }
-    if (ev.pointerId !== this.ev_down.pointerId) {
-      return;
-    }
+    const p = this.pointers.get(ev.pointerId);
+    if (!p) return;
+    this.pointers.delete(ev.pointerId);
     this.elem.releasePointerCapture(ev.pointerId);
-    const data = this.getGestureDrag(ev, this.ev_down, this.ev_prev);
+    const data = p.add(ev);
+
     this.callback(
       {
         kind: "up",
@@ -198,15 +239,15 @@ export class GestureDetector {
       },
       this
     );
-    this.callback(
-      {
-        kind: "fling",
-        data,
-      },
-      this
-    );
-    this.ev_down = undefined;
-    this.ev_prev = undefined;
+    if (this.pointers.size === 0) {
+      this.callback(
+        {
+          kind: "fling",
+          data,
+        },
+        this
+      );
+    }
   }
 
   handleEvent(ev: PointerEvent) {

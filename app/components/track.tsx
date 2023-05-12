@@ -44,6 +44,7 @@ export function Track() {
   const detect = useSettings((s) => s.detect);
   const tickWindow = useSettings((s) => s.tickWindow);
   const setStart = useSettings((s) => s.setStart);
+  const setTickWindow = useSettings((s) => s.setTickWindow);
 
   const tones = useToneDetector(detect);
   const sDetected = new Set(tones);
@@ -88,9 +89,9 @@ export function Track() {
   });
 
   useGestureDetector(canvasEl, (ev) => {
-    let x = map(ev.data.x, 0, ev.data.width, 0, 1);
     switch (ev.kind) {
       case "down":
+        const x = map(ev.data.x, 0, ev.data.width, 0, 1);
         {
           scrollerRef.current.forceFinished(true);
           ev.data.event.preventDefault();
@@ -104,7 +105,7 @@ export function Track() {
       case "drag":
         {
           ev.data.event.preventDefault();
-          let x = map(ev.data.event_down.x, 0, ev.data.width, 0, 1);
+          const x = map(ev.data.event_down.x, 0, ev.data.width, 0, 1);
           if (x < miniMapWidthRatio) {
             let y = map(ev.data.y, 0, ev.data.height, 0, 1);
             let yy = map(y, 1, 0, 0, song.durationTicks, true);
@@ -118,6 +119,7 @@ export function Track() {
       case "fling":
         {
           let prevY = 0;
+          const h = ev.data.height;
           const simpleScroller = false;
           if (!simpleScroller) {
             console.log("fling", ev.data.vy * 1000);
@@ -130,7 +132,7 @@ export function Track() {
                 const y = scrollerRef.current.getCurrY();
                 let dy = y - prevY;
                 prevY = y;
-                let dt = map(dy, 0, ev.data.height, 0, tickWindow);
+                let dt = map(dy, 0, h, 0, tickWindow);
 
                 const start = tickRef.current + dt;
                 setStart(start);
@@ -150,13 +152,32 @@ export function Track() {
                 const y = info.y;
                 let dy = y - prevY;
                 prevY = y;
-                let dt = map(dy, 0, ev.data.height, 0, tickWindow);
+                let dt = map(dy, 0, h, 0, tickWindow);
                 const start = tickRef.current + dt;
                 setStart(start);
                 requestAnimationFrame(anim);
               }
             }
             requestAnimationFrame(anim);
+          }
+        }
+        break;
+      case "pinch":
+        {
+          const dt = map(
+            ev.data.moving.dy,
+            0,
+            ev.data.moving.height,
+            0,
+            tickWindow
+          );
+          const moveFinger =
+            ev.data.moving.y < ev.data.still.y ? "above" : "below";
+          const scale = moveFinger === "above" ? Math.sign(dt) : -Math.sign(dt);
+          const newWindow = tickWindow + Math.abs(dt) * scale;
+          setTickWindow(newWindow);
+          if (moveFinger === "below") {
+            setStart(tickRef.current + dt);
           }
         }
         break;

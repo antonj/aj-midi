@@ -10,6 +10,10 @@ import {
 } from "../util/music";
 import type { KeySignature } from "../util/music";
 import type { SongSettingsExtended } from "./use-song-ticker";
+import type { Note } from "@tonejs/midi/dist/Note";
+
+type MidiNumber = number;
+type TickNumber = number;
 
 const staffLinesTrebleClef = [64, 67, 71, 74, 77];
 const staffLinesBassClef = [43, 47, 50, 53, 57];
@@ -18,7 +22,7 @@ const staffLineBassMiddle = 50;
 const lineNotes = staffLinesBassClef.concat(staffLinesTrebleClef);
 const tickHistoryRatio = 1 / 8;
 
-export function sheetTickWindow(tickWindow: number): number {
+export function sheetTickWindow(tickWindow: TickNumber): number {
   const tickHistory = (tickHistoryRatio * tickWindow) / (1 - tickHistoryRatio);
   return tickWindow + tickHistory;
 }
@@ -162,6 +166,7 @@ export function drawTrackSheet(
         break;
       }
 
+      const bar = Math.floor(barTick / songExt.songCtx.ticksPerBar) + 1;
       ctx.lineWidth = lineWidth * 1.5;
       ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
       // at bar
@@ -172,19 +177,27 @@ export function drawTrackSheet(
       ctx.lineTo(x, barBottomPbx);
       ctx.stroke();
       ctx.closePath();
+      ctx.fillText(bar.toString(), x, barTopPbx - 5);
     }
   }
 
   // draw notes
-  let ticksPerPx = map(1, 0, tickWindow, 0, w);
+  //let ticksPerPx = map(1, 0, tickWindow, 0, w);
+  let notesInView = new Array<Note>();
   for (const n of songExt.songCtx.pianoNotes) {
-    if (
-      n.ticks < minTick - 20 * ticksPerPx ||
-      n.ticks > maxTick + 20 * ticksPerPx
-    ) {
-      // skip notes that are not in view
+    if (n.ticks + n.durationTicks < minTick) {
+      // out of bounds left
       continue;
     }
+    if (n.ticks > maxTick) {
+      continue;
+    }
+    notesInView.push(n);
+  }
+
+  let bar = -1;
+  const barAccidentals = new Map<number, "sharp" | "flat">();
+  for (const n of notesInView) {
     const wIndex = Math.floor(noteIndex(n.midi, ks)); // TODO we floor here to make every 0.5 note a sharp
     let note = midiToNote(n.midi);
     let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
@@ -195,14 +208,12 @@ export function drawTrackSheet(
     {
       const wIndexClef = whiteIndex(staffLinesBassClef[0]);
       if (
-        wIndex % 2 == wIndexClef % 2 && // not on a line
-        (n.midi > staffLinesTrebleClef[staffLinesTrebleClef.length - 1] || // over top staff line
-          n.midi < staffLinesBassClef[0] || // blow bottom staff line
-          (n.midi < staffLinesTrebleClef[0] &&
-            n.midi > staffLinesBassClef[staffLinesBassClef.length - 1])) // betwen treble and clef
+        (wIndex % 2 == wIndexClef % 2 && // not on a line
+          n.midi > staffLinesTrebleClef[staffLinesTrebleClef.length - 1]) || // over top staff line
+        n.midi < staffLinesBassClef[0] || // below bottom staff line
+        (n.midi < staffLinesTrebleClef[0] &&
+          n.midi > staffLinesBassClef[staffLinesBassClef.length - 1]) // betwen treble and clef
       ) {
-        // && wIndex % 2 != 0) {
-        // not on a staff line draw a small line for it
         ctx.strokeStyle = "black";
         ctx.lineWidth = lineWidth;
         ctx.beginPath();
@@ -248,8 +259,23 @@ export function drawTrackSheet(
       ctx.stroke();
       ctx.closePath();
     }
+    // in the same bar:
+    // 1. if midi note has sharp before we do not need to draw it again
+    // 2. if midi note at same y pos has sharp before we need a natural accidental
+    //    go through all notes that has accidentals check if their y is tha same as the current note
+    //    remote accidental
+    //
     // accidentals: sharps, TOOD flats and the other one
-    if (!ks.notes.includes(note)) {
+    const currentBar = Math.floor(n.ticks / songExt.songCtx.ticksPerBar);
+    if (currentBar != bar) {
+      barAccidentals.clear();
+      bar = currentBar;
+    }
+    if (ks.notes.includes(note)) {
+    } else if (!barAccidentals.has(wIndex)) {
+      barAccidentals.set(wIndex, "sharp");
+      // not in key signature
+      // accidental
       const w = 30;
       const h = 100;
 

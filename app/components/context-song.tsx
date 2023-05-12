@@ -66,7 +66,8 @@ function getMergedPianoNotes(song: Midi) {
 function getParallelKey(n: Note) {
   return floorTo(n.time, 0.01);
 }
-function calcParallelNotes(notes: Note[]): Map<
+
+export function calcParallelNotes(notes: Note[]): Map<
   number, // time roundDown
   Note[] // <midi, note>
 > {

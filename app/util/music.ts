@@ -1,4 +1,4 @@
-import { KeySignatureEvent } from "@tonejs/midi/dist/Header";
+import type { KeySignatureEvent } from "@tonejs/midi/dist/Header";
 
 export type Note = typeof notes[number];
 

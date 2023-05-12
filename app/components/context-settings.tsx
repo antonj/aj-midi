@@ -1,8 +1,9 @@
-import { Midi } from "@tonejs/midi";
-import { createContext, ReactNode, useContext, useRef } from "react";
+import type { Midi } from "@tonejs/midi";
+import { createContext, useContext, useRef } from "react";
+import type { ReactNode } from "react";
 import { createStore, useStore } from "zustand";
 import { debounce } from "../util/debounce";
-import { SongCtx } from "./context-song";
+import type { SongCtx } from "./context-song";
 
 export type SongSettings = {
   speed: number;
