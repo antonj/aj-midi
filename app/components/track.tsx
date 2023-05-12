@@ -11,6 +11,7 @@ import { trackDraw, miniMapWidthRatio } from "./track-draw";
 import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
 import { trackDrawBg } from "./track-draw-bg";
 import { Keyboard, links as keyboardLinks } from "./keyboard";
+import { GestureEvent } from "../util/gesture-detector";
 
 export function links() {
   return keyboardLinks();
@@ -164,22 +165,32 @@ export function Track() {
         break;
       case "pinch":
         {
-          const dt = map(
-            ev.data.moving.dy,
-            0,
-            ev.data.moving.height,
-            0,
-            tickWindow
-          );
-          const moveFinger =
-            ev.data.moving.y < ev.data.still.y ? "above" : "below";
-          const scale = moveFinger === "above" ? Math.sign(dt) : -Math.sign(dt);
-          const newWindow = tickWindow + Math.abs(dt) * scale;
-          setTickWindow(newWindow);
-          if (moveFinger === "below") {
-            setStart(tickRef.current + dt);
+          function old(ev: Extract<GestureEvent, { kind: "pinch" }>) {
+            const dt = map(
+              ev.data.moving.dy,
+              0,
+              ev.data.moving.height,
+              0,
+              tickWindow
+            );
+            const moveFinger =
+              ev.data.moving.y < ev.data.still.y ? "above" : "below";
+            const scale =
+              moveFinger === "above" ? Math.sign(dt) : -Math.sign(dt);
+            const newWindow = tickWindow + Math.abs(dt) * scale;
+            setTickWindow(newWindow);
+            if (moveFinger === "below") {
+              setStart(tickRef.current + dt);
+            }
           }
+
+          function n(ev: Extract<GestureEvent, { kind: "pinch" }>) {
+            const dy = ev.data.moving.dy;
+            const deltaPointer = Math.abs(ev.data.moving.y - ev.data.still.y);
+          }
+          old(ev);
         }
+
         break;
     }
   });
