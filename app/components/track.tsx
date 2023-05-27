@@ -100,6 +100,7 @@ export function Track() {
           if (x < miniMapWidthRatio) {
             let y = map(ev.data.y, 0, ev.data.height, 0, 1);
             let yy = map(y, 1, 0, 0, song.durationTicks, true);
+            tickRef.current = yy;
             setStart(yy);
           }
         }
@@ -111,10 +112,12 @@ export function Track() {
           if (x < miniMapWidthRatio) {
             let y = map(ev.data.y, 0, ev.data.height, 0, 1);
             let yy = map(y, 1, 0, 0, song.durationTicks, true);
+            tickRef.current = yy;
             setStart(yy);
           } else {
             let dt = map(ev.data.dy, 0, ev.data.height, 0, tickWindow);
-            setStart(tickRef.current + dt);
+            tickRef.current = tickRef.current + dt;
+            setStart(tickRef.current);
           }
         }
         break;
@@ -155,8 +158,8 @@ export function Track() {
                 let dy = y - prevY;
                 prevY = y;
                 let dt = map(dy, 0, h, 0, tickWindow);
-                const start = tickRef.current + dt;
-                setStart(start);
+                tickRef.current = tickRef.current + dt;
+                setStart(tickRef.current);
                 requestAnimationFrame(anim);
               }
             }
