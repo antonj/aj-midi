@@ -124,7 +124,6 @@ class Pointer {
   }
 
   add(ev: PointerEvent): GestureDrag {
-    console.log(ev);
     if (ev.type !== "pointerup") {
       this.velo.add(ev);
     }

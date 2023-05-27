@@ -51,6 +51,7 @@ export function Track() {
   const sDetected = new Set(tones);
   const tickToneRef = useRef(new Map<number, Set<number>>());
   const tickRef = useRef(0);
+  const tickWindowRef = useRef(tickWindow);
   const scrollerRef = useRef(Scroller());
 
   useSongTicker(function trackTicker(tick, songCtx) {
@@ -165,32 +166,21 @@ export function Track() {
         break;
       case "pinch":
         {
-          function old(ev: Extract<GestureEvent, { kind: "pinch" }>) {
-            const dt = map(
-              ev.data.moving.dy,
-              0,
-              ev.data.moving.height,
-              0,
-              tickWindow
-            );
-            const moveFinger =
-              ev.data.moving.y < ev.data.still.y ? "above" : "below";
-            const scale =
-              moveFinger === "above" ? Math.sign(dt) : -Math.sign(dt);
-            const newWindow = tickWindow + Math.abs(dt) * scale;
-            setTickWindow(newWindow);
-            if (moveFinger === "below") {
-              setStart(tickRef.current + dt);
-            }
-          }
-
-          function n(ev: Extract<GestureEvent, { kind: "pinch" }>) {
-            const dy = ev.data.moving.dy;
-            const deltaPointer = Math.abs(ev.data.moving.y - ev.data.still.y);
-          }
-          old(ev);
+          const h = ev.data.moving.height;
+          const y1 = ev.data.still.y;
+          const y2 = ev.data.moving.y;
+          const dy = ev.data.moving.dy;
+          let tickWindow = tickWindowRef.current;
+          let startTick = tickRef.current;
+          const zoomPoint = map(ev.data.still.y, h, 0, 0, tickWindow); // zoom around still finger
+          const d1 = Math.abs(y1 - (y2 + dy)); // distance before
+          const d2 = Math.abs(y1 - y2); // distance after
+          const scale = d2 / d1;
+          tickWindowRef.current = scale * tickWindow;
+          setTickWindow(tickWindowRef.current);
+          tickRef.current = startTick + zoomPoint * (1 - scale);
+          setStart(tickRef.current);
         }
-
         break;
     }
   });
@@ -216,6 +206,7 @@ export function Track() {
         break;
       case "fling":
         {
+          const w = ev.data.width;
           let prevX = 0;
           scrollerRef.current.fling(prevX, 0, -ev.data.vx * 1000, 0);
           function anim() {
@@ -225,7 +216,7 @@ export function Track() {
             const x = scrollerRef.current.getCurrX();
             let dx = x - prevX;
             prevX = x;
-            let dt = map(dx, 0, ev.data.width, 0, tickWindow);
+            let dt = map(dx, 0, w, 0, tickWindow);
             const start = tickRef.current + dt;
             setStart(start);
             requestAnimationFrame(anim);
