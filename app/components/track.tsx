@@ -11,7 +11,6 @@ import { trackDraw, miniMapWidthRatio } from "./track-draw";
 import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
 import { trackDrawBg } from "./track-draw-bg";
 import { Keyboard, links as keyboardLinks } from "./keyboard";
-import { GestureEvent } from "../util/gesture-detector";
 
 export function links() {
   return keyboardLinks();
@@ -239,16 +238,16 @@ export function Track() {
   });
 
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex flex-col w-full h-full select-none">
       <div className="relative w-full h-full touch-none overflow-hidden">
         <canvas
           key={"canvas-bg"}
-          className="absolute w-full h-full touch-none select-none"
+          className="absolute w-full h-full touch-none"
           ref={setCanvasBgEl}
         />
         <canvas
           key={"canvas-track"}
-          className="absolute w-full h-full touch-none select-none"
+          className="absolute w-full h-full touch-none"
           ref={setCanvasEl}
         />
       </div>
@@ -258,7 +257,7 @@ export function Track() {
       {sheetNotation ? (
         <canvas
           key={"canvas-sheet"}
-          className="h-1/3 bg-secondary touch-none select-none"
+          className="h-1/3 bg-secondary touch-none"
           ref={setCanvasSheetEl}
         />
       ) : null}
