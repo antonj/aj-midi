@@ -127,12 +127,9 @@ export function Track() {
           const h = ev.data.height;
           const simpleScroller = false;
           if (!simpleScroller) {
-            console.log("fling", ev.data.vy * 1000);
             scrollerRef.current.fling(0, prevY, 0, ev.data.vy * 1000);
-            console.log("fling final", scrollerRef.current.getFinalY());
             function anim() {
               const scrolling = scrollerRef.current.computeScrollOffset();
-              console.log("fling first offset", scrollerRef.current.getCurrY());
               if (scrolling) {
                 const y = scrollerRef.current.getCurrY();
                 let dy = y - prevY;
@@ -147,12 +144,9 @@ export function Track() {
             requestAnimationFrame(anim);
           } else {
             const ajScroller = new AjScroller();
-            console.log("fling", ev.data.vy);
             ajScroller.fling(ev.data.vy);
-            console.log("fling final", ajScroller.yFinal);
             function anim() {
               const info = ajScroller.computeOffset();
-              console.log("fling first offset", info.y);
               if (!info.done) {
                 const y = info.y;
                 let dy = y - prevY;
@@ -179,6 +173,20 @@ export function Track() {
           const d1 = Math.abs(y1 - (y2 + dy)); // distance before
           const d2 = Math.abs(y1 - y2); // distance after
           const scale = d2 / d1;
+          tickWindowRef.current = scale * tickWindow;
+          setTickWindow(tickWindowRef.current);
+          tickRef.current = startTick + zoomPoint * (1 - scale);
+          setStart(tickRef.current);
+        }
+        break;
+      case "zoom":
+        {
+          const h = ev.data.moving.height;
+          const dy = ev.data.moving.dy;
+          let tickWindow = tickWindowRef.current;
+          let startTick = tickRef.current;
+          const zoomPoint = map(ev.data.still.y, h, 0, 0, tickWindow); // zoom around still finger
+          const scale = 1 + map(dy, 0, 10, 0, -0.02); // tweak
           tickWindowRef.current = scale * tickWindow;
           setTickWindow(tickWindowRef.current);
           tickRef.current = startTick + zoomPoint * (1 - scale);

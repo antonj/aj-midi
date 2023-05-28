@@ -44,7 +44,7 @@ export type GestureEvent =
       data: GestureDrag;
     }
   | {
-      kind: "pinch";
+      kind: "pinch" | "zoom";
       data: { still: { x: number; y: number }; moving: GestureDrag };
     }
   | {
@@ -86,11 +86,16 @@ class VelocityTracker {
   }
 }
 
+function distance(p1: { x: number; y: number }, p2: { x: number; y: number }) {
+  return Math.abs(Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2));
+}
+
 class Pointer {
   ev_down: PointerEvent;
   ev_prev: PointerEvent;
   velo: VelocityTracker;
   elem: HTMLElement;
+  clickBeforePointer?: Pointer; // there was a click on a another pointer close to this pointer down in time and distance
 
   constructor(ev: PointerEvent, elem: HTMLElement) {
     this.elem = elem;
@@ -137,6 +142,7 @@ export class GestureDetector {
   elem: HTMLElement;
   callback: (ev: GestureEvent, self: GestureDetector) => void;
   pointers: Map<number, Pointer>;
+  clicks: Map<number, Pointer>;
 
   // 1 finger = pan
   // 2 finger = zoom
@@ -148,6 +154,7 @@ export class GestureDetector {
     this.elem = elem;
     this.callback = callback;
     this.pointers = new Map();
+    this.clicks = new Map();
   }
 
   attach() {
@@ -178,6 +185,16 @@ export class GestureDetector {
       },
       this
     );
+
+    for (const [_, cp] of this.clicks.entries()) {
+      if (
+        ev.timeStamp - cp.ev_prev.timeStamp < 250 &&
+        distance(ev, cp.ev_prev) < 50
+      ) {
+        p.clickBeforePointer = cp;
+        break;
+      }
+    }
   }
 
   move(ev: PointerEvent) {
@@ -189,13 +206,29 @@ export class GestureDetector {
     switch (this.pointers.size) {
       case 1:
         {
-          this.callback(
-            {
-              kind: "drag",
-              data: drag,
-            },
-            this
-          );
+          if (p.clickBeforePointer) {
+            this.callback(
+              {
+                kind: "zoom",
+                data: {
+                  still: {
+                    x: p.clickBeforePointer.ev_prev.x,
+                    y: p.clickBeforePointer.ev_prev.y,
+                  },
+                  moving: drag,
+                },
+              },
+              this
+            );
+          } else {
+            this.callback(
+              {
+                kind: "drag",
+                data: drag,
+              },
+              this
+            );
+          }
         }
         break;
       case 2:
@@ -204,6 +237,7 @@ export class GestureDetector {
           for (const [id, p] of this.pointers.entries()) {
             if (id !== ev.pointerId) {
               op = p;
+              break;
             }
           }
           if (!op) return;
@@ -230,6 +264,17 @@ export class GestureDetector {
     this.pointers.delete(ev.pointerId);
     this.elem.releasePointerCapture(ev.pointerId);
     const data = p.add(ev);
+
+    // setup click
+    if (
+      ev.timeStamp - p.ev_down.timeStamp < 2000 && // up after down in 2 second
+      distance(ev, p.ev_down) < 50 // up is max 50 px from down
+    ) {
+      this.clicks.set(ev.pointerId, p);
+      setTimeout(() => {
+        this.clicks.delete(ev.pointerId);
+      }, 1000);
+    }
 
     this.callback(
       {

@@ -1,7 +1,8 @@
 import GUI from "lil-gui";
 import { useEffect, useRef } from "react";
 import { clamp } from "../util/map";
-import { SongSettings, useSettings } from "./context-settings";
+import { useSettings } from "./context-settings";
+import type { SongSettings } from "./context-settings";
 import { useSongCtx } from "./context-song";
 import { useSongTicker } from "./use-song-ticker";
 
@@ -12,6 +13,9 @@ export function Settings() {
   let params = useRef<SongSettings>(settings);
   params.current = settings;
   let timeRef = useRef({ time: 0 });
+  let tickWindowRef = useRef({ tickWindow: settings.tickWindow });
+
+  tickWindowRef.current.tickWindow = settings.tickWindow;
 
   const { durationTicks } = song.song;
   const { ticksPerBar } = song;
@@ -34,11 +38,12 @@ export function Settings() {
       settings.setSpeed(obj.speed);
     });
     gui
-      .add(obj, "tickWindow", 0, 20000, 5)
+      .add(tickWindowRef.current, "tickWindow", 0, 20000, 5)
       .name("window")
       .onChange(() => {
-        settings.setTickWindow(obj.tickWindow);
-      });
+        settings.setTickWindow(tickWindowRef.current.tickWindow);
+      })
+      .listen();
     gui.add(obj, "repeatBars", 0, 8, 1).onChange(() => {
       settings.setRepeatBars(obj.repeatBars);
     });
