@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { GestureDetector, GestureEvent } from "../util/gesture-detector";
+import { GestureDetector } from "../util/gesture-detector";
+import type { GestureEvent } from "../util/gesture-detector";
 
 export function useGestureDetector(
   el: HTMLElement | null,
@@ -13,10 +14,13 @@ export function useGestureDetector(
     if (!el) {
       return;
     }
+    const prevDef = (ev: TouchEvent) => ev.preventDefault();
+    el.addEventListener("touchstart", prevDef); // prevent ios doubleclick magnifier glass
     const gd = new GestureDetector(el, (ev) => {
       callbackRef.current(ev);
     }).attach();
     return () => {
+      el.removeEventListener("touchstart", prevDef);
       gd.deattach();
     };
   }, [el]);
