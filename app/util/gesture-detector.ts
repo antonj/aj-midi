@@ -6,24 +6,27 @@
  * @param {Number} velocity - An integer of joy.
  * @return undefined
  */
+type XY = { x: number; y: number };
+type XYT = { x: number; y: number; timeStamp: number };
 
-type GestureBase = {
-  x: number;
-  y: number;
-  event_down: PointerEvent;
-  event: PointerEvent;
-  timestamp: number;
+type GestuerEvent = XY & {
+  event: Event;
+  width: number;
+  height: number;
+};
+type GestureDragWheel = GestuerEvent & {
+  dx: number;
+  dy: number;
+};
+type GestureBase = GestureDragWheel & {
+  event_down: XYT;
   width: number;
   height: number;
 };
 type GestureDrag = GestureBase & {
-  event_prev: PointerEvent;
-  dx: number;
-  dy: number;
+  event_prev: XYT;
   vx: number;
   vy: number;
-  totaldx: number;
-  totaldy: number;
 };
 
 export type GestureEvent =
@@ -44,8 +47,16 @@ export type GestureEvent =
       data: GestureDrag;
     }
   | {
-      kind: "pinch" | "zoom";
+      kind: "wheel drag";
+      data: GestureDragWheel;
+    }
+  | {
+      kind: "pinch";
       data: { still: { x: number; y: number }; moving: GestureDrag };
+    }
+  | {
+      kind: "zoom";
+      data: { x: number; y: number; dy: number; height: number; width: number };
     }
   | {
       kind: "up";
@@ -111,7 +122,6 @@ class Pointer {
       y: ev.y,
       event_down: this.ev_down,
       event: ev,
-      timestamp: ev.timeStamp,
       width: bounds.width,
       height: bounds.height,
     };
@@ -121,8 +131,6 @@ class Pointer {
       ...this.getGestureBase(ev),
       dx: ev.x - this.ev_prev.x,
       dy: ev.y - this.ev_prev.y,
-      totaldx: ev.x - this.ev_down.x,
-      totaldy: ev.y - this.ev_down.y,
       event_prev: this.ev_prev,
       ...this.velo.velo(),
     };
@@ -144,9 +152,6 @@ export class GestureDetector {
   pointers: Map<number, Pointer>;
   clicks: Map<number, Pointer>;
 
-  // 1 finger = pan
-  // 2 finger = zoom
-
   constructor(
     elem: HTMLElement,
     callback: (ev: GestureEvent, self: GestureDetector) => void
@@ -163,6 +168,7 @@ export class GestureDetector {
     this.elem.addEventListener("pointerleave", this);
     this.elem.addEventListener("pointerup", this);
     this.elem.addEventListener("pointercancel", this);
+    this.elem.addEventListener("wheel", this);
     return this;
   }
   deattach() {
@@ -171,6 +177,7 @@ export class GestureDetector {
     this.elem.removeEventListener("pointerleave", this);
     this.elem.removeEventListener("pointerup", this);
     this.elem.removeEventListener("pointercancel", this);
+    this.elem.removeEventListener("wheel", this);
     return this;
   }
 
@@ -211,11 +218,11 @@ export class GestureDetector {
               {
                 kind: "zoom",
                 data: {
-                  still: {
-                    x: p.clickBeforePointer.ev_prev.x,
-                    y: p.clickBeforePointer.ev_prev.y,
-                  },
-                  moving: drag,
+                  x: p.clickBeforePointer.ev_prev.x,
+                  y: p.clickBeforePointer.ev_prev.y,
+                  dy: drag.dy,
+                  height: drag.height,
+                  width: drag.width,
                 },
               },
               this
@@ -294,20 +301,59 @@ export class GestureDetector {
     }
   }
 
-  handleEvent(ev: PointerEvent) {
+  wheel(ev: WheelEvent) {
+    const bounds = this.elem.getBoundingClientRect();
+    ev.preventDefault();
+    if (ev.ctrlKey) {
+      this.callback(
+        {
+          kind: "zoom",
+          data: {
+            x: ev.x,
+            y: ev.y,
+            dy: -ev.deltaY,
+            height: bounds.height,
+            width: bounds.width,
+          },
+        },
+        this
+      );
+    } else {
+      this.callback(
+        {
+          kind: "wheel drag",
+          data: {
+            event: ev,
+            dy: -ev.deltaY,
+            dx: -ev.deltaX,
+            x: ev.x,
+            y: ev.y,
+            height: bounds.height,
+            width: bounds.width,
+          },
+        },
+        this
+      );
+    }
+  }
+
+  handleEvent(ev: Event) {
     switch (ev.type) {
+      case "wheel":
+        this.wheel(ev as WheelEvent);
+        break;
       case "pointerdown":
-        this.down(ev);
+        this.down(ev as PointerEvent);
         break;
       case "pointermove":
-        this.move(ev);
+        this.move(ev as PointerEvent);
         break;
       case "pointerleave":
-        this.leave(ev);
+        this.leave(ev as PointerEvent);
         break;
       case "pointerup":
       case "pointercancel":
-        this.up(ev);
+        this.up(ev as PointerEvent);
         break;
     }
   }

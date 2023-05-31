@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { AjScroller } from "../util/aj-scroller";
-import { map } from "../util/map";
+import { clamp, map } from "../util/map";
 import { Scroller } from "../util/scroller";
 import { useGestureDetector } from "./use-gesture-detector";
 import { useSongCtx } from "./context-song";
@@ -34,7 +34,7 @@ function fixDpr(canvas: HTMLCanvasElement): boolean {
 }
 
 export function Track() {
-  const { song } = useSongCtx();
+  const { song, ticksPerBar } = useSongCtx();
   const sheetNotation = useSettings((s) => s.sheetNotation);
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
   const [canvasBgEl, setCanvasBgEl] = useState<HTMLCanvasElement | null>(null);
@@ -120,6 +120,13 @@ export function Track() {
           }
         }
         break;
+      case "wheel drag":
+        {
+          let dt = map(ev.data.dy, 0, ev.data.height, 0, tickWindow);
+          tickRef.current = tickRef.current + dt;
+          setStart(tickRef.current);
+        }
+        break;
       case "fling":
         {
           let prevY = 0;
@@ -171,21 +178,31 @@ export function Track() {
           const zoomPoint = map(ev.data.still.y, h, 0, 0, tickWindow); // zoom around still finger
           const d1 = Math.abs(y1 - (y2 + dy)); // distance before
           const d2 = Math.abs(y1 - y2); // distance after
-          const scale = d2 / d1;
-          tickWindowRef.current = scale * tickWindow;
+          const scale = d1 === 0 ? 1 : d2 / d1;
+          tickWindowRef.current = clamp(
+            scale * tickWindow,
+            ticksPerBar / 4,
+            song.durationTicks
+          );
           setTickWindow(tickWindowRef.current);
-          tickRef.current = startTick + zoomPoint * (1 - scale);
+          tickRef.current = clamp(
+            startTick + zoomPoint * (1 - scale),
+            0,
+            song.durationTicks
+          );
           setStart(tickRef.current);
+          console.log(scale, d1, d2, tickWindowRef.current);
+          console.log(tickRef.current);
         }
         break;
       case "zoom":
         {
-          const h = ev.data.moving.height;
-          const dy = ev.data.moving.dy;
+          const h = ev.data.height;
+          const dy = ev.data.dy;
           let tickWindow = tickWindowRef.current;
           let startTick = tickRef.current;
-          const zoomPoint = map(ev.data.still.y, h, 0, 0, tickWindow); // zoom around still finger
-          const scale = 1 + map(dy, 0, 10, 0, -0.02); // tweak
+          const zoomPoint = map(ev.data.y, h, 0, 0, tickWindow); // zoom around still finger
+          const scale = 1 + map(dy, 0, 10, 0, -0.05); // tweak
           tickWindowRef.current = scale * tickWindow;
           setTickWindow(tickWindowRef.current);
           tickRef.current = startTick + zoomPoint * (1 - scale);
@@ -203,6 +220,7 @@ export function Track() {
         }
         break;
       case "drag":
+      case "wheel drag":
         {
           let dt = map(
             ev.data.dx,
