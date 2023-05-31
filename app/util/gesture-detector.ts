@@ -18,13 +18,13 @@ type GestureDragWheel = GestuerEvent & {
   dx: number;
   dy: number;
 };
-type GestureBase = GestureDragWheel & {
+type GestureBase = GestuerEvent & {
   event_down: XYT;
-  width: number;
-  height: number;
 };
 type GestureDrag = GestureBase & {
   event_prev: XYT;
+  dx: number;
+  dy: number;
   vx: number;
   vy: number;
 };
