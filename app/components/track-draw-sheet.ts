@@ -12,7 +12,6 @@ import type { KeySignature } from "../util/music";
 import type { SongSettingsExtended } from "./use-song-ticker";
 import type { Note } from "@tonejs/midi/dist/Note";
 
-type MidiNumber = number;
 type TickNumber = number;
 
 const staffLinesTrebleClef = [64, 67, 71, 74, 77];
@@ -208,11 +207,11 @@ export function drawTrackSheet(
     {
       const wIndexClef = whiteIndex(staffLinesBassClef[0]);
       if (
-        (wIndex % 2 == wIndexClef % 2 && // not on a line
-          n.midi > staffLinesTrebleClef[staffLinesTrebleClef.length - 1]) || // over top staff line
-        n.midi < staffLinesBassClef[0] || // below bottom staff line
-        (n.midi < staffLinesTrebleClef[0] &&
-          n.midi > staffLinesBassClef[staffLinesBassClef.length - 1]) // betwen treble and clef
+        wIndex % 2 == wIndexClef % 2 && // on a line
+        (n.midi > staffLinesTrebleClef[staffLinesTrebleClef.length - 1] || // over top staff line
+          n.midi < staffLinesBassClef[0] || // below bottom staff line
+          (n.midi < staffLinesTrebleClef[0] &&
+            n.midi > staffLinesBassClef[staffLinesBassClef.length - 1])) // betwen treble and clef
       ) {
         ctx.strokeStyle = "black";
         ctx.lineWidth = lineWidth;
