@@ -1,6 +1,7 @@
-import { createContext, ReactNode, useContext, useMemo } from "react";
-import { Midi } from "@tonejs/midi";
-import { Note } from "@tonejs/midi/dist/Note";
+import type { ReactNode } from "react";
+import type { Midi } from "@tonejs/midi";
+import type { Note } from "@tonejs/midi/dist/Note";
+import { createContext, useContext, useMemo } from "react";
 import { SettingsProvider } from "./context-settings";
 import { midiToOctave, toMidiTone } from "~/util/music";
 import { floorTo } from "~/util/map";
@@ -11,10 +12,7 @@ export type SongCtx = {
   pianoNotes: Array<Note>;
   ticksPerBar: number;
   octaves: ReturnType<typeof getOctaves>;
-  tickConnections: Map<
-    number, // time roundDown
-    Note[] // <midi, note>
-  >;
+  tickConnections: ParallelNotes;
 };
 
 const SongContext = createContext<SongCtx | null>(null);
@@ -63,41 +61,34 @@ function getMergedPianoNotes(song: Midi) {
   return merged.sort((a, b) => a.ticks - b.ticks);
 }
 
-function getParallelKey(n: Note) {
-  return floorTo(n.time, 0.01);
-}
-
-export function calcParallelNotes(notes: Note[]): Map<
-  number, // time roundDown
-  Note[] // <midi, note>
-> {
-  const result = new Map<
-    number, // time roundDown
+type ParallelKey = number;
+export class ParallelNotes {
+  notes: Map<
+    ParallelKey, // time roundDown
     Note[] // <midi, note>
-  >();
-  const parallel = new Map<
-    number, // time roundDown
-    Note[] // <midi, note>
-  >();
-
-  // Note -> [Note, Note, Note]
-  for (const n of notes) {
-    const t1 = getParallelKey(n);
-    let r = result.get(t1);
-    if (!r) {
-      r = new Array<Note>();
-      result.set(t1, r);
-    }
-    r.push(n);
-    // sort to have lower midi tones first
-    if (r.length > 1) {
-      r.sort((a, b) => a.midi - b.midi);
-    }
-    if (r.length === 2) {
-      parallel.set(t1, r);
+  >;
+  constructor(notes: Note[]) {
+    this.notes = new Map();
+    for (const n of notes) {
+      this.add(n);
     }
   }
-  return parallel;
+  [Symbol.iterator]() {
+    return this.notes[Symbol.iterator]();
+  }
+  getParallelKey(n: Note): ParallelKey {
+    return floorTo(n.time, 0.01);
+  }
+  get(n: Note) {
+    return this.notes.get(this.getParallelKey(n));
+  }
+  add(n: Note) {
+    const arr = this.get(n) || [];
+    arr.push(n);
+    arr.sort((a, b) => a.midi - b.midi);
+    this.notes.set(this.getParallelKey(n), arr);
+    return arr;
+  }
 }
 
 export function SongProvider({
@@ -116,7 +107,7 @@ export function SongProvider({
         song.header.ppq; /* ticks per quarter note */
       const pianoNotes = getMergedPianoNotes(song);
       const octaves = getOctaves(pianoNotes);
-      const tickConnections = calcParallelNotes(pianoNotes);
+      const tickConnections = new ParallelNotes(pianoNotes);
 
       return {
         song,
