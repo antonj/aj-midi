@@ -18,6 +18,7 @@ export type Note = {
 export function useSongSound() {
   const volume = useSettings((s) => s.volume);
   const speed = useSettings((s) => s.speed);
+  const lastMove = useSettings((s) => s.movingTimestamp);
   const player = useRef<Player>() as React.MutableRefObject<Player>;
   if (!player.current) {
     player.current = new Player();
@@ -41,6 +42,16 @@ export function useSongSound() {
       player.current.setVolume(volume);
     }
   }, [speed, volume]);
+
+  useEffect(() => {
+    player.current.setVolume(volume);
+    const stop = setTimeout(() => {
+      player.current.setVolume(0);
+    }, 400);
+    return () => {
+      clearTimeout(stop);
+    };
+  }, [lastMove, volume]);
 
   useSongTicker(
     function soundSongTicker(tick, ctx) {

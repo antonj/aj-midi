@@ -45,6 +45,7 @@ export function Track() {
   const tickWindow = useSettings((s) => s.tickWindow);
   const setStart = useSettings((s) => s.setStart);
   const setTickWindow = useSettings((s) => s.setTickWindow);
+  const setMoving = useSettings((s) => s.setMoving);
 
   const tones = useToneDetector(detect);
   const sDetected = new Set(tones);
@@ -118,6 +119,7 @@ export function Track() {
             tickRef.current = tickRef.current + dt;
             setStart(tickRef.current);
           }
+          setMoving();
         }
         break;
       case "wheel drag":
@@ -125,6 +127,7 @@ export function Track() {
           let dt = map(ev.data.dy, 0, ev.data.height, 0, tickWindow);
           tickRef.current = tickRef.current + dt;
           setStart(tickRef.current);
+          setMoving();
         }
         break;
       case "fling":
@@ -160,6 +163,7 @@ export function Track() {
                 let dt = map(dy, 0, h, 0, tickWindow);
                 tickRef.current = tickRef.current + dt;
                 setStart(tickRef.current);
+                setMoving();
                 requestAnimationFrame(anim);
               }
             }
@@ -193,6 +197,7 @@ export function Track() {
           setStart(tickRef.current);
           console.log(scale, d1, d2, tickWindowRef.current);
           console.log(tickRef.current);
+          setMoving();
         }
         break;
       case "zoom":
@@ -207,6 +212,7 @@ export function Track() {
           setTickWindow(tickWindowRef.current);
           tickRef.current = startTick + zoomPoint * (1 - scale);
           setStart(tickRef.current);
+          setMoving();
         }
         break;
     }
@@ -230,6 +236,7 @@ export function Track() {
             sheetTickWindow(tickWindow)
           );
           setStart(tickRef.current - dt);
+          setMoving();
         }
         break;
       case "fling":
@@ -247,6 +254,7 @@ export function Track() {
             let dt = map(dx, 0, w, 0, tickWindow);
             const start = tickRef.current + dt;
             setStart(start);
+            setMoving();
             requestAnimationFrame(anim);
           }
           requestAnimationFrame(anim);
