@@ -46,12 +46,14 @@ export function useSongSound() {
   useEffect(() => {
     player.current.setVolume(volume);
     const stop = setTimeout(() => {
-      player.current.setVolume(0);
+      if (speed === 0) {
+        player.current.setVolume(0);
+      }
     }, 400);
     return () => {
       clearTimeout(stop);
     };
-  }, [lastMove, volume]);
+  }, [lastMove, volume, speed]);
 
   useSongTicker(
     function soundSongTicker(tick, ctx) {

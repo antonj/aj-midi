@@ -16,7 +16,6 @@ export type SongSettings = {
   sheetNotation: boolean;
   song: Midi | null;
   movingTimestamp: number;
-  setMoving(): void;
   setSong(song: Midi): void;
   setStart(tickStart: number): void;
   setRepeatBars(bars: number): void;
@@ -131,7 +130,6 @@ function createSettingsStore(song: Midi) {
       sheetNotation: settings.sheetNotation,
       song: song,
       movingTimestamp: 0,
-      setMoving: () => set((s) => ({ ...s, movingTimestamp: Date.now() })),
       setSong: (song: Midi) => set((s) => ({ ...s, song })),
       setSpeed: (speed: number) =>
         set((s) => {
@@ -147,7 +145,11 @@ function createSettingsStore(song: Midi) {
       setStart: (tickStart: number) =>
         set((s) => {
           updateQueryDebounced();
-          return { ...s, tickStart: Math.floor(tickStart) };
+          return {
+            ...s,
+            movingTimestamp: Date.now(),
+            tickStart: Math.floor(tickStart),
+          };
         }),
       setRepeatBars: (repeatBars: number) =>
         set((s) => {
