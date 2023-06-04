@@ -26,6 +26,38 @@ export function sheetTickWindow(tickWindow: TickNumber): number {
   return tickWindow + tickHistory;
 }
 
+function whiteIndex(midi: number) {
+  const oct = midiToOctave(midi);
+  return oct.octave * 7 + whiteIndexInOctave(oct.index);
+}
+
+// if midi is a black key return the next or previous white midi
+function toWhiteMidi(midi: number, direction: -1 | 1) {
+  const { index } = midiToOctave(midi);
+  const wi = whiteIndexInOctave(index);
+  if (wi % 1 !== 0) {
+    return midi + direction;
+  } else {
+    return midi;
+  }
+}
+
+function noteIndex(midi: number, ks: KeySignature) {
+  const n = midiToNote(midi);
+  const cOffMidi = offsetBetweenNotes("C", ks.startNote);
+  const wi = Math.floor(whiteIndexInOctave(cOffMidi)); // from C to n
+
+  const ksOffMidi = offsetBetweenNotes(ks.startNote, n);
+  const ksI = whiteIndexInOctave(ksOffMidi); // from key start to n
+
+  // where is the previous C
+  const midiC = floorTo(midi - (ksOffMidi + cOffMidi), 12);
+  let midiCOct = midiToOctave(midiC).octave;
+
+  const res = midiCOct * 7 + wi + ksI;
+  return res;
+}
+
 export function drawTrackSheet(
   ctx: CanvasRenderingContext2D,
   tick: number,
@@ -76,17 +108,6 @@ export function drawTrackSheet(
     ctx.closePath();
   }
 
-  // if midi is a black key return the next or previous white midi
-  function toWhiteMidi(midi: number, direction: -1 | 1) {
-    const { index } = midiToOctave(midi);
-    const wi = whiteIndexInOctave(index);
-    if (wi % 1 !== 0) {
-      return midi + direction;
-    } else {
-      return midi;
-    }
-  }
-
   let midiMin = 21; // 88 keys
   let midiMax = 108; // 88 keys
   if (true) {
@@ -99,27 +120,6 @@ export function drawTrackSheet(
 
   const midiMinWhiteIndex = whiteIndex(midiMin);
   const midiMaxWhiteIndex = whiteIndex(midiMax);
-
-  function whiteIndex(midi: number) {
-    const oct = midiToOctave(midi);
-    return oct.octave * 7 + whiteIndexInOctave(oct.index);
-  }
-
-  function noteIndex(midi: number, ks: KeySignature) {
-    const n = midiToNote(midi);
-    const cOffMidi = offsetBetweenNotes("C", ks.startNote);
-    const wi = Math.floor(whiteIndexInOctave(cOffMidi)); // from C to n
-
-    const ksOffMidi = offsetBetweenNotes(ks.startNote, n);
-    const ksI = whiteIndexInOctave(ksOffMidi); // from key start to n
-
-    // where is the previous C
-    const midiC = floorTo(midi - (ksOffMidi + cOffMidi), 12);
-    let midiCOct = midiToOctave(midiC).octave;
-
-    const res = midiCOct * 7 + wi + ksI;
-    return res;
-  }
 
   const numWhites = Math.floor(midiMaxWhiteIndex - midiMinWhiteIndex) + 1;
   const noteHeight = Math.floor(h / numWhites) * 2;
