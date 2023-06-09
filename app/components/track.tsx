@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AjScroller } from "../util/aj-scroller";
 import { clamp, map } from "../util/map";
 import { Scroller } from "../util/scroller";
@@ -16,9 +16,12 @@ export function links() {
   return keyboardLinks();
 }
 
-function fixDpr(canvas: HTMLCanvasElement): boolean {
+function fixDpr(
+  canvas: HTMLCanvasElement,
+  size: { width: number; height: number }
+): boolean {
   let didChange = false;
-  let { width, height } = canvas.getBoundingClientRect();
+  let { width, height } = size;
   const dpr = window.devicePixelRatio || 1;
   width = Math.floor(width * dpr);
   height = Math.floor(height * dpr);
@@ -33,6 +36,35 @@ function fixDpr(canvas: HTMLCanvasElement): boolean {
   return didChange;
 }
 
+function useElementSize(elem: HTMLElement | null) {
+  const bounds = useRef<{ width: number; height: number }>({
+    width: 0,
+    height: 0,
+  });
+  if (bounds.current == undefined && elem) {
+    bounds.current = elem.getBoundingClientRect();
+  }
+
+  useEffect(() => {
+    if (!elem) {
+      return;
+    }
+    const obs = new ResizeObserver((stuff) => {
+      for (const el of stuff) {
+        bounds.current = el.contentRect;
+        break;
+      }
+    });
+    obs.observe(elem);
+
+    return () => {
+      obs.disconnect();
+    };
+  }, [elem]);
+
+  return bounds;
+}
+
 export function Track() {
   const { song, ticksPerBar } = useSongCtx();
   const sheetNotation = useSettings((s) => s.sheetNotation);
@@ -41,6 +73,9 @@ export function Track() {
   const [canvasSheetEl, setCanvasSheetEl] = useState<HTMLCanvasElement | null>(
     null
   );
+  const canvasElSize = useElementSize(canvasEl);
+  const canvasBgElSize = useElementSize(canvasBgEl);
+  const canvasSheetElSize = useElementSize(canvasSheetEl);
   const detect = useSettings((s) => s.detect);
   const tickWindow = useSettings((s) => s.tickWindow);
   const setStart = useSettings((s) => s.setStart);
@@ -61,7 +96,7 @@ export function Track() {
       if (!ctx) {
         return;
       }
-      const changed = fixDpr(canvasBgEl);
+      const changed = fixDpr(canvasBgEl, canvasBgElSize.current);
       if (changed) {
         trackDrawBg(ctx, songCtx);
       }
@@ -74,7 +109,7 @@ export function Track() {
       if (!ctx) {
         return;
       }
-      fixDpr(canvasEl);
+      fixDpr(canvasEl, canvasElSize.current);
       trackDraw(ctx, tick, songCtx, tickToneRef.current);
     }
     if (canvasSheetEl) {
@@ -82,7 +117,7 @@ export function Track() {
       if (!ctx) {
         return;
       }
-      fixDpr(canvasSheetEl);
+      fixDpr(canvasSheetEl, canvasSheetElSize.current);
       if (songCtx.sheetNotation) {
         drawTrackSheet(ctx, tick, songCtx);
       }
