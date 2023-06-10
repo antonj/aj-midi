@@ -6,6 +6,7 @@ import { SongProvider } from "../components/context-song";
 import { Settings } from "~/components/settings";
 import { useSongSound } from "../components/use-song-sounds";
 import { useSearchParams } from "@remix-run/react";
+import { createScalesMidi } from "~/util/create-scales-midi";
 
 export function links() {
   return [...trackLinks()];
@@ -80,7 +81,7 @@ function Song({ file }: { file: string }) {
     return null;
   }
 
-  //m = createScalesMidi();
+  /* m = createScalesMidi(); */
 
   return (
     <SongProvider song={m}>

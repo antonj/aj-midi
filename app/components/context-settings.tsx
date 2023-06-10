@@ -148,7 +148,7 @@ function createSettingsStore(song: Midi) {
           return {
             ...s,
             movingTimestamp: Date.now(),
-            tickStart: Math.floor(tickStart),
+            tickStart: tickStart,
           };
         }),
       setRepeatBars: (repeatBars: number) =>

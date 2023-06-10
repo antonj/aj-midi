@@ -58,6 +58,33 @@ function noteIndex(midi: number, ks: KeySignature) {
   return res;
 }
 
+function onStaffLine(n: number, ks: KeySignature) {
+  const wIndex = Math.floor(noteIndex(n, ks)); // TODO we floor here to make every 0.5 note a sharp
+  return wIndex % 2 == whiteIndex(staffLinesBassClef[0]) % 2;
+}
+
+function clefPosition(
+  n: number,
+  ks: KeySignature
+): "over" | "under" | "between" | "in-clef" {
+  // over top staff line
+  if (n > staffLinesTrebleClef[staffLinesTrebleClef.length - 1]) {
+    return "over";
+  }
+  // below bottom staff line
+  if (n < staffLinesBassClef[0]) {
+    return "under";
+  }
+  // between treble and clef
+  if (
+    n < staffLinesTrebleClef[0] &&
+    n > staffLinesBassClef[staffLinesBassClef.length - 1]
+  ) {
+    return "between";
+  }
+  return "in-clef";
+}
+
 export function drawTrackSheet(
   ctx: CanvasRenderingContext2D,
   tick: number,
@@ -196,6 +223,7 @@ export function drawTrackSheet(
 
   let bar = -1;
   const barAccidentals = new Map<number, "sharp" | "flat">();
+  const extraStafflines = new Map<number, { high: number; low: number }>();
   for (const n of notesInView) {
     const wIndex = Math.floor(noteIndex(n.midi, ks)); // TODO we floor here to make every 0.5 note a sharp
     let note = midiToNote(n.midi);
@@ -205,14 +233,9 @@ export function drawTrackSheet(
 
     // lines for notes not on staff lines
     {
-      const wIndexClef = whiteIndex(staffLinesBassClef[0]);
-      if (
-        wIndex % 2 == wIndexClef % 2 && // on a line
-        (n.midi > staffLinesTrebleClef[staffLinesTrebleClef.length - 1] || // over top staff line
-          n.midi < staffLinesBassClef[0] || // below bottom staff line
-          (n.midi < staffLinesTrebleClef[0] &&
-            n.midi > staffLinesBassClef[staffLinesBassClef.length - 1])) // betwen treble and clef
-      ) {
+      function drawExtraStaff(midi: number) {
+        const wIndex = Math.floor(noteIndex(midi, ks));
+        let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
         ctx.strokeStyle = "black";
         ctx.lineWidth = lineWidth;
         ctx.beginPath();
@@ -220,6 +243,39 @@ export function drawTrackSheet(
         ctx.lineTo(x + noteHeight * 1.5, y);
         ctx.stroke();
         ctx.closePath();
+      }
+      if (clefPosition(n.midi, ks) !== "in-clef") {
+        const before = extraStafflines.get(n.ticks) || {
+          high: staffLinesTrebleClef[staffLinesTrebleClef.length - 1],
+          low: staffLinesBassClef[0],
+        };
+        switch (true) {
+          case n.midi > before.high: {
+            // draw new lines from
+            for (let i = before.high + 1; i <= n.midi; i++) {
+              // todo consider halftone semitone sharps and flats
+              // to not draw more than once
+              if (onStaffLine(i, ks)) {
+                drawExtraStaff(i);
+              }
+            }
+            extraStafflines.set(n.ticks, { ...before, high: n.midi });
+            break;
+          }
+          case n.midi < before.low: {
+            for (let i = before.low - 3; i >= n.midi; i--) {
+              if (onStaffLine(i, ks)) {
+                drawExtraStaff(i);
+              }
+            }
+            extraStafflines.set(n.ticks, { ...before, low: n.midi });
+            break;
+          }
+          default:
+            // middle c
+            drawExtraStaff(n.midi);
+            break;
+        }
       }
     }
 
@@ -231,6 +287,7 @@ export function drawTrackSheet(
       ctx.fillStyle = "black";
       ctx.strokeStyle = "black";
     }
+
     // ellipse note shape
     {
       ctx.beginPath();

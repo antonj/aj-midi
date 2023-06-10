@@ -52,7 +52,11 @@ export function createScalesMidi(): Midi {
       i++;
       note = note + halfSteps;
     }
-    for (let note = midiFromNote(ks.startNote), y = 0; y < 24; y++, note++) {
+    for (
+      let note = midiFromNote(ks.startNote) - 2 * 24, y = 0;
+      y < 24 * 4;
+      y++, note++
+    ) {
       track.addNote({
         midi: note,
         time: i,
