@@ -213,21 +213,18 @@ export function Track() {
           const zoomPoint = map(ev.data.still.y, h, 0, 0, tickWindow); // zoom around still finger
           const d1 = Math.abs(y1 - (y2 + dy)); // distance before
           const d2 = Math.abs(y1 - y2); // distance after
-          const scale = d1 === 0 ? 1 : d2 / d1;
-          tickWindowRef.current = clamp(
-            scale * tickWindow,
-            ticksPerBar / 4,
-            song.durationTicks
-          );
+          const scale = d1 === 0 || d2 === 0 ? 1 : d2 / d1;
+          const windowScaled = scale * tickWindow;
+          if (
+            windowScaled < ticksPerBar / 4 ||
+            windowScaled > song.durationTicks
+          ) {
+            return;
+          }
+          tickWindowRef.current = windowScaled;
+          tickRef.current = startTick + zoomPoint * (1 - scale);
           setTickWindow(tickWindowRef.current);
-          tickRef.current = clamp(
-            startTick + zoomPoint * (1 - scale),
-            0,
-            song.durationTicks
-          );
           setStart(tickRef.current);
-          console.log(scale, d1, d2, tickWindowRef.current);
-          console.log(tickRef.current);
         }
         break;
       case "zoom":
