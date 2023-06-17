@@ -168,7 +168,10 @@ export class GestureDetector {
     this.elem.addEventListener("pointerleave", this);
     this.elem.addEventListener("pointerup", this);
     this.elem.addEventListener("pointercancel", this);
+    this.elem.addEventListener("lostpointercapture", this);
     this.elem.addEventListener("wheel", this);
+    this.elem.addEventListener("touchstart", this.preventDefault);
+    this.elem.addEventListener("dragstart", this.preventDefault);
     return this;
   }
   deattach() {
@@ -177,8 +180,15 @@ export class GestureDetector {
     this.elem.removeEventListener("pointerleave", this);
     this.elem.removeEventListener("pointerup", this);
     this.elem.removeEventListener("pointercancel", this);
+    this.elem.removeEventListener("lostpointercapture", this);
     this.elem.removeEventListener("wheel", this);
+    this.elem.removeEventListener("touchstart", this.preventDefault);
+    this.elem.removeEventListener("dragstart", this.preventDefault);
     return this;
+  }
+
+  preventDefault(ev: Event) {
+    ev.preventDefault();
   }
 
   down(ev: PointerEvent) {
@@ -353,6 +363,7 @@ export class GestureDetector {
         break;
       case "pointerup":
       case "pointercancel":
+      case "lostpointercapture":
         this.up(ev as PointerEvent);
         break;
     }
