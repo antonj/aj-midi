@@ -1,0 +1,19 @@
+[data-input] {
+  height: 1.5rem;
+  padding: 0.5rem;
+  width: 100%;
+  background: var(--midi-input-bg-color);
+  color: var(--midi-active-fg-color);
+  text-align: right;
+  font-weight: bold;
+}
+
+[data-input]:focus {
+  background: var(--midi-input-active-bg-color);
+  color: var(--midi-active-fg-color);
+  outline: none;
+}
+
+[data-input]::selection {
+  background: black;
+}

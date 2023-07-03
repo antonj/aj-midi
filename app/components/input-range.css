@@ -1,0 +1,30 @@
+[data-input-range] {
+  position: relative;
+  width: 100%;
+  height: 1.5rem;
+  background: var(--midi-input-bg-color);
+}
+
+[data-input-range]:focus-within {
+  background: var(--midi-input-active-bg-color);
+}
+
+[data-input-range] input {
+  width: 0px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+[data-input-range] label {
+  margin-left: 0.25rem;
+  opacity: 0.5;
+}
+
+[data-input-range] .value {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  transform: translateX(-2px);
+  background-color: var(--midi-active-fg-color);
+}

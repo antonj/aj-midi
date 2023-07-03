@@ -304,12 +304,15 @@ export function Track() {
       <div className="h-1/6 bg-primary">
         <Keyboard />
       </div>
+
       {sheetNotation ? (
-        <canvas
-          key={"canvas-sheet"}
-          className="h-1/3 bg-secondary touch-none"
-          ref={setCanvasSheetEl}
-        />
+        <div className="h-1/3 bg-secondary touch-none relative">
+          <canvas
+            key={"canvas-sheet"}
+            className="absolute w-full h-full"
+            ref={setCanvasSheetEl}
+          />
+        </div>
       ) : null}
     </div>
   );

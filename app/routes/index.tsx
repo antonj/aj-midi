@@ -7,9 +7,10 @@ import { Settings } from "~/components/settings";
 import { useSongSound } from "../components/use-song-sounds";
 import { useSearchParams } from "@remix-run/react";
 import { createScalesMidi } from "~/util/create-scales-midi";
+import { Panel, links as PanelLinks } from "../components/panel";
 
 export function links() {
-  return [...trackLinks()];
+  return [...trackLinks(), ...PanelLinks()];
 }
 
 function useMidi(path: string) {
@@ -86,9 +87,14 @@ function Song({ file }: { file: string }) {
   return (
     <SongProvider song={m}>
       <Sounds />
-      <Settings />
-      <div className="h-s-screen">
-        <Track />
+      {/* <Settings /> */}
+      <div className="flex">
+        <div className="h-s-screen flex-1">
+          <Track />
+        </div>
+        <div className="h-s-screen max-w-xs">
+          <Panel />
+        </div>
       </div>
     </SongProvider>
   );

@@ -1,0 +1,17 @@
+[data-panel] {
+  /* --midi-fg-color: #f5f4f0;
+  --midi-bg-color: #8d8c87;
+  --midi-input-bg-color: #63625d;
+  --midi-input-active-bg-color: #3c3b36; */
+
+  --midi-fg-color: #f5f4f0;
+  --midi-bg-color: #1c191a;
+  --midi-active-fg-color: gold;
+  --midi-input-bg-color: #403d39;
+  --midi-input-active-bg-color: #756959;
+
+  color: var(--midi-fg-color);
+  background-color: var(--midi-bg-color);
+  border-left: 1px solid black;
+  height: 100%;
+}

@@ -118,8 +118,8 @@ class Pointer {
   getGestureBase(ev: PointerEvent): GestureBase {
     const bounds = this.elem.getBoundingClientRect();
     return {
-      x: ev.x,
-      y: ev.y,
+      x: ev.clientX - bounds.left,
+      y: ev.clientY - bounds.top,
       event_down: this.ev_down,
       event: ev,
       width: bounds.width,
@@ -174,6 +174,7 @@ export class GestureDetector {
     this.elem.addEventListener("dragstart", this.preventDefault);
     return this;
   }
+
   deattach() {
     this.elem.removeEventListener("pointerdown", this);
     this.elem.removeEventListener("pointermove", this);
@@ -272,9 +273,11 @@ export class GestureDetector {
         break;
     }
   }
+
   leave(ev: PointerEvent) {
     this.callback({ kind: "leave", data: ev }, this);
   }
+
   up(ev: PointerEvent) {
     const p = this.pointers.get(ev.pointerId);
     if (!p) return;

@@ -21,8 +21,10 @@ export function clamp(n: number, low: number, high: number) {
   return Math.max(Math.min(n, high), low);
 }
 
-export function roundTo(x: number, roundTo: number) {
-  return Math.round(x / roundTo) * roundTo;
+export function roundTo(x: number, roundTo: number): number {
+  return parseFloat(
+    (Math.round(x / roundTo) * roundTo).toFixed(numDecimals(roundTo))
+  );
 }
 
 export function floorTo(x: number, floorTo: number) {
@@ -34,4 +36,9 @@ export function ceilTo(x: number, ceilTo: number) {
 
 export function signum(num: number) {
   return num ? (num < 0 ? -1 : 1) : 0;
+}
+
+function numDecimals(x: number): number {
+  if (Math.floor(x.valueOf()) === x.valueOf()) return 0;
+  return x.toString().split(".")[1].length || 0;
 }
