@@ -1,21 +1,36 @@
 import { useEffect, useRef, useState } from "react";
-import { Note, Player } from "./use-song-sounds";
+import { Player } from "./use-song-sounds";
+import type { Note } from "./use-song-sounds";
+import { create } from "zustand";
 
-export function useWebMidiDevices() {
-  const [devices, setDevices] = useState<Array<WebMidi.MIDIInput>>([]);
-  useEffect(() => {
+export const useDevicesStore = create<{
+  devices: Array<WebMidi.MIDIInput>;
+  setDevices: (devices: Array<WebMidi.MIDIInput>) => void;
+  state: "" | "requesting" | "fetched devices" | "no midi support";
+  requestMIDIAccess: () => void;
+}>((set, get) => ({
+  devices: [],
+  setDevices: (devices: Array<WebMidi.MIDIInput>) => set(() => ({ devices })),
+  state: "",
+  requestMIDIAccess: () => {
+    const store = get();
+    if (store.state !== "") {
+      return;
+    }
+    set((state) => ({ ...state, state: "requesting" }));
+
     if ("requestMIDIAccess" in navigator) {
       navigator
         .requestMIDIAccess()
         .then((access) => {
           console.log("access", access);
+          set((state) => ({ ...state, state: "fetched devices" }));
           // Get lists of available MIDI controllers
           const inputs = access.inputs.values();
-          setDevices(Array.from(inputs));
-
+          set(() => ({ devices: Array.from(inputs) }));
           access.onstatechange = (event) => {
             const inputs = access.inputs.values();
-            setDevices(Array.from(inputs));
+            set(() => ({ devices: Array.from(inputs) }));
             // Print information about the (dis)connected MIDI controller
             console.log(
               event.port.name,
@@ -27,8 +42,17 @@ export function useWebMidiDevices() {
         .catch((e) => {
           console.error("failed to get midi", e);
         });
+    } else {
+      set((state) => ({ ...state, sate: "no midi support" }));
     }
-  }, []);
+  },
+}));
+
+export function useWebMidiDevices() {
+  const { devices, requestMIDIAccess } = useDevicesStore();
+  useEffect(() => {
+    requestMIDIAccess();
+  }, [requestMIDIAccess]);
   return devices;
 }
 

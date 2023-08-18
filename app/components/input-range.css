@@ -3,6 +3,7 @@
   width: 100%;
   height: 1.5rem;
   background: var(--midi-input-bg-color);
+  user-select: none;
 }
 
 [data-input-range]:focus-within {

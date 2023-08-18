@@ -1,15 +1,19 @@
 import { useSettings } from "./context-settings";
 import { useSongCtx } from "./context-song";
 import styles from "./panel.css";
+
 import { InputRange, links as InputRangeLinks } from "./input-range";
+import { links as InputCheckboxLinks } from "./input-checkbox";
 import { Input, links as InputLinks } from "./input";
 import { useSongTicker } from "./use-song-ticker";
 import { useId, useState } from "react";
+import { useDevicesStore, useWebMidiDevices } from "./use-web-midi";
 
 export function links() {
   return [
     { rel: "stylesheet", href: styles },
     ...InputRangeLinks(),
+    ...InputCheckboxLinks(),
     ...InputLinks(),
   ];
 }
@@ -17,20 +21,28 @@ export function links() {
 export function Panel() {
   const ctx = useSongCtx();
   const settings = useSettings((s) => s);
+  const devices = useWebMidiDevices();
+  const x = useDevicesStore();
 
   return (
     <div data-panel className="p-2 font-bold">
+      {x.state}
+      <br />
+      {devices.map((d) => (
+        <div key={d.id}>{d.name}</div>
+      ))}
       <hgroup>
-        <h1>{ctx.song.header.name}</h1>
+        {/* <h1>{ctx.song.header.name}</h1> */}
+        <h1>Controls</h1>
       </hgroup>
-      <BoolVal
+      <NumBool
         label="sound"
         value={settings.volume > 0}
         onChange={(value) =>
           value ? settings.setVolume(0.5) : settings.setVolume(0)
         }
       />
-      <BoolVal
+      <NumBool
         label="sheet-notation"
         value={settings.sheetNotation}
         onChange={settings.setSheetNotation}
@@ -119,25 +131,25 @@ function NumVal(props: {
   );
 }
 
-function BoolVal(props: {
+export function NumBool(props: {
   label: string;
   value: boolean;
   onChange: (value: boolean) => void;
 }) {
   const id = useId();
   return (
-    <div className="flex items-center gap-2 mt-2">
-      <label className="flex-1" htmlFor={id}>
-        {props.label}
-      </label>
-      <div className="w-1/5">
-        <input
-          id={id}
-          type="checkbox"
-          checked={props.value}
-          onChange={(ev) => props.onChange(ev.currentTarget.checked)}
-        />
-      </div>
-    </div>
+    <label
+      data-input-checkbox
+      className="flex items-center gap-2 mt-2 select-none"
+    >
+      <span className="label flex-1">{props.label}</span>
+      <input
+        id={id}
+        type="checkbox"
+        checked={props.value}
+        onChange={(ev) => props.onChange(ev.currentTarget.checked)}
+      />
+      <span className="w-1/5 checkbox ">{props.value ? "ON" : "OFF"}</span>
+    </label>
   );
 }

@@ -4,6 +4,12 @@
   --midi-input-bg-color: #63625d;
   --midi-input-active-bg-color: #3c3b36; */
 
+  position: absolute;
+  bottom: 0;
+  right: 15px;
+  width: 200px;
+  z-index: 99;
+
   --midi-fg-color: #f5f4f0;
   --midi-bg-color: #1c191a;
   --midi-active-fg-color: gold;
@@ -13,5 +19,4 @@
   color: var(--midi-fg-color);
   background-color: var(--midi-bg-color);
   border-left: 1px solid black;
-  height: 100%;
 }

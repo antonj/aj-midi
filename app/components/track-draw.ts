@@ -229,12 +229,14 @@ export function trackDraw(
 
     const note = midiToNote(n.midi);
     ctx.fillStyle = isBlack(note) ? "black" : "white";
-    ctx.strokeStyle = "rgba(0,0,0, 1)";
     ctx.lineWidth = 1;
 
     const isOn = tick >= n.ticks && tick <= n.ticks + n.durationTicks;
     if (isOn) {
       ctx.fillStyle = "gold";
+      ctx.strokeStyle = "black";
+    } else {
+      ctx.strokeStyle = isBlack(note) ? "white" : "black";
     }
     const noteHeight = Math.abs(yTop - yBottom);
     x = pixelRound(x);
