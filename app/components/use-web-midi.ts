@@ -24,10 +24,12 @@ export const useDevicesStore = create<{
         .requestMIDIAccess()
         .then((access) => {
           console.log("access", access);
-          set((state) => ({ ...state, state: "fetched devices" }));
           // Get lists of available MIDI controllers
           const inputs = access.inputs.values();
-          set(() => ({ devices: Array.from(inputs) }));
+          set(() => ({
+            devices: Array.from(inputs),
+            state: "fetched devices",
+          }));
           access.onstatechange = (event) => {
             const inputs = access.inputs.values();
             set(() => ({ devices: Array.from(inputs) }));
