@@ -23,63 +23,70 @@ export function Panel() {
   const settings = useSettings((s) => s);
   const devices = useWebMidiDevices();
   const x = useDevicesStore();
+  const [hidden, setHidden] = useState(false);
 
   return (
-    <div data-panel className="p-2 font-bold">
-      {x.state}
-      <br />
-      {devices.map((d) => (
-        <div key={d.id}>{d.name}</div>
-      ))}
-      <hgroup>
-        {/* <h1>{ctx.song.header.name}</h1> */}
+    <div data-panel className="font-bold">
+      <section className={`p-2 font-bold ${hidden ? "hidden" : ""}`}>
+        <div>
+          {x.state}
+          <br />
+          {devices.map((d) => (
+            <div key={d.id}>{d.name}</div>
+          ))}
+        </div>
+        <NumBool
+          label="sound"
+          value={settings.volume > 0}
+          onChange={(value) =>
+            value ? settings.setVolume(0.5) : settings.setVolume(0)
+          }
+        />
+        <NumBool
+          label="sheet-notation"
+          value={settings.sheetNotation}
+          onChange={settings.setSheetNotation}
+        />
+        <NumVal
+          label="speed"
+          value={settings.speed}
+          onChange={settings.setSpeed}
+          min={0}
+          max={3}
+          step={0.01}
+        />
+        <NumVal
+          label="tick-window"
+          value={settings.tickWindow}
+          onChange={settings.setTickWindow}
+          min={0}
+          max={ctx.ticksPerBar * 10}
+          step={1}
+        />
+        <NumVal
+          label="repeat-bars"
+          value={settings.repeatBars}
+          onChange={settings.setRepeatBars}
+          min={0}
+          max={8}
+          step={1}
+        />
+        <NumVal
+          label="repeat-bars-warmup"
+          value={settings.repeatBarsWarmup}
+          onChange={settings.setRepeatBarsWarmup}
+          min={0}
+          max={8}
+          step={1}
+        />
+        <NumBar />
+      </section>
+      <hgroup
+        className="font-bold p-2 cursor-pointer select-none"
+        onClick={() => setHidden((hidden) => !hidden)}
+      >
         <h1>Controls</h1>
       </hgroup>
-      <NumBool
-        label="sound"
-        value={settings.volume > 0}
-        onChange={(value) =>
-          value ? settings.setVolume(0.5) : settings.setVolume(0)
-        }
-      />
-      <NumBool
-        label="sheet-notation"
-        value={settings.sheetNotation}
-        onChange={settings.setSheetNotation}
-      />
-      <NumVal
-        label="speed"
-        value={settings.speed}
-        onChange={settings.setSpeed}
-        min={0}
-        max={3}
-        step={0.01}
-      />
-      <NumVal
-        label="tick-window"
-        value={settings.tickWindow}
-        onChange={settings.setTickWindow}
-        min={0}
-        max={ctx.ticksPerBar * 10}
-        step={1}
-      />
-      <NumVal
-        label="repeat-bars"
-        value={settings.repeatBars}
-        onChange={settings.setRepeatBars}
-        min={0}
-        max={8}
-        step={1}
-      />
-      <NumVal
-        label="repeat-bars-warmup"
-        value={settings.repeatBarsWarmup}
-        onChange={settings.setRepeatBarsWarmup}
-        min={0}
-        max={8}
-        step={1}
-      />
-      <NumBar />
     </div>
   );
 }
