@@ -35,6 +35,7 @@ export function Panel() {
             <div key={d.id}>{d.name}</div>
           ))}
         </div>
+        <a href="/">Home</a>
         <NumBool
           label="sound"
           value={settings.volume > 0}
