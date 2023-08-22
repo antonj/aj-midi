@@ -8,10 +8,14 @@ export const useDevicesStore = create<{
   setDevices: (devices: Array<WebMidi.MIDIInput>) => void;
   state: "" | "requesting" | "fetched devices" | "no midi support";
   requestMIDIAccess: () => void;
+  pressed: Map<number, Note>;
+  setPressed: (pressed: Map<number, Note>) => void;
 }>((set, get) => ({
-  devices: [],
-  setDevices: (devices: Array<WebMidi.MIDIInput>) => set(() => ({ devices })),
   state: "",
+  devices: [],
+  setDevices: (devices) => set(() => ({ devices })),
+  pressed: new Map<number, Note>(),
+  setPressed: (pressed) => set(() => ({ pressed })),
   requestMIDIAccess: () => {
     const store = get();
     if (store.state !== "") {
@@ -62,7 +66,10 @@ export function useMidiInput() {
   const devices = useWebMidiDevices();
   const d = devices[0];
   const player = useRef<Player>();
-  const [pressed, setPressed] = useState(new Map<number, Note>());
+  const { pressed, setPressed } = useDevicesStore((state) => ({
+    pressed: state.pressed,
+    setPressed: state.setPressed,
+  }));
   useEffect(() => {
     player.current = new Player();
     player.current.setVolume(1);
@@ -92,6 +99,6 @@ export function useMidiInput() {
       }
       setPressed(new Map(notes));
     };
-  }, [d]);
+  }, [d, setPressed]);
   return pressed;
 }

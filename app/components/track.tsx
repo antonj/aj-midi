@@ -11,6 +11,7 @@ import { trackDraw, miniMapWidthRatio } from "./track-draw";
 import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
 import { trackDrawBg } from "./track-draw-bg";
 import { Keyboard, links as keyboardLinks } from "./keyboard";
+import { useDevicesStore } from "./use-web-midi";
 
 export function links() {
   return keyboardLinks();
@@ -81,6 +82,8 @@ export function Track() {
   const setStart = useSettings((s) => s.setStart);
   const setTickWindow = useSettings((s) => s.setTickWindow);
 
+  const pressedNotes = useDevicesStore((state) => state.pressed);
+
   const tones = useToneDetector(detect);
   const sDetected = new Set(tones);
   const tickToneRef = useRef(new Map<number, Set<number>>());
@@ -119,7 +122,7 @@ export function Track() {
       }
       fixDpr(canvasSheetEl, canvasSheetElSize.current);
       if (songCtx.sheetNotation) {
-        drawTrackSheet(ctx, tick, songCtx);
+        drawTrackSheet(ctx, tick, songCtx, pressedNotes);
       }
     }
   });

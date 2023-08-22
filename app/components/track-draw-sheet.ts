@@ -10,7 +10,7 @@ import {
 } from "../util/music";
 import type { KeySignature } from "../util/music";
 import type { SongSettingsExtended } from "./use-song-ticker";
-import type { Note } from "@tonejs/midi/dist/Note";
+import type { Note } from "./use-song-sounds";
 
 type TickNumber = number;
 
@@ -88,7 +88,8 @@ function clefPosition(
 export function drawTrackSheet(
   ctx: CanvasRenderingContext2D,
   tick: number,
-  songExt: SongSettingsExtended
+  songExt: SongSettingsExtended,
+  pressed: Map<number, Note>
 ) {
   const { width: w, height: h } = ctx.canvas;
   const { high, low } = songExt.songCtx.octaves;
@@ -209,7 +210,12 @@ export function drawTrackSheet(
 
   // draw notes
   //let ticksPerPx = map(1, 0, tickWindow, 0, w);
-  let notesInView = new Array<Note>();
+  let notesInView = new Array<{
+    midi: number;
+    ticks: number;
+    durationTicks: number;
+    isFromInput?: boolean;
+  }>();
   for (const n of songExt.songCtx.pianoNotes) {
     if (n.ticks + n.durationTicks < minTick) {
       // out of bounds left
@@ -219,6 +225,14 @@ export function drawTrackSheet(
       continue;
     }
     notesInView.push(n);
+  }
+  for (const [, n] of pressed) {
+    notesInView.push({
+      ...n,
+      ticks: tick,
+      durationTicks: 0,
+      isFromInput: true,
+    });
   }
 
   let bar = -1;
@@ -280,7 +294,10 @@ export function drawTrackSheet(
     }
 
     const isOn = tick >= n.ticks && tick <= n.ticks + n.durationTicks;
-    if (isOn) {
+    if (n.isFromInput) {
+      ctx.fillStyle = "red";
+      ctx.strokeStyle = "red";
+    } else if (isOn) {
       ctx.fillStyle = "gold";
       ctx.strokeStyle = "gold";
     } else {
