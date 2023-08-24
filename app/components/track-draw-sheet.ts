@@ -63,10 +63,7 @@ function onStaffLine(n: number, ks: KeySignature) {
   return wIndex % 2 == whiteIndex(staffLinesBassClef[0]) % 2;
 }
 
-function clefPosition(
-  n: number,
-  ks: KeySignature
-): "over" | "under" | "between" | "in-clef" {
+function clefPosition(n: number): "over" | "under" | "between" | "in-clef" {
   // over top staff line
   if (n > staffLinesTrebleClef[staffLinesTrebleClef.length - 1]) {
     return "over";
@@ -258,7 +255,7 @@ export function drawTrackSheet(
         ctx.stroke();
         ctx.closePath();
       }
-      if (clefPosition(n.midi, ks) !== "in-clef") {
+      if (clefPosition(n.midi) !== "in-clef") {
         const before = extraStafflines.get(n.ticks) || {
           high: staffLinesTrebleClef[staffLinesTrebleClef.length - 1],
           low: staffLinesBassClef[0],
@@ -286,8 +283,10 @@ export function drawTrackSheet(
             break;
           }
           default:
-            // middle c
-            drawExtraStaff(n.midi);
+            // between
+            if (onStaffLine(n.midi, ks)) {
+              drawExtraStaff(n.midi);
+            }
             break;
         }
       }
