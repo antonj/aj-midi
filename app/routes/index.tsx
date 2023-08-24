@@ -2,8 +2,6 @@ import { Midi } from "@tonejs/midi";
 import { useEffect, useState } from "react";
 import { Track, links as trackLinks } from "../components/track";
 import { SongProvider } from "../components/context-song";
-
-import { Settings } from "~/components/settings";
 import { useSongSound } from "../components/use-song-sounds";
 import { useSearchParams } from "@remix-run/react";
 import { createScalesMidi } from "~/util/create-scales-midi";
@@ -33,46 +31,118 @@ function SongPicker() {
   }
 
   return (
-    <div>
+    <ul>
       {[
-        { name: "Moon 1", url: "/static/midi/moon_1.midi" },
-        { name: "Moon 2", url: "/static/midi/moon_2.midi" },
-        { name: "Moon 3", url: "/static/midi/moon_3.midi" },
-        { name: "Visa från Utmyra", url: "/static/midi/utmyra.midi" },
-        { name: "Visa från Rättvik", url: "/static/midi/rattvik.midi" },
-        { name: "Elise", url: "/static/midi/elise.midi" },
         {
-          name: "A Whiter Shade of Pale",
-          url: "/static/midi/a_whiter_shade_of_pale.midi",
+          artist: "Felix Mendelssohn",
+          title:
+            "Lieder ohne Worte: Book VI, Op. 67: No. 2, Allegro leggiero, MWV U145",
+          url: "/static/midi/mendelssohn_opus_67_no_2_and_no_32.midi",
         },
         {
-          name: "Chopin - Nocturne",
+          artist: "Ludwig van Beethoven",
+          title:
+            'Piano Sonata No. 14, Op. 27 No. 2, "Moonlight": I. Adagio sostenuto',
+          url: "/static/midi/moon_1.midi",
+        },
+        {
+          artist: "Ludwig van Beethoven",
+          title:
+            'Piano Sonata No. 14, Op. 27 No. 2, "Moonlight": II. Allegretto',
+
+          url: "/static/midi/moon_2.midi",
+        },
+        {
+          artist: "Ludwig van Beethoven",
+          title:
+            'Piano Sonata No. 14, Op. 27 No. 2, "Moonlight": III. Presto agitato',
+          url: "/static/midi/moon_3.midi",
+        },
+        {
+          artist: "Ludwig van Beethoven",
+          title: "Für Elise",
+          url: "/static/midi/elise.midi",
+        },
+        {
+          artist: "Frédéric Chopin",
+          title: "Nocturne in B-Flat Minor, Op. 9, No. 1",
           url: "/static/midi/chopin_nocturneop9nr1.midi",
         },
-        { name: "Holy Night", url: "/static/midi/o_holy_night.midi" },
-        { name: "Waltz", url: "/static/midi/blue-danube-waltz-strauss.midi" },
-        { name: "Super Mario", url: "https://bitmidi.com/uploads/72257.mid" },
-        { name: "Jingle Bells", url: "https://bitmidi.com/uploads/35143.mid" },
-        { name: "Still Dre", url: "https://bitmidi.com/uploads/41197.mid" },
-        { name: "Tetris", url: "https://bitmidi.com/uploads/100444.mid" },
+        {
+          artist: "Jan Johansson",
+          title: "Visa från Utmyra",
+          url: "/static/midi/utmyra.midi",
+        },
+        {
+          artist: "Jan Johansson",
+          title: "Visa från Rättvik",
+          url: "/static/midi/rattvik.midi",
+        },
+
+        {
+          artist: "Procol Harum",
+          title: "A Whiter Shade of Pale",
+          url: "/static/midi/a_whiter_shade_of_pale.midi",
+        },
+
+        {
+          artist: "",
+          title: "Holy Night",
+          url: "/static/midi/o_holy_night.midi",
+        },
+        {
+          artist: "",
+          title: "Waltz",
+          url: "/static/midi/blue-danube-waltz-strauss.midi",
+        },
+        {
+          artist: "",
+          title: "Super Mario",
+          url: "https://bitmidi.com/uploads/72257.mid",
+        },
+        {
+          artist: "",
+          title: "Jingle Bells",
+          url: "https://bitmidi.com/uploads/35143.mid",
+        },
+        {
+          artist: "Dr Dre",
+          title: "Still Dre",
+          url: "https://bitmidi.com/uploads/41197.mid",
+        },
+        {
+          artist: "",
+          title: "Tetris",
+          url: "https://bitmidi.com/uploads/100444.mid",
+        },
       ].map((s) => {
         return (
-          <a key={s.url} href={`/?file=${s.url}`} className="block">
-            {s.name}
-          </a>
+          <li key={s.url} className="pb-4">
+            <a href={`/?file=${s.url}`} className="block hover:text-accent">
+              <h3 className="font-bold underline">{s.title}</h3>
+              <span>{s.artist || "-"}</span>
+            </a>
+          </li>
         );
       })}
-      <input
-        type="file"
-        accept="audio/midi"
-        onChange={(e) => {
-          if (e.target.files && e.target.files.length > 0) {
-            const file = e.target.files[0];
-            setFile(URL.createObjectURL(file));
-          }
-        }}
-      />
-    </div>
+      <li className="pb-4">
+        <label className="block font-bold underline hover:text-accent cursor-pointer">
+          Upload MIDI
+          <br />
+          <input
+            className="pt-2"
+            type="file"
+            accept="audio/midi"
+            onChange={(e) => {
+              if (e.target.files && e.target.files.length > 0) {
+                const file = e.target.files[0];
+                setFile(URL.createObjectURL(file));
+              }
+            }}
+          />
+        </label>
+      </li>
+    </ul>
   );
 }
 
@@ -112,5 +182,9 @@ export default function Index() {
   if (file) {
     return <Song file={file} />;
   }
-  return <SongPicker />;
+  return (
+    <main className="p-8">
+      <SongPicker />
+    </main>
+  );
 }
