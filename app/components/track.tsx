@@ -1,17 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { AjScroller } from "../util/aj-scroller";
-import { clamp, map } from "../util/map";
+import { map } from "../util/map";
 import { Scroller } from "../util/scroller";
 import { useGestureDetector } from "./use-gesture-detector";
 import { useSongCtx } from "./context-song";
 import { useToneDetector } from "./use-tone-detector";
-import { useSettings } from "./context-settings";
 import { useSongTicker } from "./use-song-ticker";
 import { trackDraw, miniMapWidthRatio } from "./track-draw";
 import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
 import { trackDrawBg } from "./track-draw-bg";
 import { Keyboard, links as keyboardLinks } from "./keyboard";
 import { useDevicesStore } from "./use-web-midi";
+import { usePlayContext } from "./use-play-context";
+import { useEnginge } from "./context-valtio";
+import { useSnapshot } from "valtio";
 
 export function links() {
   return keyboardLinks();
@@ -38,11 +40,10 @@ function fixDpr(
 }
 
 function useElementSize(elem: HTMLElement | null) {
-  const bounds = useRef<{ width: number; height: number }>({
-    width: 0,
-    height: 0,
-  });
-  if (bounds.current == undefined && elem) {
+  const bounds = useRef<{ width: number; height: number }>();
+  if (elem == null) {
+    bounds.current = { width: 0, height: 0 };
+  } else if (!bounds.current) {
     bounds.current = elem.getBoundingClientRect();
   }
 
@@ -68,7 +69,9 @@ function useElementSize(elem: HTMLElement | null) {
 
 export function Track() {
   const { song, ticksPerBar } = useSongCtx();
-  const sheetNotation = useSettings((s) => s.sheetNotation);
+  const engine = useEnginge();
+  const showSheetNotation = useSnapshot(engine).sheetNotation;
+
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
   const [canvasBgEl, setCanvasBgEl] = useState<HTMLCanvasElement | null>(null);
   const [canvasSheetEl, setCanvasSheetEl] = useState<HTMLCanvasElement | null>(
@@ -77,55 +80,52 @@ export function Track() {
   const canvasElSize = useElementSize(canvasEl);
   const canvasBgElSize = useElementSize(canvasBgEl);
   const canvasSheetElSize = useElementSize(canvasSheetEl);
-  const detect = useSettings((s) => s.detect);
-  const tickWindow = useSettings((s) => s.tickWindow);
-  const setStart = useSettings((s) => s.setStart);
-  const setTickWindow = useSettings((s) => s.setTickWindow);
 
   const pressedNotes = useDevicesStore((state) => state.pressed);
+  usePlayContext();
 
-  const tones = useToneDetector(detect);
+  const tones = useToneDetector(engine.detect);
   const sDetected = new Set(tones);
   const tickToneRef = useRef(new Map<number, Set<number>>());
-  const tickRef = useRef(0);
-  const tickWindowRef = useRef(tickWindow);
   const scrollerRef = useRef(Scroller());
 
-  useSongTicker(function trackTicker(tick, songCtx) {
-    tickRef.current = tick;
-    tickToneRef.current.set(tick, sDetected);
-    if (canvasBgEl) {
-      let ctx = canvasBgEl.getContext("2d", { alpha: false });
-      if (!ctx) {
-        return;
+  useSongTicker(
+    function trackTicker(tick, songCtx) {
+      tickToneRef.current.set(tick, sDetected);
+      if (canvasBgEl) {
+        let ctx = canvasBgEl.getContext("2d", { alpha: false });
+        if (!ctx) {
+          return;
+        }
+        const changed = fixDpr(canvasBgEl, canvasBgElSize.current);
+        if (changed) {
+          trackDrawBg(ctx, songCtx);
+        }
       }
-      const changed = fixDpr(canvasBgEl, canvasBgElSize.current);
-      if (changed) {
-        trackDrawBg(ctx, songCtx);
+      {
+        if (!canvasEl) {
+          return;
+        }
+        let ctx = canvasEl.getContext("2d", { alpha: true });
+        if (!ctx) {
+          return;
+        }
+        fixDpr(canvasEl, canvasElSize.current);
+        trackDraw(ctx, tick, songCtx, tickToneRef.current);
       }
-    }
-    {
-      if (!canvasEl) {
-        return;
+      if (canvasSheetEl) {
+        let ctx = canvasSheetEl.getContext("2d", { alpha: false });
+        if (!ctx) {
+          return;
+        }
+        fixDpr(canvasSheetEl, canvasSheetElSize.current);
+        if (songCtx.sheetNotation) {
+          drawTrackSheet(ctx, tick, songCtx, pressedNotes);
+        }
       }
-      let ctx = canvasEl.getContext("2d", { alpha: true });
-      if (!ctx) {
-        return;
-      }
-      fixDpr(canvasEl, canvasElSize.current);
-      trackDraw(ctx, tick, songCtx, tickToneRef.current);
-    }
-    if (canvasSheetEl) {
-      let ctx = canvasSheetEl.getContext("2d", { alpha: false });
-      if (!ctx) {
-        return;
-      }
-      fixDpr(canvasSheetEl, canvasSheetElSize.current);
-      if (songCtx.sheetNotation) {
-        drawTrackSheet(ctx, tick, songCtx, pressedNotes);
-      }
-    }
-  });
+    },
+    [canvasEl, canvasSheetEl, canvasBgEl]
+  );
 
   useGestureDetector(canvasEl, (ev) => {
     switch (ev.kind) {
@@ -137,8 +137,7 @@ export function Track() {
           if (x < miniMapWidthRatio) {
             let y = map(ev.data.y, 0, ev.data.height, 0, 1);
             let yy = map(y, 1, 0, 0, song.durationTicks, true);
-            tickRef.current = yy;
-            setStart(yy);
+            engine.seek(yy);
           }
         }
         break;
@@ -149,20 +148,17 @@ export function Track() {
           if (x < miniMapWidthRatio) {
             let y = map(ev.data.y, 0, ev.data.height, 0, 1);
             let yy = map(y, 1, 0, 0, song.durationTicks, true);
-            tickRef.current = yy;
-            setStart(yy);
+            engine.seek(yy);
           } else {
-            let dt = map(ev.data.dy, 0, ev.data.height, 0, tickWindow);
-            tickRef.current = tickRef.current + dt;
-            setStart(tickRef.current);
+            let dt = map(ev.data.dy, 0, ev.data.height, 0, engine.tickWindow);
+            engine.seek(engine.tick + dt);
           }
         }
         break;
       case "wheel drag":
         {
-          let dt = map(ev.data.dy, 0, ev.data.height, 0, tickWindow);
-          tickRef.current = tickRef.current + dt;
-          setStart(tickRef.current);
+          let dt = map(ev.data.dy, 0, ev.data.height, 0, engine.tickWindow);
+          engine.seek(engine.tick + dt);
         }
         break;
       case "fling":
@@ -178,10 +174,10 @@ export function Track() {
                 const y = scrollerRef.current.getCurrY();
                 let dy = y - prevY;
                 prevY = y;
-                let dt = map(dy, 0, h, 0, tickWindow);
+                let dt = map(dy, 0, h, 0, engine.tickWindow);
 
-                const start = tickRef.current + dt;
-                setStart(start);
+                const start = engine.tick + dt;
+                engine.seek(start);
                 requestAnimationFrame(anim);
               }
             }
@@ -195,9 +191,8 @@ export function Track() {
                 const y = info.y;
                 let dy = y - prevY;
                 prevY = y;
-                let dt = map(dy, 0, h, 0, tickWindow);
-                tickRef.current = tickRef.current + dt;
-                setStart(tickRef.current);
+                let dt = map(dy, 0, h, 0, engine.tickWindow);
+                engine.seek(engine.tick + dt);
                 requestAnimationFrame(anim);
               }
             }
@@ -211,8 +206,8 @@ export function Track() {
           const y1 = ev.data.still.y;
           const y2 = ev.data.moving.y;
           const dy = ev.data.moving.dy;
-          let tickWindow = tickWindowRef.current;
-          let startTick = tickRef.current;
+          let tickWindow = engine.tickWindow;
+          let startTick = engine.tick;
           const zoomPoint = map(ev.data.still.y, h, 0, 0, tickWindow); // zoom around still finger
           const d1 = Math.abs(y1 - (y2 + dy)); // distance before
           const d2 = Math.abs(y1 - y2); // distance after
@@ -224,24 +219,20 @@ export function Track() {
           ) {
             return;
           }
-          tickWindowRef.current = windowScaled;
-          tickRef.current = startTick + zoomPoint * (1 - scale);
-          setTickWindow(tickWindowRef.current);
-          setStart(tickRef.current);
+          engine.tickWindow = windowScaled;
+          engine.seek(startTick + zoomPoint * (1 - scale));
         }
         break;
       case "zoom":
         {
           const h = ev.data.height;
           const dy = ev.data.dy;
-          let tickWindow = tickWindowRef.current;
-          let startTick = tickRef.current;
+          let tickWindow = engine.tickWindow;
+          let startTick = engine.tick;
           const zoomPoint = map(ev.data.y, h, 0, 0, tickWindow); // zoom around still finger
           const scale = 1 + map(dy, 0, 10, 0, -0.05); // tweak
-          tickWindowRef.current = scale * tickWindow;
-          setTickWindow(tickWindowRef.current);
-          tickRef.current = startTick + zoomPoint * (1 - scale);
-          setStart(tickRef.current);
+          engine.tickWindow = scale * tickWindow;
+          engine.seek(startTick + zoomPoint * (1 - scale));
         }
         break;
     }
@@ -262,9 +253,9 @@ export function Track() {
             0,
             ev.data.width,
             0,
-            sheetTickWindow(tickWindow)
+            sheetTickWindow(engine.tickWindow)
           );
-          setStart(tickRef.current - dt);
+          engine.seek(engine.tick - dt);
         }
         break;
       case "fling":
@@ -279,9 +270,8 @@ export function Track() {
             const x = scrollerRef.current.getCurrX();
             let dx = x - prevX;
             prevX = x;
-            let dt = map(dx, 0, w, 0, tickWindow);
-            const start = tickRef.current + dt;
-            setStart(start);
+            let dt = map(dx, 0, w, 0, engine.tickWindow);
+            engine.seek(engine.tick + dt);
             requestAnimationFrame(anim);
           }
           requestAnimationFrame(anim);
@@ -308,7 +298,7 @@ export function Track() {
         <Keyboard />
       </div>
 
-      {sheetNotation ? (
+      {showSheetNotation ? (
         <div className="h-1/3 bg-secondary touch-none relative">
           <canvas
             key={"canvas-sheet"}

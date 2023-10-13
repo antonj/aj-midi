@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Player } from "./use-song-sounds";
 import type { Note } from "./use-song-sounds";
 import { create } from "zustand";
@@ -21,9 +21,8 @@ export const useDevicesStore = create<{
     if (store.state !== "") {
       return;
     }
-    set((state) => ({ ...state, state: "requesting" }));
-
     if ("requestMIDIAccess" in navigator) {
+      set(() => ({ state: "requesting" }));
       navigator
         .requestMIDIAccess()
         .then((access) => {
@@ -35,6 +34,7 @@ export const useDevicesStore = create<{
             state: "fetched devices",
           }));
           access.onstatechange = (event) => {
+            console.log("onstatechange", event);
             const inputs = access.inputs.values();
             set(() => ({ devices: Array.from(inputs) }));
             // Print information about the (dis)connected MIDI controller
@@ -49,7 +49,7 @@ export const useDevicesStore = create<{
           console.error("failed to get midi", e);
         });
     } else {
-      set((state) => ({ ...state, sate: "no midi support" }));
+      set(() => ({ state: "no midi support" }));
     }
   },
 }));

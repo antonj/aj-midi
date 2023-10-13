@@ -1,6 +1,7 @@
+import type { Midi } from "@tonejs/midi";
 import type { KeySignatureEvent } from "@tonejs/midi/dist/Header";
 
-export type Note = typeof notes[number];
+export type Note = (typeof notes)[number];
 
 export const notes = [
   "C",
@@ -47,7 +48,7 @@ export const notesWithFlats = [
   "Bb",
   "B",
 ] as const;
-type NoteWithFlat = Note | typeof notesWithFlats[number];
+type NoteWithFlat = Note | (typeof notesWithFlats)[number];
 
 type Accidental = "sharp" | "flat";
 
@@ -225,4 +226,10 @@ export function whiteIndexInOctave(index: number) {
     default:
       throw new Error("index out of bounds");
   }
+}
+
+export function getTicksPerBar(song: Midi): number {
+  let [x, y] = song.header.timeSignatures[0].timeSignature; // TODO handle all timeSignatures
+  let equivalentQuarterNotes = x * (4 / y);
+  return song.header.ppq * equivalentQuarterNotes; /* ticks per quarter note */
 }

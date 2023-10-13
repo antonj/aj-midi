@@ -6,6 +6,7 @@ import {
   numWhiteInOctate,
   toMidiTone,
 } from "../util/music";
+import { MidiEngine } from "./midi-valtio";
 import {
   blackWidthRatio,
   mapRound,
@@ -13,11 +14,10 @@ import {
   pixelRound,
   xCenterInPiano,
 } from "./track-draw";
-import { SongSettingsExtended } from "./use-song-ticker";
 
 export function trackDrawBg(
   ctx: CanvasRenderingContext2D,
-  songExt: SongSettingsExtended
+  songExt: MidiEngine
 ) {
   const { width: w, height: h } = ctx.canvas;
   ctx.clearRect(0, 0, w, h);
@@ -25,7 +25,7 @@ export function trackDrawBg(
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, w, h);
 
-  const { octaves } = songExt.songCtx.octaves;
+  const { octaves } = songExt.song.octaves;
 
   const minMidi = toMidiTone(octaves[0], 0);
   const maxMidi = toMidiTone(octaves[octaves.length - 1], numNotesInOctave - 1);
@@ -63,7 +63,7 @@ export function trackDrawBg(
       const note = midiToNote(midi);
       let x = xCenterInPiano(midi, octaves, 0, w, whiteWidthPx);
       switch (note) {
-        case "f": {
+        case "F": {
           ctx.lineWidth = 1;
           ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
           x = x - whiteWidthPx / 2;
@@ -88,7 +88,7 @@ export function trackDrawBg(
   const whiteWidthMini = miniWidthPx / numWhites;
   const blackWidthMini = blackWidthRatio * whiteWidthMini;
   const minTickMiniPx = 0;
-  const maxTickMiniPx = songExt.songCtx.song.durationTicks;
+  const maxTickMiniPx = songExt.song.song.durationTicks;
 
   // minimap
   if (true) {
@@ -97,7 +97,7 @@ export function trackDrawBg(
     for (
       let barTick = 0;
       barTick < maxTickMiniPx;
-      barTick = barTick + songExt.songCtx.ticksPerBar
+      barTick = barTick + songExt.song.ticksPerBar
     ) {
       ctx.lineWidth = 2;
       ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
@@ -106,7 +106,7 @@ export function trackDrawBg(
     }
 
     // draw notes
-    for (const n of songExt.songCtx.pianoNotes) {
+    for (const n of songExt.song.pianoNotes) {
       const note = midiToNote(n.midi);
       const noteHeight = h / (maxTickMiniPx / n.durationTicks);
       let x = xCenterInPiano(

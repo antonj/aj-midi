@@ -9,8 +9,8 @@ import {
   whiteIndexInOctave,
 } from "../util/music";
 import type { KeySignature } from "../util/music";
-import type { SongSettingsExtended } from "./use-song-ticker";
 import type { Note } from "./use-song-sounds";
+import { MidiEngine } from "./midi-valtio";
 
 type TickNumber = number;
 
@@ -85,22 +85,22 @@ function clefPosition(n: number): "over" | "under" | "between" | "in-clef" {
 export function drawTrackSheet(
   ctx: CanvasRenderingContext2D,
   tick: number,
-  songExt: SongSettingsExtended,
+  songExt: MidiEngine,
   pressed: Map<number, Note>
 ) {
   const { width: w, height: h } = ctx.canvas;
-  const { high, low } = songExt.songCtx.octaves;
+  const { high, low } = songExt.song.octaves;
   const tickWindow = sheetTickWindow(songExt.tickWindow);
-  const minTick = Math.floor(tick - tickWindow * tickHistoryRatio);
-  const maxTick = Math.floor(minTick + tickWindow);
+  const minTick = tick - tickWindow * tickHistoryRatio;
+  const maxTick = minTick + tickWindow;
 
   let kse: KeySignatureEvent | undefined;
   for (
-    let l = songExt.songCtx.song.header.keySignatures.length, i = l - 1;
+    let l = songExt.song.song.header.keySignatures.length, i = l - 1;
     i >= 0;
     i--
   ) {
-    const ks = songExt.songCtx.song.header.keySignatures[i];
+    const ks = songExt.song.song.header.keySignatures[i];
     // 101 in [ 0 , 100, 200, 300] => 100
     if (ks.ticks < Math.max(1, tick)) {
       kse = ks;
@@ -136,9 +136,9 @@ export function drawTrackSheet(
   let midiMin = 21; // 88 keys
   let midiMax = 108; // 88 keys
   if (true) {
-    midiMin = toWhiteMidi(Math.min(low - 2, lineNotes[0]), -1);
+    midiMin = toWhiteMidi(Math.min(low, lineNotes[0]) - 4, -1);
     midiMax = toWhiteMidi(
-      Math.max(high + 2, lineNotes[lineNotes.length - 1] + 8),
+      Math.max(high, lineNotes[lineNotes.length - 1]) + 4,
       1
     );
   }
@@ -181,7 +181,7 @@ export function drawTrackSheet(
     for (
       let barTick = 0;
       barTick < maxTick;
-      barTick = barTick + songExt.songCtx.ticksPerBar
+      barTick = barTick + songExt.song.ticksPerBar
     ) {
       if (barTick < minTick) {
         continue;
@@ -190,12 +190,12 @@ export function drawTrackSheet(
         break;
       }
 
-      const bar = Math.floor(barTick / songExt.songCtx.ticksPerBar) + 1;
+      const bar = Math.floor(barTick / songExt.song.ticksPerBar) + 1;
       ctx.lineWidth = lineWidth * 1.5;
       ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
       // at bar
       let x =
-        map(barTick, minTick, maxTick, 0, w) - songExt.songCtx.ticksPerBar / 64; // - noteHeight put the bar lines to the left of the notes
+        map(barTick, minTick, maxTick, 0, w) - songExt.song.ticksPerBar / 64; // - noteHeight put the bar lines to the left of the notes
       ctx.beginPath();
       ctx.moveTo(x, barTopPbx);
       ctx.lineTo(x, barBottomPbx);
@@ -213,7 +213,7 @@ export function drawTrackSheet(
     durationTicks: number;
     isFromInput?: boolean;
   }>();
-  for (const n of songExt.songCtx.pianoNotes) {
+  for (const n of songExt.song.pianoNotes) {
     if (n.ticks + n.durationTicks < minTick) {
       // out of bounds left
       continue;
@@ -338,7 +338,7 @@ export function drawTrackSheet(
     //    remote accidental
     //
     // accidentals: sharps, TOOD flats and the other one
-    const currentBar = Math.floor(n.ticks / songExt.songCtx.ticksPerBar);
+    const currentBar = Math.floor(n.ticks / songExt.song.ticksPerBar);
     if (currentBar != bar) {
       barAccidentals.clear();
       bar = currentBar;

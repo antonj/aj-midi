@@ -1,72 +1,43 @@
-import { useRef } from "react";
-import { roundTo } from "../util/map";
-import { SongSettings, useSettings } from "./context-settings";
-import { SongCtx, useSongCtx } from "./context-song";
-import { usePrevious } from "./use-previous";
-import { useRequestAnimationFrame } from "./use-request-animation-frame";
+import { Midi } from "@tonejs/midi";
+import { useEffect, useRef } from "react";
+import { subscribeKey } from "valtio/utils";
+import type { SongCtx } from "./context-song";
+import { useEnginge } from "./context-valtio";
+import { MidiEngine } from "./midi-valtio";
 
-export type SongSettingsExtended = SongSettings & {
+export type SongSettingsExtended = {
+  speed: number;
+  tickStart: number;
+  repeatBars: number;
+  repeatBarsWarmup: number;
+  tickWindow: number;
+  volume: number;
+  detect: boolean;
+  sheetNotation: boolean;
+  song: Midi | null;
+  movingTimestamp: number;
+} & {
   songCtx: SongCtx;
   tickEnd: number;
   tickRepeatStart: number;
 };
 
-type TickerCallback = (tick: number, songCtx: SongSettingsExtended) => void;
+type TickerCallback = (tick: number, songCtx: MidiEngine) => void;
 
 export function useSongTicker(
   onTick: TickerCallback,
-  onStateChange?: (state: "started" | "stopped") => void
+  deps: Array<unknown> = []
 ) {
-  const songCtx = useSongCtx();
-  const ctx = useSettings((s) => s);
-  const {
-    ticksPerBar,
-    bpm,
-    song: {
-      durationTicks,
-      header: { ppq },
-    },
-  } = songCtx;
-
-  const tickRef = useRef(ctx.tickStart);
-
-  const tickEnd =
-    ctx.repeatBars === 0
-      ? durationTicks
-      : roundTo(
-          Math.max(0, ctx.tickStart) + ctx.repeatBars * ticksPerBar,
-          ticksPerBar
-        );
-
-  const ctxExtended: SongSettingsExtended = {
-    ...ctx,
-    songCtx,
-    tickEnd,
-    tickRepeatStart: !ctx.repeatBars
-      ? 0
-      : tickEnd - ctx.repeatBars * ticksPerBar,
-  };
-
-  const prevStart = usePrevious(ctx.tickStart);
-  // seek
-  if (ctx.tickStart !== prevStart) {
-    tickRef.current = ctx.tickStart;
+  const ctx = useEnginge();
+  const callbackRef = useRef(onTick);
+  if (onTick != callbackRef.current) {
+    callbackRef.current = onTick;
   }
 
-  useRequestAnimationFrame(function songTicker(deltaMs) {
-    let msPerTick = (60 * 1000) / (bpm * ppq);
-    msPerTick /= ctx.speed;
-    let tick = tickRef.current + deltaMs / msPerTick;
-
-    if (tick > ctxExtended.tickEnd && ctx.tickStart < ctxExtended.tickEnd) {
-      // reset to start
-      if (ctxExtended.repeatBars > 0) {
-        tick = ctxExtended.tickRepeatStart - ctx.repeatBarsWarmup * ticksPerBar;
-      } else {
-        tick = roundTo(ctx.tickStart, ticksPerBar) - ticksPerBar;
-      }
-    }
-    tickRef.current = tick;
-    onTick(tickRef.current, ctxExtended);
-  }, onStateChange);
+  useEffect(() => {
+    callbackRef.current(ctx.tick, ctx); // always draw first then only onchanges
+    return subscribeKey(ctx, "rid", () => {
+      callbackRef.current(ctx.tick, ctx);
+    });
+  }, deps);
 }

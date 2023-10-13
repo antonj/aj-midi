@@ -1,9 +1,11 @@
 import type { Midi } from "@tonejs/midi";
-import { createContext, useContext, useRef } from "react";
+import { createContext, useContext, useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import { createStore, useStore } from "zustand";
-import { debounce } from "../util/debounce";
+import { debounce } from "~/util/debounce";
 import type { SongCtx } from "./context-song";
+import { getTicksPerBar } from "~/util/music";
+import { MidiEngine } from "./midi-engine";
 
 export type SongSettings = {
   speed: number;
@@ -67,8 +69,7 @@ type SettingsInitial = {
 };
 
 function createSettingsStore(song: Midi) {
-  const ticksPerBar =
-    song.header.timeSignatures[0].timeSignature[0] * song.header.ppq;
+  const ticksPerBar = getTicksPerBar(song);
   /* function tickToBar(tick: number) {
    *   return Math.floor(tick / ticksPerBar);
    * }
@@ -100,6 +101,7 @@ function createSettingsStore(song: Midi) {
   };
 
   return createStore<SongSettings>()((set, get) => {
+    console.log("create store yo");
     function updateQuery() {
       const url = new URL(window.location.href);
       url.searchParams.set("speed", get().speed.toString());
@@ -130,42 +132,41 @@ function createSettingsStore(song: Midi) {
       sheetNotation: settings.sheetNotation,
       song: song,
       movingTimestamp: 0,
-      setSong: (song: Midi) => set((s) => ({ ...s, song })),
+      setSong: (song: Midi) => set(() => ({ song })),
       setSpeed: (speed: number) =>
         set((s) => {
           updateQueryDebounced();
-          return { ...s, speed };
+          return { speed };
         }),
-      setVolume: (volume: number) => set((s) => ({ ...s, volume })),
+      setVolume: (volume: number) => set(() => ({ volume })),
       setTickWindow: (tickWindow: number) =>
-        set((s) => {
+        set(() => {
           updateQueryDebounced();
-          return { ...s, tickWindow };
+          return { tickWindow };
         }),
       setStart: (tickStart: number) =>
-        set((s) => {
+        set(() => {
           updateQueryDebounced();
           return {
-            ...s,
             movingTimestamp: Date.now(),
             tickStart: tickStart,
           };
         }),
       setRepeatBars: (repeatBars: number) =>
-        set((s) => {
+        set(() => {
           updateQueryDebounced();
-          return { ...s, repeatBars };
+          return { repeatBars };
         }),
       setRepeatBarsWarmup: (repeatBarsWarmup: number) =>
-        set((s) => {
+        set(() => {
           updateQueryDebounced();
-          return { ...s, repeatBarsWarmup };
+          return { repeatBarsWarmup };
         }),
-      setDetect: (detect: boolean) => set((s) => ({ ...s, detect })),
+      setDetect: (detect: boolean) => set(() => ({ detect })),
       setSheetNotation: (sheetNotation: boolean) =>
-        set((s) => {
+        set(() => {
           updateQueryDebounced();
-          return { ...s, sheetNotation };
+          return { sheetNotation };
         }),
     };
   });

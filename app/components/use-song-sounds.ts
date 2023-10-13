@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
+import { useSnapshot } from "valtio";
 import { map } from "~/util/map";
 import { noteToFreq } from "../util/music";
-import { useSettings } from "./context-settings";
-import { useSongTicker } from "./use-song-ticker";
+import { useEnginge } from "./context-valtio";
+import { useVisibilityChange } from "./use-visibility-change";
 
 export type Note = {
   /**
@@ -16,9 +17,15 @@ export type Note = {
 };
 
 export function useSongSound() {
-  const volume = useSettings((s) => s.volume);
-  const speed = useSettings((s) => s.speed);
-  const lastMove = useSettings((s) => s.movingTimestamp);
+  const visible = useVisibilityChange();
+  const eng = useEnginge();
+  const state = useSnapshot(eng);
+
+  const volume = state.volume;
+  const speed = state.speed;
+  const lastMove = state.movingTimestamp;
+  const pressed = state.pressed;
+
   const player = useRef<Player>() as React.MutableRefObject<Player>;
   if (!player.current) {
     player.current = new Player();
@@ -55,28 +62,17 @@ export function useSongSound() {
     };
   }, [lastMove, volume, speed]);
 
-  useSongTicker(
-    function soundSongTicker(tick, ctx) {
-      const pressed = new Map<number, Note>();
-      for (const n of ctx.songCtx.pianoNotes) {
-        // current
-        if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
-          pressed.set(n.midi, n);
-        }
-      }
-      player.current.setTones(pressed);
-    },
-    (state) => {
-      switch (state) {
-        case "started":
-          player.current.ctx.resume();
-          break;
-        case "stopped":
-          player.current.ctx.suspend();
-          break;
-      }
+  useEffect(() => {
+    player.current.setTones(pressed);
+  }, [pressed]);
+
+  useEffect(() => {
+    if (visible) {
+      player.current.ctx.resume();
+    } else {
+      player.current.ctx.suspend();
     }
-  );
+  }, [visible]);
 }
 
 export class Player {

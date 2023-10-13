@@ -1,11 +1,8 @@
-import { useMemo, useState } from "react";
 import { isBlack, notes, toMidiTone } from "../util/music";
-
-import styles from "./keyboard.css";
-import { useSongCtx } from "./context-song";
-
 import { useMidiInput } from "./use-web-midi";
-import { useSongTicker } from "./use-song-ticker";
+import { useEnginge } from "./context-valtio";
+import { useSnapshot } from "valtio";
+import styles from "./keyboard.css";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
@@ -17,59 +14,19 @@ export function eqSet<T>(as: Set<T>, bs: Set<T>) {
   return true;
 }
 
+interface Has<T> {
+  has(val: T): boolean;
+}
+
 export function Keyboard() {
+  const eng = useEnginge();
+  const state = useSnapshot(eng);
+
   const {
     octaves: { octaves },
-  } = useSongCtx();
+  } = state.song;
 
-  const [sPressed, setPressed] = useState(new Set<number>());
-  const [sFuture, setFuture] = useState(new Set<number>());
-
-  const midiPressedMap = useMidiInput();
-  const midiPressed = useMemo(() => {
-    return new Set(midiPressedMap.keys());
-  }, [midiPressedMap]);
-
-  useSongTicker(function keyboardTicker(tick, settings) {
-    const pressed = new Set<number>();
-    const future = new Set<number>();
-    for (const n of settings.songCtx.pianoNotes ?? []) {
-      // current
-      if (
-        tick > n.ticks &&
-        tick < n.ticks + n.durationTicks &&
-        tick > settings.tickRepeatStart
-      ) {
-        pressed.add(n.midi);
-      }
-      // future
-      if (
-        tick < n.ticks &&
-        tick > n.ticks - settings.tickWindow &&
-        n.ticks > settings.tickRepeatStart && // do not show things that are before repeat start
-        n.ticks < settings.tickEnd // do not show things that are after repeat end
-      ) {
-        future.add(n.midi);
-      }
-    }
-    if (!eqSet(pressed, sPressed)) {
-      setPressed((curr) => {
-        if (!eqSet(curr, pressed)) {
-          return pressed;
-        }
-        return curr;
-      });
-    }
-    if (!eqSet(future, sFuture)) {
-      setFuture((curr) => {
-        if (!eqSet(curr, future)) {
-          return future;
-        }
-        return curr;
-      });
-    }
-  });
-
+  const midiPressed = useMidiInput();
   return (
     <div data-keyboard>
       {octaves.map((o) => (
@@ -77,8 +34,8 @@ export function Keyboard() {
           key={o}
           octaveIndex={o}
           pressedMidiTone={midiPressed}
-          pressedMidiToneFacit={sPressed}
-          pressedMidiToneFuture={sFuture}
+          pressedMidiToneFacit={state.pressed}
+          pressedMidiToneFuture={state.pressedFuture}
         />
       ))}
     </div>
@@ -92,9 +49,9 @@ function Octave({
   pressedMidiToneFuture,
 }: {
   octaveIndex: number;
-  pressedMidiTone: Set<number>;
-  pressedMidiToneFacit: Set<number>;
-  pressedMidiToneFuture: Set<number>;
+  pressedMidiTone: Has<number>;
+  pressedMidiToneFacit: Has<number>;
+  pressedMidiToneFuture: Has<number>;
 }) {
   return (
     <div className="octave flex">

@@ -1,6 +1,7 @@
 {
   "extends": ["@remix-run/eslint-config", "@remix-run/eslint-config/node"],
   "rules": {
-    "no-lone-blocks": "off"
+    "no-lone-blocks": "off",
+    "prefer-const": "off"
   }
 }

@@ -1,12 +1,12 @@
-import { useSettings } from "./context-settings";
 import { useSongCtx } from "./context-song";
 import styles from "./panel.css";
 
-import { InputRange, links as InputRangeLinks } from "./input-range";
-import { links as InputCheckboxLinks } from "./input-checkbox";
-import { Input, links as InputLinks } from "./input";
-import { useSongTicker } from "./use-song-ticker";
 import { useId, useState } from "react";
+import { useSnapshot } from "valtio";
+import { useEnginge } from "./context-valtio";
+import { Input, links as InputLinks } from "./input";
+import { links as InputCheckboxLinks } from "./input-checkbox";
+import { InputRange, links as InputRangeLinks } from "./input-range";
 import { useDevicesStore, useWebMidiDevices } from "./use-web-midi";
 
 export function links() {
@@ -20,7 +20,8 @@ export function links() {
 
 export function Panel() {
   const ctx = useSongCtx();
-  const settings = useSettings((s) => s);
+  const engine = useEnginge();
+  const settings = useSnapshot(engine);
   const devices = useWebMidiDevices();
   const x = useDevicesStore();
   const [hidden, setHidden] = useState(false);
@@ -40,18 +41,18 @@ export function Panel() {
           label="sound"
           value={settings.volume > 0}
           onChange={(value) =>
-            value ? settings.setVolume(0.5) : settings.setVolume(0)
+            value ? (engine.volume = 0.5) : (engine.volume = 0)
           }
         />
         <NumBool
           label="sheet-notation"
           value={settings.sheetNotation}
-          onChange={settings.setSheetNotation}
+          onChange={(v) => (engine.sheetNotation = v)}
         />
         <NumVal
           label="speed"
           value={settings.speed}
-          onChange={settings.setSpeed}
+          onChange={(v) => (engine.speed = v)}
           min={0}
           max={3}
           step={0.01}
@@ -59,7 +60,7 @@ export function Panel() {
         <NumVal
           label="tick-window"
           value={settings.tickWindow}
-          onChange={settings.setTickWindow}
+          onChange={(v) => (engine.tickWindow = v)}
           min={0}
           max={ctx.ticksPerBar * 10}
           step={1}
@@ -67,7 +68,7 @@ export function Panel() {
         <NumVal
           label="repeat-bars"
           value={settings.repeatBars}
-          onChange={settings.setRepeatBars}
+          onChange={(v) => (engine.repeatBars = v)}
           min={0}
           max={8}
           step={1}
@@ -75,7 +76,7 @@ export function Panel() {
         <NumVal
           label="repeat-bars-warmup"
           value={settings.repeatBarsWarmup}
-          onChange={settings.setRepeatBarsWarmup}
+          onChange={(v) => (engine.repeatBarsWarmup = v)}
           min={0}
           max={8}
           step={1}
@@ -93,20 +94,18 @@ export function Panel() {
 }
 
 function NumBar() {
-  const ctx = useSongCtx();
-  const settings = useSettings((s) => s);
-  const [bar, setBar] = useState(1);
-  useSongTicker(function settingsTicker(tick) {
-    setBar(Math.floor(tick / ctx.ticksPerBar) + 1);
-  });
+  const engine = useEnginge();
+  const bar = useSnapshot(engine).bar;
 
   return (
     <NumVal
       label="bar"
       value={bar}
-      onChange={(v) => settings.setStart((v - 1) * ctx.ticksPerBar)}
+      onChange={(v) => engine.seek((v - 1) * engine.song.ticksPerBar)}
       min={1}
-      max={Math.floor(ctx.song.durationTicks / ctx.ticksPerBar) + 1}
+      max={
+        Math.floor(engine.song.song.durationTicks / engine.song.ticksPerBar) + 1
+      }
       step={1}
     />
   );

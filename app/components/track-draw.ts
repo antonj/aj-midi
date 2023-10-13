@@ -7,6 +7,7 @@ import {
   numWhiteInOctate,
   whiteIndexInOctave,
 } from "../util/music";
+import { MidiEngine } from "./midi-valtio";
 
 import { SongSettingsExtended } from "./use-song-ticker";
 
@@ -107,12 +108,12 @@ function leftAndWidth(
 export function trackDraw(
   ctx: CanvasRenderingContext2D,
   tick: number,
-  songExt: SongSettingsExtended,
+  songExt: MidiEngine,
   pressed: Map<number, Set<number>>
 ) {
   const { width: w, height: h } = ctx.canvas;
   ctx.clearRect(0, 0, w, h);
-  const { octaves } = songExt.songCtx.octaves;
+  const { octaves } = songExt.song.octaves;
 
   const numWhites = octaves.length * numWhiteInOctate;
 
@@ -128,7 +129,7 @@ export function trackDraw(
   for (
     let barTick = 0;
     barTick < maxTick;
-    barTick = barTick + songExt.songCtx.ticksPerBar
+    barTick = barTick + songExt.song.ticksPerBar
   ) {
     if (barTick < minTick) {
       continue;
@@ -145,7 +146,7 @@ export function trackDraw(
     // half bar previous
     ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
     y = mapRound(
-      barTick - songExt.songCtx.ticksPerBar / 2,
+      barTick - songExt.song.ticksPerBar / 2,
       minTick,
       maxTick,
       h,
@@ -156,7 +157,7 @@ export function trackDraw(
     // half bar next
     ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
     y = mapRound(
-      barTick + songExt.songCtx.ticksPerBar / 2,
+      barTick + songExt.song.ticksPerBar / 2,
       minTick,
       maxTick,
       h,
@@ -171,11 +172,11 @@ export function trackDraw(
     const miniRightPx = pixelRound(miniLeftPx + w * miniMapWidthRatio);
     const miniWidthPx = miniRightPx - miniLeftPx;
     const minTickMiniPx = 0;
-    const maxTickMiniPx = songExt.songCtx.song.durationTicks;
+    const maxTickMiniPx = songExt.song.song.durationTicks;
 
     // current tick line
     ctx.fillStyle = "gold";
-    let y = mapRound(tick, minTickMiniPx, maxTickMiniPx, h, 0);
+    const y = mapRound(tick, minTickMiniPx, maxTickMiniPx, h, 0);
     ctx.fillRect(miniLeftPx, y - 1, miniWidthPx, 2);
 
     // fill repeat bars in mini bg
@@ -211,7 +212,7 @@ export function trackDraw(
   }
 
   // draw notes
-  for (const n of songExt.songCtx.pianoNotes) {
+  for (const n of songExt.song.pianoNotes) {
     const yTop = mapRound(n.ticks + n.durationTicks, minTick, maxTick, h, 0);
     const yBottom = mapRound(n.ticks, minTick, maxTick, h, 0);
     let [x, noteWidth] = leftAndWidth(
@@ -250,7 +251,7 @@ export function trackDraw(
   // draw connections
   ctx.strokeStyle = "red";
   ctx.lineWidth = 1;
-  for (const [, notes] of songExt.songCtx.tickConnections) {
+  for (const [, notes] of songExt.song.tickConnections) {
     for (let i = 0; i < notes.length - 1; i++) {
       const t1 = notes[i];
       const t2 = notes[i + 1];

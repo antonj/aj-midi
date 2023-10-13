@@ -3,8 +3,10 @@ import type { Midi } from "@tonejs/midi";
 import type { Note } from "@tonejs/midi/dist/Note";
 import { createContext, useContext, useMemo } from "react";
 import { SettingsProvider } from "./context-settings";
-import { midiToOctave, toMidiTone } from "~/util/music";
+import { getTicksPerBar, midiToOctave, toMidiTone } from "~/util/music";
 import { floorTo } from "~/util/map";
+//import { EngineProvider } from "./context-engine";
+import { EngineProvider } from "./context-valtio";
 
 export type SongCtx = {
   song: Midi;
@@ -103,10 +105,7 @@ export function SongProvider({
       console.log("provider", song);
       let bpm = song.header.tempos[0]?.bpm || 120;
 
-      let [x, y] = song.header.timeSignatures[0].timeSignature;
-      let equivalentQuarterNotes = x * (4 / y);
-      const ticksPerBar =
-        song.header.ppq * equivalentQuarterNotes; /* ticks per quarter note */
+      const ticksPerBar = getTicksPerBar(song);
       const pianoNotes = getMergedPianoNotes(song);
       const octaves = getOctaves(pianoNotes);
       const tickConnections = new ParallelNotes(pianoNotes);
@@ -125,7 +124,8 @@ export function SongProvider({
 
   return (
     <SongContext.Provider value={ctx}>
-      <SettingsProvider ctx={ctx}>{children}</SettingsProvider>
+      {/* <SettingsProvider ctx={ctx}>{children}</SettingsProvider> */}
+      <EngineProvider ctx={ctx}>{children}</EngineProvider>
     </SongContext.Provider>
   );
 }
