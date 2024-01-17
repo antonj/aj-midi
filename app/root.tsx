@@ -21,9 +21,14 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => [
   {
-    charset: "utf-8",
     title: "MIDI visualizer",
-    viewport: "width=device-width,initial-scale=1,viewport-fit=cover",
+  },
+  {
+    charset: "utf-8",
+  },
+  {
+    name: "viewport",
+    content: "width=device-width,initial-scale=1,viewport-fit=cover",
   },
 ];
 
