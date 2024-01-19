@@ -11,7 +11,7 @@ import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
 import { trackDrawBg } from "./track-draw-bg";
 import { Keyboard, links as keyboardLinks } from "./keyboard";
 import { useDevicesStore } from "./use-web-midi";
-import { usePlayContext } from "./use-play-context";
+import { usePlayController } from "./use-play-context";
 import { useEnginge } from "./context-valtio";
 import { useSnapshot } from "valtio";
 
@@ -40,10 +40,13 @@ function fixDpr(
 }
 
 function useElementSize(elem: HTMLElement | null) {
-  const bounds = useRef<{ width: number; height: number }>();
+  const bounds = useRef<{ width: number; height: number }>({
+    width: -1,
+    height: -1,
+  });
   if (elem == null) {
     bounds.current = { width: 0, height: 0 };
-  } else if (!bounds.current) {
+  } else if (bounds.current.width < 0) {
     bounds.current = elem.getBoundingClientRect();
   }
 
@@ -82,7 +85,7 @@ export function Track() {
   const canvasSheetElSize = useElementSize(canvasSheetEl);
 
   const pressedNotes = useDevicesStore((state) => state.pressed);
-  usePlayContext();
+  usePlayController();
 
   const tones = useToneDetector(engine.detect);
   const sDetected = new Set(tones);

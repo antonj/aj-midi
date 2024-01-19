@@ -100,5 +100,5 @@ export function useMidiInput() {
       setPressed(new Map(notes));
     };
   }, [d, setPressed]);
-  return pressed;
+  return [d, pressed] as const;
 }

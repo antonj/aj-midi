@@ -2,10 +2,8 @@ import type { ReactNode } from "react";
 import type { Midi } from "@tonejs/midi";
 import type { Note } from "@tonejs/midi/dist/Note";
 import { createContext, useContext, useMemo } from "react";
-import { SettingsProvider } from "./context-settings";
 import { getTicksPerBar, midiToOctave, toMidiTone } from "~/util/music";
 import { floorTo } from "~/util/map";
-//import { EngineProvider } from "./context-engine";
 import { EngineProvider } from "./context-valtio";
 
 export type SongCtx = {

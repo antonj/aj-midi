@@ -50,8 +50,14 @@ export function createMidiEngine(song: SongCtx) {
     sheetNotation,
     volume: 0,
     movingTimestamp: 0,
-    pressed: new Map<number, { midi: number; velocity: number }>(),
-    pressedFuture: new Map<number, { midi: number; velocity: number }>(),
+    pressed: new Map<
+      number,
+      { midi: number; velocity: number; ticks: number }
+    >(),
+    pressedFuture: new Map<
+      number,
+      { midi: number; velocity: number; ticks: number }
+    >(),
     rid: 0,
     listeners: new Set<() => void>(),
 
@@ -115,23 +121,32 @@ export function createMidiEngine(song: SongCtx) {
 
         // find pressed
         {
-          this.pressed = new Map();
-          this.pressedFuture = new Map();
+          const pressed = new Map();
+          const pressedFuture = new Map();
           for (const n of this.song.pianoNotes) {
             // current
-            if (tick > n.ticks && tick < n.ticks + n.durationTicks) {
-              this.pressed.set(n.midi, n);
+            if (
+              this.tickRepeatStart <= n.ticks &&
+              tick > n.ticks &&
+              tick < n.ticks + n.durationTicks
+            ) {
+              pressed.set(n.midi, n);
             } else if (
               tick < n.ticks &&
               tick > n.ticks - this.tickWindow &&
               n.ticks > this.tickRepeatStart && // do not show things that are before repeat start
               n.ticks < this.tickEnd // do not show things that are after repeat end
             ) {
-              this.pressedFuture.set(n.midi, n);
+              pressedFuture.set(n.midi, n);
             }
           }
+          if (!mapEqualKeys(this.pressed, pressed)) {
+            this.pressed = pressed;
+          }
+          if (!mapEqualKeys(this.pressedFuture, pressedFuture)) {
+            this.pressedFuture = pressedFuture;
+          }
         }
-
         this.tick = tick;
         this.tickEnd = tickEnd;
         this.tickRepeatStart = tickRepeatStart;
@@ -147,4 +162,16 @@ export function createMidiEngine(song: SongCtx) {
     },
   });
   return p;
+}
+
+function mapEqualKeys<K, V>(m1: Map<K, V>, m2: Map<K, V>) {
+  if (m1.size !== m2.size) {
+    return false;
+  }
+  for (let [key] of m1) {
+    if (!m2.has(key)) {
+      return false;
+    }
+  }
+  return true;
 }

@@ -26,7 +26,7 @@ export function Keyboard() {
     octaves: { octaves },
   } = state.song;
 
-  const midiPressed = useMidiInput();
+  const [_, midiPressed] = useMidiInput();
   return (
     <div data-keyboard>
       {octaves.map((o) => (
