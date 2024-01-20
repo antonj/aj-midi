@@ -1,7 +1,18 @@
 import { useEffect, useRef } from "react";
 import { Player } from "./use-song-sounds";
-import type { Note } from "./use-song-sounds";
 import { create } from "zustand";
+
+export type Note = {
+  /**
+   * The notes MIDI value.
+   */
+  midi: number;
+  /**
+   * The normalized velocity (0-1).
+   */
+  velocity: number;
+  time: number;
+};
 
 export const useDevicesStore = create<{
   devices: Array<WebMidi.MIDIInput>;
@@ -82,17 +93,14 @@ export function useMidiInput() {
 
     const notes = new Map<number, Note>();
     d.onmidimessage = (evt) => {
-      console.log(evt.data);
       const [command, note, velocity] = evt.data;
       switch (command) {
         case 0x90:
           const velo = velocity / 0x7f;
-          console.log("down", note, velo);
-          notes.set(note, { midi: note, velocity: velo });
+          notes.set(note, { midi: note, velocity: velo, time: Date.now() });
           player.current?.setTones(notes);
           break;
         case 0x80:
-          console.log("up", note);
           notes.delete(note);
           player.current?.setTones(notes);
           break;

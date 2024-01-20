@@ -9,43 +9,61 @@ function usePlayContext() {
   const snap = useSnapshot(ctx);
   const pressed = snap.pressed;
   const tickStart = snap.tickStart;
+
   const [d, input] = useMidiInput();
-  const [ok, setOk] = useState(new Set<number>());
   const [missing, setMissing] = useState(new Set<number>());
 
+  const ok = useRef(new Map<string, { midi: number; ticks: number }>());
+  const inputUsed = useRef(new Set<string>());
+
+  // Clear when start changes
   useEffect(() => {
-    setOk((ok) => (ok.size === 0 ? ok : new Set()));
     setMissing((m) => (m.size === 0 ? m : new Set()));
+    ok.current.clear();
+    inputUsed.current.clear();
   }, [tickStart]);
 
+  // pressed midi:ticks
+  // input midi:time
+  // ok => midi:ticks:time // this note is take care of
+
   useEffect(() => {
-    // remove old pressed from ok
-    const newOk = new Set(ok);
     const newMissing = new Set(missing);
 
-    for (const o of ok) {
-      if (!pressed.has(o)) {
-        newOk.delete(o);
+    // clean old pressed from ok if they are not pressed anymore
+    for (const [k, o] of ok.current) {
+      if (!pressed.has(o.midi)) {
+        ok.current.delete(okKey(o));
       }
+    }
+    // clean inputUsed every time on keys are pressed
+    if (input.size === 0) {
+      inputUsed.current.clear();
     }
 
     // find new mathes
-    for (const n of input.keys()) {
-      if (pressed.has(n) && !newOk.has(n)) {
-        newOk.add(n);
-        newMissing.delete(n);
+    for (const [k, i] of input) {
+      if (inputUsed.current.has(`${i.midi}:${i.time}`)) {
+        // ignore this input has already been matched with note
+        continue;
+      }
+      const p = pressed.get(k);
+      if (p && !ok.current.has(okKey(p))) {
+        // consume this input
+        inputUsed.current.add(`${i.midi}:${i.time}`);
+        // this note is ok, matched with input
+        ok.current.set(okKey(p), p);
+        newMissing.delete(p.midi);
       }
     }
 
     // find missing
-    for (const p of pressed.keys()) {
-      if (!newOk.has(p)) {
-        newMissing.add(p);
+    for (const [k, p] of pressed) {
+      if (!ok.current.has(okKey(p))) {
+        newMissing.add(k);
       }
     }
-
     setMissing((m) => (eqSet(m, newMissing) ? m : newMissing));
-    setOk((o) => (eqSet(o, newOk) ? o : newOk));
   }, [pressed, input]);
   return [d, missing] as const;
 }
