@@ -124,6 +124,11 @@ function SongPicker() {
             title: "Tetris",
             url: "https://bitmidi.com/uploads/100444.mid",
           },
+          {
+            artist: "",
+            title: "Twinkle Twinkle Little Star",
+            url: "/static/midi/twinkle.midi",
+          },
         ].map((s) => {
           return (
             <li key={s.url} className="pb-4">

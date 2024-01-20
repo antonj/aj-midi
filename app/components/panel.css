@@ -10,6 +10,8 @@
   width: 200px;
   z-index: 99;
 
+  font-size: 0.75rem;
+
   --midi-fg-color: #f5f4f0;
   --midi-bg-color: #1c191a;
   --midi-active-fg-color: gold;
