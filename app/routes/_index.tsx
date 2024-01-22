@@ -72,6 +72,11 @@ function SongPicker() {
             url: "/static/midi/chopin_nocturneop9nr1.midi",
           },
           {
+            artist: "Frédéric Chopin",
+            title: '12 Études, Op. 25: No. 11 in A Minor "Winter Wind"',
+            url: "/static/midi/chpn_op25_e11.midi",
+          },
+          {
             artist: "Pyotr Ilyich Tchaikovsky, Yuja Wang",
             title:
               "Swan Lake, Op. 20, TH. 12: Dance of the Four Swans (Arr. Wild for Piano)",
