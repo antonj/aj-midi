@@ -1,6 +1,6 @@
 import { isBlack, notes, toMidiTone } from "../util/music";
 import { useMidiInput } from "./use-web-midi";
-import { useEnginge } from "./context-valtio";
+import { useEnginge } from "./engine-provider";
 import { useSnapshot } from "valtio";
 import styles from "./keyboard.css";
 
@@ -22,9 +22,7 @@ export function Keyboard() {
   const eng = useEnginge();
   const state = useSnapshot(eng);
 
-  const {
-    octaves: { octaves },
-  } = state.song;
+  const octaves = state.octaves.octaves;
 
   const [_, midiPressed] = useMidiInput();
   return (

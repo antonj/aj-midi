@@ -2,7 +2,7 @@ import { Midi } from "@tonejs/midi";
 import { useEffect, useRef } from "react";
 import { subscribeKey } from "valtio/utils";
 import type { SongCtx } from "./context-song";
-import { useEnginge } from "./context-valtio";
+import { useEnginge } from "./engine-provider";
 import { MidiEngine } from "./midi-valtio";
 
 export type SongSettingsExtended = {

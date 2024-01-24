@@ -25,7 +25,7 @@ export function trackDrawBg(
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, w, h);
 
-  const { octaves } = songExt.song.octaves;
+  const { octaves } = songExt.octaves;
 
   const minMidi = toMidiTone(octaves[0], 0);
   const maxMidi = toMidiTone(octaves[octaves.length - 1], numNotesInOctave - 1);
@@ -88,7 +88,7 @@ export function trackDrawBg(
   const whiteWidthMini = miniWidthPx / numWhites;
   const blackWidthMini = blackWidthRatio * whiteWidthMini;
   const minTickMiniPx = 0;
-  const maxTickMiniPx = songExt.song.song.durationTicks;
+  const maxTickMiniPx = songExt.song.durationTicks;
 
   // minimap
   if (true) {
@@ -97,7 +97,7 @@ export function trackDrawBg(
     for (
       let barTick = 0;
       barTick < maxTickMiniPx;
-      barTick = barTick + songExt.song.ticksPerBar
+      barTick = barTick + songExt.ticksPerBar
     ) {
       ctx.lineWidth = 2;
       ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
@@ -106,7 +106,7 @@ export function trackDrawBg(
     }
 
     // draw notes
-    for (const n of songExt.song.pianoNotes) {
+    for (const n of songExt.pianoNotes) {
       const note = midiToNote(n.midi);
       const noteHeight = h / (maxTickMiniPx / n.durationTicks);
       let x = xCenterInPiano(

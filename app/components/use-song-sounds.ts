@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useSnapshot } from "valtio";
 import { map } from "~/util/map";
 import { noteToFreq } from "../util/music";
-import { useEnginge } from "./context-valtio";
+import { useEnginge } from "./engine-provider";
 import { useVisibilityChange } from "./use-visibility-change";
 
 export type Note = {

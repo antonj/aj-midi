@@ -2,11 +2,11 @@ import type { Midi } from "@tonejs/midi";
 import midiPkg from "@tonejs/midi";
 import { useEffect, useState } from "react";
 import { Track, links as trackLinks } from "../components/track";
-import { SongProvider } from "../components/context-song";
 import { useSongSound } from "../components/use-song-sounds";
 import { useSearchParams } from "@remix-run/react";
 //import { createScalesMidi } from "~/util/create-scales-midi";
 import { Panel, links as PanelLinks } from "../components/panel";
+import { EngineProvider } from "../components/engine-provider";
 
 export function links() {
   return [...trackLinks(), ...PanelLinks()];
@@ -175,7 +175,7 @@ function Song({ file }: { file: string }) {
   /* m = createScalesMidi(); */
 
   return (
-    <SongProvider song={m}>
+    <EngineProvider song={m}>
       <Sounds />
       {/* <Settings /> */}
       <div className="flex">
@@ -186,7 +186,7 @@ function Song({ file }: { file: string }) {
           <Panel />
         </div>
       </div>
-    </SongProvider>
+    </EngineProvider>
   );
 }
 

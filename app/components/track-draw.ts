@@ -113,7 +113,7 @@ export function trackDraw(
 ) {
   const { width: w, height: h } = ctx.canvas;
   ctx.clearRect(0, 0, w, h);
-  const { octaves } = songExt.song.octaves;
+  const { octaves } = songExt.octaves;
 
   const numWhites = octaves.length * numWhiteInOctate;
 
@@ -129,7 +129,7 @@ export function trackDraw(
   for (
     let barTick = 0;
     barTick < maxTick;
-    barTick = barTick + songExt.song.ticksPerBar
+    barTick = barTick + songExt.ticksPerBar
   ) {
     if (barTick < minTick) {
       continue;
@@ -145,24 +145,12 @@ export function trackDraw(
     ctx.fillRect(-1, y, w, 2);
     // half bar previous
     ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-    y = mapRound(
-      barTick - songExt.song.ticksPerBar / 2,
-      minTick,
-      maxTick,
-      h,
-      0
-    );
+    y = mapRound(barTick - songExt.ticksPerBar / 2, minTick, maxTick, h, 0);
 
     ctx.fillRect(-1, y, w, 2);
     // half bar next
     ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-    y = mapRound(
-      barTick + songExt.song.ticksPerBar / 2,
-      minTick,
-      maxTick,
-      h,
-      0
-    );
+    y = mapRound(barTick + songExt.ticksPerBar / 2, minTick, maxTick, h, 0);
     ctx.fillRect(-1, y, w, 2);
   }
 
@@ -172,7 +160,7 @@ export function trackDraw(
     const miniRightPx = pixelRound(miniLeftPx + w * miniMapWidthRatio);
     const miniWidthPx = miniRightPx - miniLeftPx;
     const minTickMiniPx = 0;
-    const maxTickMiniPx = songExt.song.song.durationTicks;
+    const maxTickMiniPx = songExt.song.durationTicks;
 
     // current tick line
     ctx.fillStyle = "gold";
@@ -212,7 +200,7 @@ export function trackDraw(
   }
 
   // draw notes
-  for (const n of songExt.song.pianoNotes) {
+  for (const n of songExt.pianoNotes) {
     const yTop = mapRound(n.ticks + n.durationTicks, minTick, maxTick, h, 0);
     const yBottom = mapRound(n.ticks, minTick, maxTick, h, 0);
     let [x, noteWidth] = leftAndWidth(
@@ -251,7 +239,7 @@ export function trackDraw(
   // draw connections
   ctx.strokeStyle = "red";
   ctx.lineWidth = 1;
-  for (const [, notes] of songExt.song.tickConnections) {
+  for (const [, notes] of songExt.tickConnections) {
     for (let i = 0; i < notes.length - 1; i++) {
       const t1 = notes[i];
       const t2 = notes[i + 1];

@@ -1,9 +1,12 @@
 import { proxy, ref } from "valtio";
-import { SongCtx } from "./context-song";
 import { getTicksPerBar } from "../util/music";
 import { roundTo } from "../util/map";
 import { debounce } from "../util/debounce";
 import { subscribeKey } from "valtio/utils";
+import { Midi } from "@tonejs/midi";
+import { Note } from "@tonejs/midi/dist/Note";
+import { ParallelNotes } from "./parallel-notes";
+import { SongCtx } from "./engine-provider";
 
 function updateQuery(ctx: MidiEngine) {
   const url = new URL(window.location.href);
@@ -22,9 +25,10 @@ function updateQuery(ctx: MidiEngine) {
 const updateQueryDebounced = debounce(updateQuery, 300);
 
 export type MidiEngine = ReturnType<typeof createMidiEngine>;
+type PressedNote = { midi: number; velocity: number; ticks: number };
 
-export function createMidiEngine(song: SongCtx) {
-  const ticksPerBar = getTicksPerBar(song.song);
+export function createMidiEngine(song: Midi) {
+  const ticksPerBar = getTicksPerBar(song);
 
   // intial settings from  query params
   const url = new URL(window.location.href);
@@ -40,7 +44,7 @@ export function createMidiEngine(song: SongCtx) {
     speed: speed ? parseFloat(speed) : 1,
     tick: start ? parseInt(start) : -1,
     tickStart: start ? parseInt(start) : -1,
-    tickEnd: song.song.durationTicks,
+    tickEnd: song.durationTicks,
     song: ref(song), // do not track internal nested objects, ex ppq was lost
     detect: false,
     tickRepeatStart: 0,
@@ -50,16 +54,17 @@ export function createMidiEngine(song: SongCtx) {
     sheetNotation,
     volume: 0,
     movingTimestamp: 0,
-    pressed: new Map<
-      number,
-      { midi: number; velocity: number; ticks: number }
-    >(),
-    pressedFuture: new Map<
-      number,
-      { midi: number; velocity: number; ticks: number }
-    >(),
+    pressed: new Map<number, PressedNote>(),
+    pressedFuture: new Map<number, PressedNote>(),
     rid: 0,
     listeners: new Set<() => void>(),
+
+    trackIndexs: new Set<number>(),
+    ticksPerBar: 0,
+    bpm: 0,
+    pianoNotes: [] as Note[],
+    octaves: {} as SongCtx["octaves"],
+    tickConnections: new ParallelNotes([]),
 
     get bar() {
       return Math.floor(this.tick / ticksPerBar) + 1;
@@ -79,26 +84,21 @@ export function createMidiEngine(song: SongCtx) {
       this.listeners.add(subscribeKey(this, "repeatBarsWarmup", update));
       this.listeners.add(subscribeKey(this, "sheetNotation", update));
 
-      console.log("start", this.song.song);
+      console.log("start", this.song);
       const {
-        ticksPerBar,
-        bpm,
-        song: {
-          durationTicks,
-          header: { ppq },
-        },
+        durationTicks,
+        header: { ppq },
       } = this.song;
 
       let prevTimestamp = 0;
 
       const step = (timestamp: number) => {
-        const msPerTick = (60 * 1000) / (bpm * ppq) / this.speed;
+        const msPerTick = (60 * 1000) / (this.bpm * ppq) / this.speed;
         const deltaMs = prevTimestamp ? timestamp - prevTimestamp : 0;
         prevTimestamp = timestamp;
         let tick =
           this.speed === 0 ? this.tick : this.tick + deltaMs / msPerTick;
-        // console.log("=====");
-        // console.log("deltaMs", deltaMs, msPerTick, tick);
+        //console.log("deltaMs", deltaMs, msPerTick, tick);
         const tickEnd =
           this.repeatBars === 0
             ? durationTicks
@@ -121,9 +121,9 @@ export function createMidiEngine(song: SongCtx) {
 
         // find pressed
         {
-          const pressed = new Map();
-          const pressedFuture = new Map();
-          for (const n of this.song.pianoNotes) {
+          const pressed = new Map<number, PressedNote>();
+          const pressedFuture = new Map<number, PressedNote>();
+          for (const n of this.pianoNotes) {
             // current
             if (
               this.tickRepeatStart <= n.ticks &&
@@ -140,10 +140,10 @@ export function createMidiEngine(song: SongCtx) {
               pressedFuture.set(n.midi, n);
             }
           }
-          if (!mapEqualKeys(this.pressed, pressed)) {
+          if (!mapEquals(this.pressed, pressed)) {
             this.pressed = pressed;
           }
-          if (!mapEqualKeys(this.pressedFuture, pressedFuture)) {
+          if (!mapEquals(this.pressedFuture, pressedFuture)) {
             this.pressedFuture = pressedFuture;
           }
         }
@@ -164,12 +164,15 @@ export function createMidiEngine(song: SongCtx) {
   return p;
 }
 
-function mapEqualKeys<K, V>(m1: Map<K, V>, m2: Map<K, V>) {
+function mapEquals(m1: Map<number, PressedNote>, m2: Map<number, PressedNote>) {
   if (m1.size !== m2.size) {
     return false;
   }
-  for (let [key] of m1) {
-    if (!m2.has(key)) {
+  for (let [key, v1] of m1) {
+    const v2 = m2.get(key);
+    if (!v2) {
+      return false;
+    } else if (v1.ticks !== v2.ticks) {
       return false;
     }
   }

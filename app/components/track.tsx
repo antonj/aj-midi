@@ -3,7 +3,6 @@ import { AjScroller } from "../util/aj-scroller";
 import { map } from "../util/map";
 import { Scroller } from "../util/scroller";
 import { useGestureDetector } from "./use-gesture-detector";
-import { useSongCtx } from "./context-song";
 import { useToneDetector } from "./use-tone-detector";
 import { useSongTicker } from "./use-song-ticker";
 import { trackDraw, miniMapWidthRatio } from "./track-draw";
@@ -11,9 +10,10 @@ import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
 import { trackDrawBg } from "./track-draw-bg";
 import { Keyboard, links as keyboardLinks } from "./keyboard";
 import { useDevicesStore } from "./use-web-midi";
-import { usePlayController } from "./use-play-context";
-import { useEnginge } from "./context-valtio";
+import { usePlayController } from "./use-play-controller";
+import { useEnginge } from "./engine-provider";
 import { useSnapshot } from "valtio";
+import { usePrevious } from "./use-previous";
 
 export function links() {
   return keyboardLinks();
@@ -70,11 +70,16 @@ function useElementSize(elem: HTMLElement | null) {
   return bounds;
 }
 
+function useTracksChange() {
+  const engine = useEnginge();
+  const pianoTracks = useSnapshot(engine).pianoNotes;
+  const prevPianoTracks = usePrevious(pianoTracks);
+  return pianoTracks !== prevPianoTracks;
+}
+
 export function Track() {
-  const { song, ticksPerBar } = useSongCtx();
   const engine = useEnginge();
   const showSheetNotation = useSnapshot(engine).sheetNotation;
-
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
   const [canvasBgEl, setCanvasBgEl] = useState<HTMLCanvasElement | null>(null);
   const [canvasSheetEl, setCanvasSheetEl] = useState<HTMLCanvasElement | null>(
@@ -85,12 +90,18 @@ export function Track() {
   const canvasSheetElSize = useElementSize(canvasSheetEl);
 
   const pressedNotes = useDevicesStore((state) => state.pressed);
-  usePlayController();
 
+  usePlayController();
   const tones = useToneDetector(engine.detect);
   const sDetected = new Set(tones);
   const tickToneRef = useRef(new Map<number, Set<number>>());
   const scrollerRef = useRef(Scroller());
+
+  const tracksChanged = useTracksChange();
+  const rerenderBackground = useRef(true);
+  if (tracksChanged) {
+    rerenderBackground.current = true;
+  }
 
   useSongTicker(
     function trackTicker(tick, songCtx) {
@@ -101,8 +112,9 @@ export function Track() {
           return;
         }
         const changed = fixDpr(canvasBgEl, canvasBgElSize.current);
-        if (changed) {
+        if (changed || rerenderBackground.current) {
           trackDrawBg(ctx, songCtx);
+          rerenderBackground.current = false;
         }
       }
       {
@@ -139,7 +151,7 @@ export function Track() {
           ev.data.event.preventDefault();
           if (x < miniMapWidthRatio) {
             let y = map(ev.data.y, 0, ev.data.height, 0, 1);
-            let yy = map(y, 1, 0, 0, song.durationTicks, true);
+            let yy = map(y, 1, 0, 0, engine.song.durationTicks, true);
             engine.seek(yy);
           }
         }
@@ -150,7 +162,7 @@ export function Track() {
           const x = map(ev.data.event_down.x, 0, ev.data.width, 0, 1);
           if (x < miniMapWidthRatio) {
             let y = map(ev.data.y, 0, ev.data.height, 0, 1);
-            let yy = map(y, 1, 0, 0, song.durationTicks, true);
+            let yy = map(y, 1, 0, 0, engine.song.durationTicks, true);
             engine.seek(yy);
           } else {
             let dt = map(ev.data.dy, 0, ev.data.height, 0, engine.tickWindow);
@@ -217,8 +229,8 @@ export function Track() {
           const scale = d1 === 0 || d2 === 0 ? 1 : d2 / d1;
           const windowScaled = scale * tickWindow;
           if (
-            windowScaled < ticksPerBar / 4 ||
-            windowScaled > song.durationTicks
+            windowScaled < engine.ticksPerBar / 4 ||
+            windowScaled > engine.song.durationTicks
           ) {
             return;
           }

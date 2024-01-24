@@ -233,3 +233,51 @@ export function getTicksPerBar(song: Midi): number {
   let equivalentQuarterNotes = x * (4 / y);
   return song.header.ppq * equivalentQuarterNotes; /* ticks per quarter note */
 }
+
+export function getOctaves(notes: { midi: number }[]) {
+  let low = Number.MAX_VALUE;
+  let high = Number.MIN_VALUE;
+  for (const n of notes) {
+    if (n.midi < low) {
+      low = n.midi;
+    }
+    if (n.midi > high) {
+      high = n.midi;
+    }
+  }
+  const lowOctave = midiToOctave(low).octave;
+  const highOctave = midiToOctave(high).octave;
+  const numOctaves = highOctave - lowOctave + 1;
+  const octaves = Array.from({ length: numOctaves }).map(
+    (_, i) => lowOctave + i
+  );
+  const min = toMidiTone(lowOctave, 0);
+  const max = toMidiTone(highOctave, 11);
+  return { octaves, low, high, min, max };
+}
+
+export function mergeNotes(
+  song: Midi,
+  filter = "piano",
+  tracks: Set<number> = new Set()
+) {
+  const pianoTracks = song.tracks
+    .filter((_, i) => (tracks.size === 0 ? true : tracks.has(i)))
+    .filter((t) => t.instrument.family === filter);
+  // song.tracks = pianoTracks;
+  // const blob = new Blob([song.toArray()], {
+  //   type: "audio/midi",
+  // });
+  // var url = window.URL.createObjectURL(blob);
+  // window.location.assign(url);
+
+  if (pianoTracks.length === 0) {
+    // ignore instrument just use the first available track
+    return song.tracks[0].notes;
+  }
+  let merged = pianoTracks[0].notes;
+  for (let i = 1; i < pianoTracks.length; i++) {
+    merged = merged.concat(pianoTracks[i].notes);
+  }
+  return merged.sort((a, b) => a.ticks - b.ticks);
+}

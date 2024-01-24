@@ -1,9 +1,8 @@
-import { useSongCtx } from "./context-song";
 import styles from "./panel.css";
 
 import { useId, useState } from "react";
 import { useSnapshot } from "valtio";
-import { useEnginge } from "./context-valtio";
+import { useEnginge } from "./engine-provider";
 import { Input, links as InputLinks } from "./input";
 import { links as InputCheckboxLinks } from "./input-checkbox";
 import { InputRange, links as InputRangeLinks } from "./input-range";
@@ -19,7 +18,6 @@ export function links() {
 }
 
 export function Panel() {
-  const ctx = useSongCtx();
   const engine = useEnginge();
   const settings = useSnapshot(engine);
   const devices = useWebMidiDevices();
@@ -37,6 +35,7 @@ export function Panel() {
           ))}
         </div>
         <a href="/">Home</a>
+        <SelectTracks />
         <NumBool
           label="sound"
           value={settings.volume > 0}
@@ -62,7 +61,7 @@ export function Panel() {
           value={settings.tickWindow}
           onChange={(v) => (engine.tickWindow = v)}
           min={0}
-          max={ctx.ticksPerBar * 10}
+          max={settings.ticksPerBar * 10}
           step={1}
         />
         <NumVal
@@ -93,6 +92,56 @@ export function Panel() {
   );
 }
 
+function SelectTracks() {
+  const eng = useEnginge();
+  const snap = useSnapshot(eng);
+  if (snap.song.tracks.length < 2) {
+    return null;
+  }
+  return (
+    <>
+      <NumBool
+        label="all-tracks"
+        value={
+          snap.trackIndexs.size === 0 ||
+          snap.trackIndexs.size ===
+            snap.song.tracks.filter((t) => t.notes.length > 0).length
+        }
+        onChange={(v) => {
+          console.log(v);
+          if (v) {
+            eng.trackIndexs = new Set(
+              snap.song.tracks
+                .filter((t) => t.notes.length > 0)
+                .map((_, i) => i)
+            );
+          }
+        }}
+      />
+      <div className="ml-2">
+        {snap.song.tracks.map((x, i) => {
+          return x.notes.length > 0 ? (
+            <NumBool
+              key={i}
+              label={x.name}
+              value={snap.trackIndexs.has(i)}
+              onChange={(v) => {
+                const newVals = new Set(snap.trackIndexs);
+                if (v) {
+                  newVals.add(i);
+                } else {
+                  newVals.delete(i);
+                }
+                eng.trackIndexs = newVals;
+              }}
+            />
+          ) : null;
+        })}
+      </div>
+    </>
+  );
+}
+
 function NumBar() {
   const engine = useEnginge();
   const bar = useSnapshot(engine).bar;
@@ -101,11 +150,9 @@ function NumBar() {
     <NumVal
       label="bar"
       value={bar}
-      onChange={(v) => engine.seek((v - 1) * engine.song.ticksPerBar)}
+      onChange={(v) => engine.seek((v - 1) * engine.ticksPerBar)}
       min={1}
-      max={
-        Math.floor(engine.song.song.durationTicks / engine.song.ticksPerBar) + 1
-      }
+      max={Math.floor(engine.song.durationTicks / engine.ticksPerBar) + 1}
       step={1}
     />
   );

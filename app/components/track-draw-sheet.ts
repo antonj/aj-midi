@@ -89,18 +89,18 @@ export function drawTrackSheet(
   pressed: Map<number, Note>
 ) {
   const { width: w, height: h } = ctx.canvas;
-  const { high, low } = songExt.song.octaves;
+  const { high, low } = songExt.octaves;
   const tickWindow = sheetTickWindow(songExt.tickWindow);
   const minTick = tick - tickWindow * tickHistoryRatio;
   const maxTick = minTick + tickWindow;
 
   let kse: KeySignatureEvent | undefined;
   for (
-    let l = songExt.song.song.header.keySignatures.length, i = l - 1;
+    let l = songExt.song.header.keySignatures.length, i = l - 1;
     i >= 0;
     i--
   ) {
-    const ks = songExt.song.song.header.keySignatures[i];
+    const ks = songExt.song.header.keySignatures[i];
     // 101 in [ 0 , 100, 200, 300] => 100
     if (ks.ticks < Math.max(1, tick)) {
       kse = ks;
@@ -181,7 +181,7 @@ export function drawTrackSheet(
     for (
       let barTick = 0;
       barTick < maxTick;
-      barTick = barTick + songExt.song.ticksPerBar
+      barTick = barTick + songExt.ticksPerBar
     ) {
       if (barTick < minTick) {
         continue;
@@ -190,12 +190,11 @@ export function drawTrackSheet(
         break;
       }
 
-      const bar = Math.floor(barTick / songExt.song.ticksPerBar) + 1;
+      const bar = Math.floor(barTick / songExt.ticksPerBar) + 1;
       ctx.lineWidth = lineWidth * 1.5;
       ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
       // at bar
-      let x =
-        map(barTick, minTick, maxTick, 0, w) - songExt.song.ticksPerBar / 64; // - noteHeight put the bar lines to the left of the notes
+      let x = map(barTick, minTick, maxTick, 0, w) - songExt.ticksPerBar / 64; // - noteHeight put the bar lines to the left of the notes
       ctx.beginPath();
       ctx.moveTo(x, barTopPbx);
       ctx.lineTo(x, barBottomPbx);
@@ -213,7 +212,7 @@ export function drawTrackSheet(
     durationTicks: number;
     isFromInput?: boolean;
   }>();
-  for (const n of songExt.song.pianoNotes) {
+  for (const n of songExt.pianoNotes) {
     if (n.ticks + n.durationTicks < minTick) {
       // out of bounds left
       continue;
@@ -338,7 +337,7 @@ export function drawTrackSheet(
     //    remote accidental
     //
     // accidentals: sharps, TOOD flats and the other one
-    const currentBar = Math.floor(n.ticks / songExt.song.ticksPerBar);
+    const currentBar = Math.floor(n.ticks / songExt.ticksPerBar);
     if (currentBar != bar) {
       barAccidentals.clear();
       bar = currentBar;

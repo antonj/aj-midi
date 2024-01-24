@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useMidiInput } from "./use-web-midi";
-import { useEnginge } from "./context-valtio";
+import { useEnginge } from "./engine-provider";
 import { useSnapshot } from "valtio";
 import { eqSet } from "./keyboard";
 
@@ -30,15 +30,21 @@ function usePlayContext() {
   useEffect(() => {
     const newMissing = new Set(missing);
 
-    // clean old pressed from ok if they are not pressed anymore
-    for (const [k, o] of ok.current) {
-      if (!pressed.has(o.midi)) {
-        ok.current.delete(okKey(o));
-      }
-    }
     // clean inputUsed every time on keys are pressed
     if (input.size === 0) {
       inputUsed.current.clear();
+    }
+
+    // clean old pressed from ok if they are not pressed anymore
+    for (const [k, o] of ok.current) {
+      const p = pressed.get(o.midi);
+      if (!p) {
+        // not pressed anymore remove from ok
+        ok.current.delete(k);
+      } else if (okKey(p) !== k) {
+        // could be pressed but with different input key
+        ok.current.delete(k);
+      }
     }
 
     // find new mathes
