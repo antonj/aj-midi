@@ -77,7 +77,7 @@ function SongPicker() {
             url: "/static/midi/chpn_op25_e11.midi",
           },
           {
-            artist: "Pyotr Ilyich Tchaikovsky, Yuja Wang",
+            artist: "Pyotr Ilyich Tchaikovsky",
             title:
               "Swan Lake, Op. 20, TH. 12: Dance of the Four Swans (Arr. Wild for Piano)",
             url: "/static/midi/swan.midi",
