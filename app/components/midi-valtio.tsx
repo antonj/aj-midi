@@ -17,7 +17,7 @@ function updateQuery(ctx: MidiEngine) {
   if (ctx.sheetNotation) {
     url.searchParams.set("sheet", "true");
   } else {
-    url.searchParams.delete("sheet");
+    url.searchParams.set("sheet", "false");
   }
   url.searchParams.set("warmup", Math.floor(ctx.repeatBarsWarmup).toString());
   window.history.replaceState(null, "", url.toString());
@@ -38,7 +38,7 @@ export function createMidiEngine(song: Midi) {
   const warmup = searchParams.get("warmup");
   const tickWindow = searchParams.get("window");
   const speed = searchParams.get("speed");
-  const sheetNotation = searchParams.get("sheet") === "true";
+  const sheetNotation = searchParams.get("sheet");
 
   const p = proxy({
     speed: speed ? parseFloat(speed) : 1,
@@ -51,7 +51,7 @@ export function createMidiEngine(song: Midi) {
     repeatBars: repeatBars ? parseInt(repeatBars) : 0,
     repeatBarsWarmup: warmup ? parseInt(warmup) : 0,
     tickWindow: tickWindow ? parseInt(tickWindow) : ticksPerBar * 4,
-    sheetNotation,
+    sheetNotation: sheetNotation ? sheetNotation === "true" : true,
     volume: 0,
     movingTimestamp: 0,
     pressed: new Map<number, PressedNote>(),
