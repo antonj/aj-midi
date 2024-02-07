@@ -25,8 +25,6 @@ export function EngineProvider({
   children: ReactNode;
   song: Midi;
 }) {
-  console.log("eng provider song", song);
-
   const store = useMemo(() => {
     console.log("createMidiEngine", song);
     return createMidiEngine(song);
@@ -64,8 +62,10 @@ export function EngineProvider({
   );
 
   useEffect(() => {
+    console.log("starts", store);
     store.start();
     return () => {
+      console.log("stop", store);
       store.stop();
     };
   }, [store]);

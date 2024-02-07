@@ -24,10 +24,7 @@ export type SongSettingsExtended = {
 
 type TickerCallback = (tick: number, songCtx: MidiEngine) => void;
 
-export function useSongTicker(
-  onTick: TickerCallback,
-  deps: Array<unknown> = []
-) {
+export function useSongTicker(onTick: TickerCallback) {
   const ctx = useEnginge();
   const callbackRef = useRef(onTick);
   if (onTick != callbackRef.current) {
@@ -39,5 +36,5 @@ export function useSongTicker(
     return subscribeKey(ctx, "rid", () => {
       callbackRef.current(ctx.tick, ctx);
     });
-  }, deps);
+  }, [ctx]);
 }

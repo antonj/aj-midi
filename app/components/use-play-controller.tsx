@@ -69,6 +69,21 @@ function usePlayContext() {
         newMissing.add(k);
       }
     }
+    /* console.log("============");
+     * console.log(
+     *   "pressed",
+     *   Array.from(pressed.entries()).map(([k, v]) => `${k}:${v.ticks}`)
+     * );
+     * console.log(
+     *   "input",
+     *   Array.from(input.entries()).map(([k, v]) => `${k}:${v.time}`)
+     * );
+     * console.log(
+     *   "ok",
+     *   Array.from(ok.current.entries()).map(([k, v]) => `${k}:${v.ticks}`)
+     * );
+     * console.log("inputUsed", Array.from(inputUsed.current));
+     * console.log("missed", Array.from(newMissing)); */
     setMissing((m) => (eqSet(m, newMissing) ? m : newMissing));
   }, [pressed, input]);
   return [d, missing] as const;

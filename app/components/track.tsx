@@ -103,44 +103,41 @@ export function Track() {
     rerenderBackground.current = true;
   }
 
-  useSongTicker(
-    function trackTicker(tick, songCtx) {
-      tickToneRef.current.set(tick, sDetected);
-      if (canvasBgEl) {
-        let ctx = canvasBgEl.getContext("2d", { alpha: false });
-        if (!ctx) {
-          return;
-        }
-        const changed = fixDpr(canvasBgEl, canvasBgElSize.current);
-        if (changed || rerenderBackground.current) {
-          trackDrawBg(ctx, songCtx);
-          rerenderBackground.current = false;
-        }
+  useSongTicker(function trackTicker(tick, songCtx) {
+    tickToneRef.current.set(tick, sDetected);
+    if (canvasBgEl) {
+      let ctx = canvasBgEl.getContext("2d", { alpha: false });
+      if (!ctx) {
+        return;
       }
-      {
-        if (!canvasEl) {
-          return;
-        }
-        let ctx = canvasEl.getContext("2d", { alpha: true });
-        if (!ctx) {
-          return;
-        }
-        fixDpr(canvasEl, canvasElSize.current);
-        trackDraw(ctx, tick, songCtx, tickToneRef.current);
+      const changed = fixDpr(canvasBgEl, canvasBgElSize.current);
+      if (changed || rerenderBackground.current) {
+        trackDrawBg(ctx, songCtx);
+        rerenderBackground.current = false;
       }
-      if (canvasSheetEl) {
-        let ctx = canvasSheetEl.getContext("2d", { alpha: false });
-        if (!ctx) {
-          return;
-        }
-        fixDpr(canvasSheetEl, canvasSheetElSize.current);
-        if (songCtx.sheetNotation) {
-          drawTrackSheet(ctx, tick, songCtx, pressedNotes);
-        }
+    }
+    {
+      if (!canvasEl) {
+        return;
       }
-    },
-    [canvasEl, canvasSheetEl, canvasBgEl]
-  );
+      let ctx = canvasEl.getContext("2d", { alpha: true });
+      if (!ctx) {
+        return;
+      }
+      fixDpr(canvasEl, canvasElSize.current);
+      trackDraw(ctx, tick, songCtx, tickToneRef.current);
+    }
+    if (canvasSheetEl) {
+      let ctx = canvasSheetEl.getContext("2d", { alpha: false });
+      if (!ctx) {
+        return;
+      }
+      fixDpr(canvasSheetEl, canvasSheetElSize.current);
+      if (songCtx.sheetNotation) {
+        drawTrackSheet(ctx, tick, songCtx, pressedNotes);
+      }
+    }
+  });
 
   useGestureDetector(canvasEl, (ev) => {
     switch (ev.kind) {

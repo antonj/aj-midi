@@ -84,7 +84,6 @@ export function createMidiEngine(song: Midi) {
       this.listeners.add(subscribeKey(this, "repeatBarsWarmup", update));
       this.listeners.add(subscribeKey(this, "sheetNotation", update));
 
-      console.log("start", this.song);
       const {
         durationTicks,
         header: { ppq },
