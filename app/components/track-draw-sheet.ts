@@ -297,7 +297,7 @@ export function drawTrackSheet(
       ctx.strokeStyle = "red";
     } else if (isOn) {
       ctx.fillStyle = "gold";
-      ctx.strokeStyle = "gold";
+      ctx.strokeStyle = "black";
     } else {
       ctx.fillStyle = "black";
       ctx.strokeStyle = "black";
@@ -316,6 +316,10 @@ export function drawTrackSheet(
         Math.PI * 2
       );
       ctx.fill();
+      if (isOn) {
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+      }
       ctx.closePath();
     }
     // stem
@@ -344,24 +348,45 @@ export function drawTrackSheet(
     }
     if (ks.notes.includes(note)) {
     } else if (!barAccidentals.has(wIndex)) {
+      ctx.fillStyle = "black";
       barAccidentals.set(wIndex, "sharp");
       // not in key signature
       // accidental
-      const w = 30;
-      const h = 100;
+      const w = 100;
+      const h = 300; // 3 times as high
 
       ctx.save();
-      ctx.translate(x - noteHeight * 1.75, y - noteHeight / 2);
-      ctx.scale(noteHeight / w, noteHeight / h);
-      // 100 100 canvas
-      let t = 10;
+      ctx.translate(x - noteHeight * 1.9, y - noteHeight * 1.5);
+      ctx.scale(noteHeight / w, noteHeight / w);
+
+      // ctx.fillStyle = "red";
+      // ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "black";
+
+      let t = 15;
       let t2 = t / 2;
       // horisontal
-      ctx.fillRect(0, h * 0.25 - t2, w, t);
-      ctx.fillRect(0, h * 0.75 - t2, w, t);
+      //ctx.fillRect(0, h * 0.25 - t2, w, t);
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.45);
+      ctx.lineTo(w, h * 0.35);
+      ctx.lineTo(w, h * 0.35 - t * 2);
+      ctx.lineTo(0, h * 0.45 - t * 2);
+      ctx.closePath();
+      ctx.fill();
+
+      // ctx.fillRect(0, h * 0.75 - t2, w, t);
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.75);
+      ctx.lineTo(w, h * 0.65);
+      ctx.lineTo(w, h * 0.65 - t * 2);
+      ctx.lineTo(0, h * 0.75 - t * 2);
+      ctx.closePath();
+      ctx.fill();
+
       // vertical
-      ctx.fillRect(w * 0.25 - t2 / 2, 0, t / 2, h);
-      ctx.fillRect(w * 0.75 - t2 / 2, 0, t / 2, h);
+      ctx.fillRect(w * 0.3 - t2 / 2, 0.05 * h, t / 2, 0.95 * h);
+      ctx.fillRect(w * 0.7 - t2 / 2, 0, t / 2, 0.95 * h);
 
       ctx.restore();
     }
