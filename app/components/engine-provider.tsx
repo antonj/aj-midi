@@ -25,12 +25,14 @@ export function EngineProvider({
   children: ReactNode;
   song: Midi;
 }) {
-  const storeRef = useRef<MidiEngine>();
-  if (!storeRef.current) {
-    storeRef.current = createMidiEngine(song);
-  }
+  console.log("eng provider song", song);
 
-  const snap = useSnapshot(storeRef.current);
+  const store = useMemo(() => {
+    console.log("createMidiEngine", song);
+    return createMidiEngine(song);
+  }, [song]);
+
+  const snap = useSnapshot(store);
   const trackIndexs = snap.trackIndexs;
   useMemo<SongCtx>(
     function ctxMemo() {
@@ -43,11 +45,11 @@ export function EngineProvider({
       const octaves = getOctaves(allPianoNotes);
       const tickConnections = new ParallelNotes(pianoNotes);
 
-      storeRef.current!.bpm = bpm;
-      storeRef.current!.ticksPerBar = ticksPerBar;
-      storeRef.current!.pianoNotes = pianoNotes;
-      storeRef.current!.octaves = octaves;
-      storeRef.current!.tickConnections = tickConnections;
+      store.bpm = bpm;
+      store.ticksPerBar = ticksPerBar;
+      store.pianoNotes = pianoNotes;
+      store.octaves = octaves;
+      store.tickConnections = tickConnections;
 
       return {
         song,
@@ -58,20 +60,18 @@ export function EngineProvider({
         octaves,
       };
     },
-    [song, trackIndexs]
+    [store, trackIndexs]
   );
 
   useEffect(() => {
-    storeRef.current?.start();
+    store.start();
     return () => {
-      storeRef.current?.stop();
+      store.stop();
     };
-  }, [song]);
+  }, [store]);
 
   return (
-    <EngineContext.Provider value={storeRef.current}>
-      {children}
-    </EngineContext.Provider>
+    <EngineContext.Provider value={store}>{children}</EngineContext.Provider>
   );
 }
 
