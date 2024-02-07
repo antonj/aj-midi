@@ -9,14 +9,13 @@ import {
 } from "../util/music";
 import { MidiEngine } from "./midi-valtio";
 
-import { SongSettingsExtended } from "./use-song-ticker";
-
 export const miniMapWidthRatio = 0.1;
 export const blackWidthRatio = 0.6;
 
 export function pixelRound(x: number) {
   return Math.floor(x);
 }
+
 export function mapRound(
   n: number,
   start1: number,
