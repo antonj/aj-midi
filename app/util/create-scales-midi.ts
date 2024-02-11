@@ -1,4 +1,5 @@
-import { Header, Midi } from "@tonejs/midi";
+import midi from "@tonejs/midi";
+const { Midi, Header } = midi;
 import {
   keySignatures,
   midiToNote,
@@ -7,7 +8,7 @@ import {
   Note,
 } from "./music";
 
-export function createScalesMidi(): Midi {
+export function createScalesMidi() {
   const m = new Midi();
 
   m.header = new Header();

@@ -1,16 +1,18 @@
 import type { KeySignatureEvent } from "@tonejs/midi/dist/Header";
-import { floorTo, map } from "~/util/map";
+import { map } from "~/util/map";
 import {
   findKeySignature,
   keySignatures,
   midiToNote,
   midiToOctave,
-  offsetBetweenNotes,
   whiteIndexInOctave,
 } from "../util/music";
 import type { KeySignature } from "../util/music";
 import type { Note } from "./use-song-sounds";
 import { MidiEngine } from "./midi-valtio";
+import { whiteIndexInKey } from "~/util/music";
+import { whiteIndex } from "~/util/music";
+import { getParallelKey } from "./parallel-notes";
 
 type TickNumber = number;
 
@@ -26,11 +28,6 @@ export function sheetTickWindow(tickWindow: TickNumber): number {
   return tickWindow + tickHistory;
 }
 
-function whiteIndex(midi: number) {
-  const oct = midiToOctave(midi);
-  return oct.octave * 7 + whiteIndexInOctave(oct.index);
-}
-
 // if midi is a black key return the next or previous white midi
 function toWhiteMidi(midi: number, direction: -1 | 1) {
   const { index } = midiToOctave(midi);
@@ -42,24 +39,8 @@ function toWhiteMidi(midi: number, direction: -1 | 1) {
   }
 }
 
-function noteIndex(midi: number, ks: KeySignature) {
-  const n = midiToNote(midi);
-  const cOffMidi = offsetBetweenNotes("C", ks.startNote);
-  const wi = Math.floor(whiteIndexInOctave(cOffMidi)); // from C to n
-
-  const ksOffMidi = offsetBetweenNotes(ks.startNote, n);
-  const ksI = whiteIndexInOctave(ksOffMidi); // from key start to n
-
-  // where is the previous C
-  const midiC = floorTo(midi - (ksOffMidi + cOffMidi), 12);
-  let midiCOct = midiToOctave(midiC).octave;
-
-  const res = midiCOct * 7 + wi + ksI;
-  return res;
-}
-
 function onStaffLine(n: number, ks: KeySignature) {
-  const wIndex = Math.floor(noteIndex(n, ks)); // TODO we floor here to make every 0.5 note a sharp
+  const wIndex = Math.floor(whiteIndexInKey(n, ks)); // TODO we floor here to make every 0.5 note a sharp
   return wIndex % 2 == whiteIndex(staffLinesBassClef[0]) % 2;
 }
 
@@ -135,7 +116,7 @@ export function drawTrackSheet(
 
   let midiMin = 21; // 88 keys
   let midiMax = 108; // 88 keys
-  if (true) {
+  if (false) {
     midiMin = toWhiteMidi(Math.min(low, lineNotes[0]) - 4, -1);
     midiMax = toWhiteMidi(
       Math.max(high, lineNotes[lineNotes.length - 1]) + 4,
@@ -143,7 +124,7 @@ export function drawTrackSheet(
     );
   }
 
-  const midiMinWhiteIndex = whiteIndex(midiMin);
+  const midiMinWhiteIndex = whiteIndex(midiMin); //whiteIndexInKey(midiMin, ks);
   const midiMaxWhiteIndex = whiteIndex(midiMax);
 
   const numWhites = Math.floor(midiMaxWhiteIndex - midiMinWhiteIndex) + 1;
@@ -191,7 +172,7 @@ export function drawTrackSheet(
       }
 
       const bar = Math.floor(barTick / songExt.ticksPerBar) + 1;
-      ctx.lineWidth = lineWidth * 1.5;
+      ctx.lineWidth = lineWidth * 2;
       ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
       // at bar
       let x = map(barTick, minTick, maxTick, 0, w) - songExt.ticksPerBar / 64; // - noteHeight put the bar lines to the left of the notes
@@ -209,6 +190,7 @@ export function drawTrackSheet(
   let notesInView = new Array<{
     midi: number;
     ticks: number;
+    time: number;
     durationTicks: number;
     isFromInput?: boolean;
   }>();
@@ -226,6 +208,7 @@ export function drawTrackSheet(
     notesInView.push({
       ...n,
       ticks: tick,
+      time: map(tick, 0, songExt.song.durationTicks, 0, songExt.song.duration),
       durationTicks: 0,
       isFromInput: true,
     });
@@ -235,7 +218,7 @@ export function drawTrackSheet(
   const barAccidentals = new Map<number, "sharp" | "flat">();
   const extraStafflines = new Map<number, { high: number; low: number }>();
   for (const n of notesInView) {
-    const wIndex = Math.floor(noteIndex(n.midi, ks)); // TODO we floor here to make every 0.5 note a sharp
+    const wIndex = Math.floor(whiteIndexInKey(n.midi, ks)); // TODO we floor here to make every 0.5 note a sharp
     let note = midiToNote(n.midi);
     let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
     const x = map(n.ticks, minTick, maxTick, 0, w);
@@ -244,9 +227,9 @@ export function drawTrackSheet(
     // lines for notes not on staff lines
     {
       function drawExtraStaff(midi: number) {
-        const wIndex = Math.floor(noteIndex(midi, ks));
+        const wIndex = Math.floor(whiteIndexInKey(midi, ks));
         let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
         ctx.lineWidth = lineWidth;
         ctx.beginPath();
         ctx.moveTo(x - noteHeight * 1.5, y);

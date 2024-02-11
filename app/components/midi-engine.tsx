@@ -16,9 +16,9 @@ import {
 } from "rxjs";
 import { debounce } from "../util/debounce";
 import { roundTo } from "../util/map";
-import { SongCtx } from "./context-song";
 import { Midi } from "@tonejs/midi";
 import { SongSettingsExtended } from "./use-song-ticker";
+import { SongCtx } from "./engine-provider";
 
 function updateQuery(engine: MidiEngine) {
   const url = new URL(window.location.href);

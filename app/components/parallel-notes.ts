@@ -1,6 +1,10 @@
 import type { Note } from "@tonejs/midi/dist/Note";
 import { floorTo } from "../util/map";
 
+export function getParallelKey(n: { time: number }): ParallelKey {
+  return floorTo(n.time, 0.01);
+}
+
 type ParallelKey = number;
 export class ParallelNotes {
   notes: Map<
@@ -16,17 +20,15 @@ export class ParallelNotes {
   [Symbol.iterator]() {
     return this.notes[Symbol.iterator]();
   }
-  getParallelKey(n: Note): ParallelKey {
-    return floorTo(n.time, 0.01);
-  }
+
   get(n: Note) {
-    return this.notes.get(this.getParallelKey(n));
+    return this.notes.get(getParallelKey(n));
   }
   add(n: Note) {
     const arr = this.get(n) || [];
     arr.push(n);
     arr.sort((a, b) => a.midi - b.midi);
-    this.notes.set(this.getParallelKey(n), arr);
+    this.notes.set(getParallelKey(n), arr);
     return arr;
   }
 }
