@@ -7,6 +7,7 @@ import { useSearchParams } from "@remix-run/react";
 import { Panel, links as PanelLinks } from "../components/panel";
 import { EngineProvider } from "../components/engine-provider";
 import { createScalesMidi } from "../util/create-scales-midi";
+import { files } from "./midi.$id[.midi]";
 
 export function links() {
   return [...trackLinks(), ...PanelLinks()];
@@ -128,12 +129,7 @@ const songs: Array<SongType> = [
     title: "Twinkle Twinkle Little Star",
     url: "/static/midi/twinkle.midi",
   },
-  {
-    artist: "",
-    title: "All Key Signatures",
-    url: "/midi/twinkle.midi",
-  },
-];
+].concat(files);
 
 function SongPicker() {
   const [file, setFile] = useState<string>("");
@@ -182,6 +178,8 @@ function Song({ file }: { file: string }) {
   if (!m) {
     return null;
   }
+
+  m = createScalesMidi();
 
   return (
     <EngineProvider song={m}>

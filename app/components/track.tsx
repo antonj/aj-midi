@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AjScroller } from "../util/aj-scroller";
 import { map } from "../util/map";
 import { Scroller } from "../util/scroller";
@@ -14,6 +14,7 @@ import { usePlayController } from "./use-play-controller";
 import { useEnginge } from "./engine-provider";
 import { useSnapshot } from "valtio";
 import { usePrevious } from "./use-previous";
+import { Canvas } from "./Canvas";
 
 export function links() {
   return keyboardLinks();
@@ -102,6 +103,10 @@ export function Track() {
   if (tracksChanged) {
     rerenderBackground.current = true;
   }
+
+  const drawSheet = useCallback((ctx: CanvasRenderingContext2D) => {
+    console.log("sheet draw");
+  }, []);
 
   useSongTicker(function trackTicker(tick, songCtx) {
     tickToneRef.current.set(tick, sDetected);

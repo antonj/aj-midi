@@ -1,6 +1,6 @@
 import type { Midi } from "@tonejs/midi";
-import type { KeySignatureEvent } from "@tonejs/midi/dist/Header";
 import { floorTo } from "./map";
+import { KeySignature } from "./key-signature";
 
 export type Note = (typeof notes)[number];
 
@@ -19,6 +19,42 @@ export const notes = [
   "B",
 ] as const;
 
+export const notesWithFlats = [
+  "C",
+  "Db",
+  "D",
+  "Eb",
+  "E",
+  "F",
+  "Gb",
+  "G",
+  "Ab",
+  "A",
+  "Bb",
+  "B",
+] as const;
+export type NoteWithFlat = Note | (typeof notesWithFlats)[number];
+
+export const noteIndex = {
+  C: 0,
+  "C#": 1,
+  Db: 1,
+  D: 2,
+  "D#": 3,
+  Eb: 3,
+  E: 4,
+  F: 5,
+  "F#": 6,
+  Gb: 6,
+  G: 7,
+  "G#": 8,
+  Ab: 8,
+  A: 9,
+  "A#": 10,
+  Bb: 10,
+  B: 11,
+};
+
 export const noteToMidi: { [key in Note]: number } = {
   C: 60,
   "C#": 61,
@@ -34,24 +70,7 @@ export const noteToMidi: { [key in Note]: number } = {
   B: 71,
 };
 
-export const notesWithFlats = [
-  "C",
-  "D",
-  "Db",
-  "D",
-  "Eb",
-  "E",
-  "F",
-  "Gb",
-  "G",
-  "Ab",
-  "A",
-  "Bb",
-  "B",
-] as const;
-type NoteWithFlat = Note | (typeof notesWithFlats)[number];
-
-type Accidental = "sharp" | "flat";
+export type Accidental = "sharp" | "flat";
 
 export const numNotesInOctave = notes.length;
 export const numWhiteInOctate = notes.filter(isWhite).length;
@@ -61,22 +80,15 @@ export type KeyScale = "major" | "minor";
 
 export type Key = `${NoteWithFlat}-${KeyScale}`;
 
-export const scaleMajorHalfsteps = [2, 2, 1, 2, 2, 2, 1];
-export const scaleMinorHalfsteps = [2, 1, 2, 2, 1, 2, 2];
-const cMidi = 36;
-
-export type KeySignature = {
-  key: Key;
-  startNote: Note;
-  accidental: Accidental;
-  scale: KeyScale;
-  notes: Array<Note>;
-};
+export const cMidi = 60;
 
 // how many halfsteps from to
-export function offsetBetweenNotes(from: Note, to: Note): number {
-  const f = notes.indexOf(from); // 0
-  const t = notes.indexOf(to); // 2
+export function offsetBetweenNotes(
+  from: NoteWithFlat,
+  to: NoteWithFlat
+): number {
+  const f = noteIndex[from]; // 0
+  const t = noteIndex[to]; // 2
   const diff = t - f;
   if (diff >= 0) {
     return diff;
@@ -84,81 +96,13 @@ export function offsetBetweenNotes(from: Note, to: Note): number {
   return notes.length + diff;
 }
 
-export function findKeySignature(kse?: KeySignatureEvent) {
-  if (!kse) {
-    return null;
-  }
-  return keySignatures[`${kse.key}-${kse.scale}` as Key] || null;
-}
-
-export const keySignatures: {
-  [k in Key]: KeySignature;
-} = (function createKeySignatures() {
-  let keySignatures: { [k: string]: KeySignature & { startMidi: number } } = {};
-  // sharp keys signatures
-  for (
-    let startNote = cMidi, i = 0;
-    i < 7 + 5; // all the way around the weel, efter 7 steps we are looking at flat keys
-    i++, startNote = startNote + 7 // seven halfsteps forward is the next major key start https://en.wikipedia.org/wiki/Perfect_fifth
-  ) {
-    const nMajor = midiToNote(startNote);
-    const nMinor = midiToNote(startNote - 3); // minor scales starts 3 steps minor to the major key
-    const keyMajor = nMajor + "-major";
-    const keyMinor = nMinor + "-minor";
-    keySignatures[keyMajor] = {
-      key: keyMajor as Key,
-      startNote: nMajor,
-      startMidi: startNote,
-      scale: "major",
-      accidental: "sharp",
-      notes: [],
-    };
-    keySignatures[keyMinor] = {
-      key: keyMinor as Key,
-      startNote: nMinor,
-      startMidi: startNote - 3,
-      scale: "minor",
-      accidental: "sharp",
-      notes: [],
-    };
-    for (let j = 0, note = startNote; j < numWhiteInOctate; j++) {
-      const n = midiToNote(note);
-      // sharps
-      keySignatures[keyMajor].notes.push(n);
-      keySignatures[keyMinor].notes.push(n);
-      note = note + scaleMajorHalfsteps[j];
-    }
-    // reorder notes of minor scale ot have them in order
-    let a = keySignatures[keyMinor].notes;
-    keySignatures[keyMinor].notes = a
-      .slice(a.indexOf(nMinor))
-      .concat(a.slice(0, a.indexOf(nMinor)));
-  }
-
-  // Create flats from sharps
-  for (const signature of Object.values(keySignatures)) {
-    if (isBlack(signature.startNote)) {
-      const startNote = midiToNote(signature.startMidi + 1);
-      const keyMajor = (startNote + "b-" + signature.scale) as Key;
-      keySignatures[keyMajor] = {
-        ...signature,
-        key: keyMajor,
-        accidental: "flat",
-      };
-    }
-  }
-
-  //console.log(keySignatures);
-  return keySignatures as unknown as { [k in Key]: KeySignature };
-})();
-
-export function isWhite(note?: Note): boolean {
+export function isWhite(note?: NoteWithFlat): boolean {
   if (typeof note !== "string") {
     return false;
   }
   return note.length === 1;
 }
-export function isBlack(note?: Note): boolean {
+export function isBlack(note?: NoteWithFlat): boolean {
   if (typeof note !== "string") {
     return false;
   }
@@ -169,9 +113,28 @@ export function toMidiTone(octave: number, index: number): number {
   return (octave + 1) * 12 + index;
 }
 
-export function midiToNote(midi: number): Note {
+export function midiToNote(
+  midi: number,
+  accidental: "flat" | "sharp" = "sharp"
+): NoteWithFlat {
   const { index } = midiToOctave(midi);
-  return notes[index];
+  if (accidental === "sharp") {
+    return notes[index];
+  } else {
+    return notesWithFlats[index];
+  }
+}
+
+export function noteInKeySignature(
+  note: NoteWithFlat,
+  ks: KeySignature
+): boolean {
+  for (const ksn of ks.notes) {
+    if (noteIndex[ksn] === noteIndex[note]) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export function midiToOctave(midiTone: number): {
@@ -181,7 +144,7 @@ export function midiToOctave(midiTone: number): {
   index: number;
 } {
   const octave = Math.floor(midiTone / numNotesInOctave) - 1;
-  const index = midiTone % numNotesInOctave;
+  const index = Math.abs(midiTone % numNotesInOctave);
   return { octave, index };
 }
 
@@ -225,7 +188,7 @@ export function whiteIndexInOctave(index: number) {
     case 11:
       return 6;
     default:
-      throw new Error("index out of bounds");
+      throw new Error("index out of bounds. Index: " + index);
   }
 }
 
@@ -314,11 +277,18 @@ export function whiteIndexInKey(midi: number, ks: KeySignature) {
   if (ks.key === "C-major") {
     return whiteIndex(midi);
   }
-  const cOffMidi = offsetBetweenNotes("C", ks.startNote);
+  let startNote = ks.startNote;
+  if (ks.scale === "minor") {
+    // use major scale startnote since whiteIndexInOctave depends on that major scale halfstep order:
+    // [2, 2, 1, 2, 2, 2, 1] instead of the minor [2, 1, 2, 2, 1, 2, 2]
+    startNote = notes[(noteIndex[ks.startNote] + 3) % notes.length];
+  }
+
+  const cOffMidi = offsetBetweenNotes("C", startNote);
   const wi = Math.floor(whiteIndexInOctave(cOffMidi)); // from C to n
 
   const n = midiToNote(midi);
-  const ksOffMidi = offsetBetweenNotes(ks.startNote, n);
+  const ksOffMidi = offsetBetweenNotes(startNote, n);
   const ksI = whiteIndexInOctave(ksOffMidi); // from key start to n
 
   // where is the previous C

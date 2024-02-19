@@ -1,18 +1,20 @@
 import type { KeySignatureEvent } from "@tonejs/midi/dist/Header";
 import { map } from "~/util/map";
 import {
-  findKeySignature,
-  keySignatures,
   midiToNote,
   midiToOctave,
+  noteInKeySignature,
   whiteIndexInOctave,
 } from "../util/music";
-import type { KeySignature } from "../util/music";
+import { keySignatures } from "~/util/key-signature";
+import { findKeySignature } from "~/util/key-signature";
+import type { KeySignature } from "~/util/key-signature";
 import type { Note } from "./use-song-sounds";
 import { MidiEngine } from "./midi-valtio";
 import { whiteIndexInKey } from "~/util/music";
 import { whiteIndex } from "~/util/music";
 import { getParallelKey } from "./parallel-notes";
+import { drawGlyph } from "./glyph";
 
 type TickNumber = number;
 
@@ -329,49 +331,13 @@ export function drawTrackSheet(
       barAccidentals.clear();
       bar = currentBar;
     }
-    if (ks.notes.includes(note)) {
-    } else if (!barAccidentals.has(wIndex)) {
+    // todo handle flats
+    if (!noteInKeySignature(note, ks) && !barAccidentals.has(wIndex)) {
       ctx.fillStyle = "black";
-      barAccidentals.set(wIndex, "sharp");
+      barAccidentals.set(wIndex, ks.accidental);
       // not in key signature
       // accidental
-      const w = 100;
-      const h = 300; // 3 times as high
-
-      ctx.save();
-      ctx.translate(x - noteHeight * 1.9, y - noteHeight * 1.5);
-      ctx.scale(noteHeight / w, noteHeight / w);
-
-      // ctx.fillStyle = "red";
-      // ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = "black";
-
-      let t = 15;
-      let t2 = t / 2;
-      // horisontal
-      //ctx.fillRect(0, h * 0.25 - t2, w, t);
-      ctx.beginPath();
-      ctx.moveTo(0, h * 0.45);
-      ctx.lineTo(w, h * 0.35);
-      ctx.lineTo(w, h * 0.35 - t * 2);
-      ctx.lineTo(0, h * 0.45 - t * 2);
-      ctx.closePath();
-      ctx.fill();
-
-      // ctx.fillRect(0, h * 0.75 - t2, w, t);
-      ctx.beginPath();
-      ctx.moveTo(0, h * 0.75);
-      ctx.lineTo(w, h * 0.65);
-      ctx.lineTo(w, h * 0.65 - t * 2);
-      ctx.lineTo(0, h * 0.75 - t * 2);
-      ctx.closePath();
-      ctx.fill();
-
-      // vertical
-      ctx.fillRect(w * 0.3 - t2 / 2, 0.05 * h, t / 2, 0.95 * h);
-      ctx.fillRect(w * 0.7 - t2 / 2, 0, t / 2, 0.95 * h);
-
-      ctx.restore();
+      drawGlyph(ctx, ks.accidental, x, y, noteHeight);
     }
   }
 }
