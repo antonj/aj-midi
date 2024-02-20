@@ -80,7 +80,7 @@ export type KeyScale = "major" | "minor";
 
 export type Key = `${NoteWithFlat}-${KeyScale}`;
 
-export const cMidi = 60;
+export const cMidi = 36;
 
 // how many halfsteps from to
 export function offsetBetweenNotes(
@@ -295,7 +295,13 @@ export function whiteIndexInKey(midi: number, ks: KeySignature) {
   const midiC = floorTo(midi - (ksOffMidi + cOffMidi), 12);
   let midiCOct = midiToOctave(midiC).octave;
 
-  const res = midiCOct * 7 + wi + ksI;
+  let res = midiCOct * 7 + wi + ksI;
+  if (
+    ks.accidental === "flat" &&
+    !(ks.key === "F-major" || ks.key === "D-minor")
+  ) {
+    res = res + 1;
+  }
   return res;
 }
 

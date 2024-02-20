@@ -30,7 +30,9 @@ export function findKeySignature(kse?: KeySignatureEvent) {
 export const keySignatures: {
   [k in Key]: KeySignature;
 } = (function createKeySignatures() {
-  let keySignatures: { [k: string]: KeySignature & { startMidi: number } } = {};
+  let keySignatures: {
+    [k: string]: KeySignature & { startMidi: number; index: number };
+  } = {};
   // sharp keys signatures
   for (
     let startNote = cMidi, i = 0;
@@ -48,6 +50,7 @@ export const keySignatures: {
       scale: "major",
       accidental: "sharp",
       notes: [],
+      index: i,
     };
     keySignatures[keyMinor] = {
       key: keyMinor as Key,
@@ -56,6 +59,7 @@ export const keySignatures: {
       scale: "minor",
       accidental: "sharp",
       notes: [],
+      index: i,
     };
     for (let j = 0, note = startNote; j < numWhiteInOctate; j++) {
       const n = midiToNote(note);
@@ -71,14 +75,17 @@ export const keySignatures: {
       .concat(a.slice(0, a.indexOf(nMinor)));
   }
 
-  // Create flats from sharps
-  for (const signature of Object.values(keySignatures)) {
-    if (isBlack(signature.startNote)) {
+  for (const k of Object.keys(keySignatures)) {
+    const signature = keySignatures[k];
+    if (signature.index > 5) {
+      if (signature.index !== 6) {
+        delete keySignatures[k]; // Gb and F#
+      }
       const startNote = midiToNote(signature.startMidi, "flat");
-      const keyMajor = (startNote + "-" + signature.scale) as Key;
-      keySignatures[keyMajor] = {
+      const key = (startNote + "-" + signature.scale) as Key;
+      keySignatures[key] = {
         ...signature,
-        key: keyMajor,
+        key: key,
         startNote: startNote,
         notes: signature.notes.map((n) => notesWithFlats[noteIndex[n]]),
         accidental: "flat",

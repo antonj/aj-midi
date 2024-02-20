@@ -50,6 +50,7 @@ describe("whiteIndexInKey", () => {
     [12, keySignatures["E-major"], -0.5], // C in octave 0 is -0.5 since #C is in E-major so C is half a tone below the key signature note
     [13, keySignatures["E-major"], 0], // C# in octave 0 is 0
 
+    // G, A, B, C, D, E, F♯
     [12, keySignatures["G-major"], 0], // C in octave 0 is 0
     [14, keySignatures["G-major"], 1], // D in octave 0 is 1
     [16, keySignatures["G-major"], 2], // E in octave 0 is 2
@@ -61,6 +62,7 @@ describe("whiteIndexInKey", () => {
     [22, keySignatures["G-major"], 5.5], // A# in octave 0 is 5.5
     [23, keySignatures["G-major"], 6], // B in octave 0 is 6
 
+    // E, F♯,G, A, B, C, D
     [12, keySignatures["E-minor"], 0], // C in octave 0 is 0
     [14, keySignatures["E-minor"], 1], // D in octave 0 is 1
     [16, keySignatures["E-minor"], 2], // E in octave 0 is 2
@@ -71,6 +73,12 @@ describe("whiteIndexInKey", () => {
     [21, keySignatures["E-minor"], 5], // A in octave 0 is 5
     [22, keySignatures["E-minor"], 5.5], // A# in octave 0 is 5.5
     [23, keySignatures["E-minor"], 6], // B in octave 0 is 6
+
+    // B♭, C, D, E♭, F, G, A
+    [12, keySignatures["Bb-major"], 0], // C in octave 0 is 0
+    [13, keySignatures["Bb-major"], 0.5], // C♯ in octave 0 is 0.5
+    [14, keySignatures["Bb-major"], 1], // D in octave 0 is 1
+    [15, keySignatures["Bb-major"], 2], // E♭ or D♯ in octave 0 is 2
   ];
   test.each(cases)(
     "whiteIndexInKey %p in key %o is %p",
