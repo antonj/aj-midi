@@ -1,4 +1,4 @@
-import { isBlack, notes, toMidiTone } from "../util/music";
+import { isBlack, notesWithSharps, toMidiTone } from "../util/music";
 import { useMidiInput } from "./use-web-midi";
 import { useEnginge } from "./engine-provider";
 import { useSnapshot } from "valtio";
@@ -53,7 +53,7 @@ function Octave({
 }) {
   return (
     <div className="octave flex">
-      {notes.map((t, i) => {
+      {notesWithSharps.map((t, i) => {
         if (isBlack(t)) {
           return null;
         }
@@ -81,7 +81,7 @@ function Octave({
               </span>
               {/* {toMidiTone(octaveIndex, i)} */}
             </button>
-            {isBlack(notes[i + 1]) ? (
+            {isBlack(notesWithSharps[i + 1]) ? (
               <button
                 className={
                   "key-black " +
@@ -96,7 +96,7 @@ function Octave({
                     : "")
                 }
               >
-                <span>{notes[i + 1]}</span>
+                <span>{notesWithSharps[i + 1]}</span>
                 {/* {toMidiTone(octaveIndex, i + 1)} */}
               </button>
             ) : null}

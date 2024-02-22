@@ -1,14 +1,11 @@
 import { expect, test } from "@jest/globals";
+import { KeySignature, Note, keySignatures } from "./key-signature";
 import {
-  Note,
-  whiteIndexInKey,
+  noteInKeySignature,
   offsetBetweenNotes,
   whiteIndex,
-  NoteWithFlat,
-  noteInKeySignature,
+  whiteIndexInKey,
 } from "./music";
-import { KeySignature } from "./key-signature";
-import { keySignatures } from "./key-signature";
 
 describe("offsetBetweenNotes", () => {
   const cases: Array<[Note, Note, number]> = [
@@ -79,6 +76,39 @@ describe("whiteIndexInKey", () => {
     [13, keySignatures["Bb-major"], 0.5], // C♯ in octave 0 is 0.5
     [14, keySignatures["Bb-major"], 1], // D in octave 0 is 1
     [15, keySignatures["Bb-major"], 2], // E♭ or D♯ in octave 0 is 2
+    [16, keySignatures["Bb-major"], 2.5], // E in octave 0
+    [17, keySignatures["Bb-major"], 3], // F in octave 0
+    [18, keySignatures["Bb-major"], 3.5], // F# in octave 0
+    [19, keySignatures["Bb-major"], 4], // G in octave 0
+    [20, keySignatures["Bb-major"], 4.5], // G# in octave 0
+    [21, keySignatures["Bb-major"], 5], // A in octave 0
+    [22, keySignatures["Bb-major"], 6], // A#,Bb in octave 0
+    [23, keySignatures["Bb-major"], 6.5], // B in octave 0
+
+    //F, G, A, B♭, C, D, E
+    [12, keySignatures["F-major"], 0], // C in octave 0
+    [14, keySignatures["F-major"], 1], // D in octave 0
+    [16, keySignatures["F-major"], 2], // E in octave 0
+    [17, keySignatures["F-major"], 3], // F in octave 0
+    [18, keySignatures["F-major"], 3.5], // F# in octave 0
+    [19, keySignatures["F-major"], 4], // G in octave 0
+    [20, keySignatures["F-major"], 4.5], // G# in octave 0
+    [21, keySignatures["F-major"], 5], // A in octave 0
+    [22, keySignatures["F-major"], 6], // A#,Bb in octave 0
+    [23, keySignatures["F-major"], 6.5], // B in octave 0
+
+    // D, E,F, G, A, B♭, C,
+    [12, keySignatures["D-minor"], 0], // C in octave 0
+    [14, keySignatures["D-minor"], 1], // D in octave 0
+    [16, keySignatures["D-minor"], 2], // E in octave 0
+    [17, keySignatures["D-minor"], 3], // F in octave 0
+    [18, keySignatures["D-minor"], 3.5], // F# in octave 0
+    [19, keySignatures["D-minor"], 4], // G in octave 0
+    [20, keySignatures["D-minor"], 4.5], // G# in octave 0
+    [21, keySignatures["D-minor"], 5], // A in octave 0
+    [22, keySignatures["D-minor"], 6], // A#,Bb in octave 0
+    [23, keySignatures["D-minor"], 6.5], // B in octave 0
+    [24, keySignatures["D-minor"], 7], // C in octave 1
   ];
   test.each(cases)(
     "whiteIndexInKey %p in key %o is %p",
@@ -89,7 +119,7 @@ describe("whiteIndexInKey", () => {
 });
 
 describe("noteInKeySignature", () => {
-  const cases: Array<[NoteWithFlat, KeySignature, boolean]> = [
+  const cases: Array<[Note, KeySignature, boolean]> = [
     ["Bb", keySignatures["Bb-major"], true],
     ["A#", keySignatures["Bb-major"], true],
     ["C", keySignatures["C-major"], true],

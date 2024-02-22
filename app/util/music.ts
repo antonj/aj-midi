@@ -1,10 +1,13 @@
 import type { Midi } from "@tonejs/midi";
 import { floorTo } from "./map";
-import { KeySignature } from "./key-signature";
+import type { Note, KeySignature } from "./key-signature";
+import { noteIndex } from "./key-signature";
 
-export type Note = (typeof notes)[number];
+export type MidiNumber = number;
 
-export const notes = [
+export const notes = ["C", "D", "E", "F", "G", "A", "B"];
+
+export const notesWithSharps = [
   "C",
   "C#",
   "D",
@@ -18,6 +21,7 @@ export const notes = [
   "A#",
   "B",
 ] as const;
+export type NoteWithSharps = (typeof notesWithSharps)[number];
 
 export const notesWithFlats = [
   "C",
@@ -33,76 +37,34 @@ export const notesWithFlats = [
   "Bb",
   "B",
 ] as const;
-export type NoteWithFlat = Note | (typeof notesWithFlats)[number];
+export type NoteWithFlatAndSharps =
+  | NoteWithSharps
+  | (typeof notesWithFlats)[number];
 
-export const noteIndex = {
-  C: 0,
-  "C#": 1,
-  Db: 1,
-  D: 2,
-  "D#": 3,
-  Eb: 3,
-  E: 4,
-  F: 5,
-  "F#": 6,
-  Gb: 6,
-  G: 7,
-  "G#": 8,
-  Ab: 8,
-  A: 9,
-  "A#": 10,
-  Bb: 10,
-  B: 11,
-};
-
-export const noteToMidi: { [key in Note]: number } = {
-  C: 60,
-  "C#": 61,
-  D: 62,
-  "D#": 63,
-  E: 64,
-  F: 65,
-  "F#": 66,
-  G: 67,
-  "G#": 68,
-  A: 69,
-  "A#": 70,
-  B: 71,
-};
-
-export type Accidental = "sharp" | "flat";
-
-export const numNotesInOctave = notes.length;
-export const numWhiteInOctate = notes.filter(isWhite).length;
-export const numBlackInOctate = notes.filter(isBlack).length;
-
-export type KeyScale = "major" | "minor";
-
-export type Key = `${NoteWithFlat}-${KeyScale}`;
+export const numNotesInOctave = notesWithSharps.length;
+export const numWhiteInOctate = notesWithSharps.filter(isWhite).length;
+export const numBlackInOctate = notesWithSharps.filter(isBlack).length;
 
 export const cMidi = 36;
 
 // how many halfsteps from to
-export function offsetBetweenNotes(
-  from: NoteWithFlat,
-  to: NoteWithFlat
-): number {
+export function offsetBetweenNotes(from: Note, to: Note): number {
   const f = noteIndex[from]; // 0
   const t = noteIndex[to]; // 2
   const diff = t - f;
   if (diff >= 0) {
     return diff;
   }
-  return notes.length + diff;
+  return notesWithSharps.length + diff;
 }
 
-export function isWhite(note?: NoteWithFlat): boolean {
+export function isWhite(note?: NoteWithFlatAndSharps): boolean {
   if (typeof note !== "string") {
     return false;
   }
   return note.length === 1;
 }
-export function isBlack(note?: NoteWithFlat): boolean {
+export function isBlack(note?: NoteWithFlatAndSharps): boolean {
   if (typeof note !== "string") {
     return false;
   }
@@ -116,19 +78,16 @@ export function toMidiTone(octave: number, index: number): number {
 export function midiToNote(
   midi: number,
   accidental: "flat" | "sharp" = "sharp"
-): NoteWithFlat {
+): NoteWithFlatAndSharps {
   const { index } = midiToOctave(midi);
   if (accidental === "sharp") {
-    return notes[index];
+    return notesWithSharps[index];
   } else {
     return notesWithFlats[index];
   }
 }
 
-export function noteInKeySignature(
-  note: NoteWithFlat,
-  ks: KeySignature
-): boolean {
+export function noteInKeySignature(note: Note, ks: KeySignature): boolean {
   for (const ksn of ks.notes) {
     if (noteIndex[ksn] === noteIndex[note]) {
       return true;
@@ -277,11 +236,12 @@ export function whiteIndexInKey(midi: number, ks: KeySignature) {
   if (ks.key === "C-major") {
     return whiteIndex(midi);
   }
-  let startNote = ks.startNote;
+  let startNote = ks.notes[0];
   if (ks.scale === "minor") {
     // use major scale startnote since whiteIndexInOctave depends on that major scale halfstep order:
     // [2, 2, 1, 2, 2, 2, 1] instead of the minor [2, 1, 2, 2, 1, 2, 2]
-    startNote = notes[(noteIndex[ks.startNote] + 3) % notes.length];
+    startNote =
+      notesWithSharps[(noteIndex[ks.notes[0]] + 3) % notesWithSharps.length];
   }
 
   const cOffMidi = offsetBetweenNotes("C", startNote);
@@ -298,7 +258,11 @@ export function whiteIndexInKey(midi: number, ks: KeySignature) {
   let res = midiCOct * 7 + wi + ksI;
   if (
     ks.accidental === "flat" &&
+    ks.notes[0].length === 2 &&
     !(ks.key === "F-major" || ks.key === "D-minor")
+    // (ks.accidental === "flat" &&
+    //   ks.scale === "minor" &&
+    //   keySignatures[ks.parallell].startNote.length === 2)
   ) {
     res = res + 1;
   }

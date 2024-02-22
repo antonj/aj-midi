@@ -1,20 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSnapshot } from "valtio";
 import { AjScroller } from "../util/aj-scroller";
 import { map } from "../util/map";
 import { Scroller } from "../util/scroller";
-import { useGestureDetector } from "./use-gesture-detector";
-import { useToneDetector } from "./use-tone-detector";
-import { useSongTicker } from "./use-song-ticker";
-import { trackDraw, miniMapWidthRatio } from "./track-draw";
-import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
-import { trackDrawBg } from "./track-draw-bg";
-import { Keyboard, links as keyboardLinks } from "./keyboard";
-import { useDevicesStore } from "./use-web-midi";
-import { usePlayController } from "./use-play-controller";
 import { useEnginge } from "./engine-provider";
-import { useSnapshot } from "valtio";
+import { Keyboard, links as keyboardLinks } from "./keyboard";
+import { miniMapWidthRatio, trackDraw } from "./track-draw";
+import { trackDrawBg } from "./track-draw-bg";
+import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
+import { useGestureDetector } from "./use-gesture-detector";
+import { usePlayController } from "./use-play-controller";
 import { usePrevious } from "./use-previous";
-import { Canvas } from "./Canvas";
+import { useSongTicker } from "./use-song-ticker";
+import { useToneDetector } from "./use-tone-detector";
+import { useDevicesStore } from "./use-web-midi";
 
 export function links() {
   return keyboardLinks();
@@ -103,10 +102,6 @@ export function Track() {
   if (tracksChanged) {
     rerenderBackground.current = true;
   }
-
-  const drawSheet = useCallback((ctx: CanvasRenderingContext2D) => {
-    console.log("sheet draw");
-  }, []);
 
   useSongTicker(function trackTicker(tick, songCtx) {
     tickToneRef.current.set(tick, sDetected);

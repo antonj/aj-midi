@@ -7,7 +7,7 @@ import {
   numWhiteInOctate,
   whiteIndexInOctave,
 } from "../util/music";
-import { MidiEngine } from "./midi-valtio";
+import type { MidiEngine } from "./midi-valtio";
 
 export const miniMapWidthRatio = 0.1;
 export const blackWidthRatio = 0.6;

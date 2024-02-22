@@ -1,4 +1,4 @@
-import { MidiEngine } from "./midi-valtio";
+import type { MidiEngine } from "./midi-valtio";
 
 export function trackDraw(
   ctx: CanvasRenderingContext2D,

@@ -6,7 +6,7 @@ import {
   numWhiteInOctate,
   toMidiTone,
 } from "../util/music";
-import { MidiEngine } from "./midi-valtio";
+import type { MidiEngine } from "./midi-valtio";
 import {
   blackWidthRatio,
   mapRound,

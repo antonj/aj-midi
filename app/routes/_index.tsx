@@ -179,7 +179,7 @@ function Song({ file }: { file: string }) {
     return null;
   }
 
-  m = createScalesMidi();
+  //m = createScalesMidi();
 
   return (
     <EngineProvider song={m}>

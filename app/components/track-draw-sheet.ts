@@ -1,20 +1,18 @@
 import type { KeySignatureEvent } from "@tonejs/midi/dist/Header";
+import type { KeySignature } from "~/util/key-signature";
+import { findKeySignature, keySignatures } from "~/util/key-signature";
 import { map } from "~/util/map";
 import {
   midiToNote,
   midiToOctave,
   noteInKeySignature,
   whiteIndexInOctave,
+  whiteIndex,
+  whiteIndexInKey,
 } from "../util/music";
-import { keySignatures } from "~/util/key-signature";
-import { findKeySignature } from "~/util/key-signature";
-import type { KeySignature } from "~/util/key-signature";
-import type { Note } from "./use-song-sounds";
-import { MidiEngine } from "./midi-valtio";
-import { whiteIndexInKey } from "~/util/music";
-import { whiteIndex } from "~/util/music";
-import { getParallelKey } from "./parallel-notes";
 import { drawGlyph } from "./glyph";
+import type { MidiEngine } from "./midi-valtio";
+import type { Note } from "./use-song-sounds";
 
 type TickNumber = number;
 
@@ -220,7 +218,11 @@ export function drawTrackSheet(
   const barAccidentals = new Map<number, "sharp" | "flat">();
   const extraStafflines = new Map<number, { high: number; low: number }>();
   for (const n of notesInView) {
-    const wIndex = Math.floor(whiteIndexInKey(n.midi, ks)); // TODO we floor here to make every 0.5 note a sharp
+    // const wIndex =
+    //   ks.accidental === "sharp"
+    //     ? Math.floor(whiteIndexInKey(n.midi, ks)) // floor here to make every 0.5 note a sharp
+    //     : Math.ceil(whiteIndexInKey(n.midi, ks)); // ceil here to make every 0.5 note a flat
+    const wIndex = Math.floor(whiteIndexInKey(n.midi, ks)); // floor here to make every 0.5 note a sharp
     let note = midiToNote(n.midi);
     let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
     const x = map(n.ticks, minTick, maxTick, 0, w);

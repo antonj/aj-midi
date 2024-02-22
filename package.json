@@ -13,7 +13,8 @@
     "dev:css": "tailwindcss -i ./styles/tailwind.css -o ./app/styles/tailwind.css --watch",
     "start": "cross-env NODE_ENV=production remix-serve ./build/index.js",
     "static-build": "esbuild public/audio-worklet.ts --minify --bundle --outfile=public/audio-worklet.js '--define:process.env.NODE_ENV=\"\"'",
-    "static-dev": "esbuild public/audio-worklet.ts --watch --bundle --outfile=public/audio-worklet.js '--define:process.env.NODE_ENV=\"development\"'"
+    "static-dev": "esbuild public/audio-worklet.ts --watch --bundle --outfile=public/audio-worklet.js '--define:process.env.NODE_ENV=\"development\"'",
+    "test": "jest"
   },
   "dependencies": {
     "@remix-run/react": "^2.3.1",
