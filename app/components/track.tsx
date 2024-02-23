@@ -4,7 +4,6 @@ import { AjScroller } from "../util/aj-scroller";
 import { map } from "../util/map";
 import { Scroller } from "../util/scroller";
 import { useEnginge } from "./engine-provider";
-import { Keyboard, links as keyboardLinks } from "./keyboard";
 import { miniMapWidthRatio, trackDraw } from "./track-draw";
 import { trackDrawBg } from "./track-draw-bg";
 import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
@@ -14,9 +13,10 @@ import { usePrevious } from "./use-previous";
 import { useSongTicker } from "./use-song-ticker";
 import { useToneDetector } from "./use-tone-detector";
 import { useDevicesStore } from "./use-web-midi";
+import { trackDrawKeyabord } from "./track-draw-keyboard";
 
 export function links() {
-  return keyboardLinks();
+  return [];
 }
 
 function fixDpr(
@@ -85,9 +85,13 @@ export function Track() {
   const [canvasSheetEl, setCanvasSheetEl] = useState<HTMLCanvasElement | null>(
     null
   );
+  const [canvasKeyboardEl, setCanvasKeyboardEl] =
+    useState<HTMLCanvasElement | null>(null);
+
   const canvasElSize = useElementSize(canvasEl);
   const canvasBgElSize = useElementSize(canvasBgEl);
   const canvasSheetElSize = useElementSize(canvasSheetEl);
+  const canvasKeyboardElSize = useElementSize(canvasKeyboardEl);
 
   const pressedNotes = useDevicesStore((state) => state.pressed);
 
@@ -126,6 +130,14 @@ export function Track() {
       }
       fixDpr(canvasEl, canvasElSize.current);
       trackDraw(ctx, tick, songCtx, tickToneRef.current);
+    }
+    if (canvasKeyboardEl) {
+      let ctx = canvasKeyboardEl.getContext("2d", { alpha: false });
+      if (!ctx) {
+        return;
+      }
+      fixDpr(canvasKeyboardEl, canvasKeyboardElSize.current);
+      trackDrawKeyabord(ctx, tick, songCtx, pressedNotes);
     }
     if (canvasSheetEl) {
       let ctx = canvasSheetEl.getContext("2d", { alpha: false });
@@ -306,8 +318,12 @@ export function Track() {
           ref={setCanvasEl}
         />
       </div>
-      <div className="h-1/6 bg-primary">
-        <Keyboard />
+      <div className="relative h-1/6 bg-primary">
+        <canvas
+          key={"canvas-keyboard"}
+          className="absolute w-full h-full touch-none"
+          ref={setCanvasKeyboardEl}
+        />
       </div>
 
       {showSheetNotation ? (
