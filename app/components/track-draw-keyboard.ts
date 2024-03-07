@@ -13,6 +13,18 @@ import type { Note } from "./use-song-sounds";
 import type { MidiEngine } from "./midi-valtio";
 import { drawNote } from "./track-draw-sheet";
 
+function getFill(active: boolean, down: boolean) {
+  switch (true) {
+    case active && down:
+      return "green";
+    case active:
+      return "gold";
+    case down:
+      return "red";
+  }
+  return "";
+}
+
 export function trackDrawKeyabord(
   ctx: CanvasRenderingContext2D,
   tick: number,
@@ -52,27 +64,7 @@ export function trackDrawKeyabord(
       if (wI % 1 === 0) {
         const left = pixelRound(i * octaveWidth + whiteWidthPx * wI);
         const midi = toMidiTone(o, k);
-
-        const active = songExt.pressed.has(midi);
-        const down = deviceDown.has(midi);
-        let fill = "";
-        switch (true) {
-          case active && down:
-            {
-              fill = "green";
-            }
-            break;
-          case active:
-            {
-              fill = "gold";
-            }
-            break;
-          case down:
-            {
-              fill = "red";
-            }
-            break;
-        }
+        let fill = getFill(songExt.pressed.has(midi), deviceDown.has(midi));
         if (fill) {
           ctx.fillStyle = fill;
           ctx.fillRect(left, 0, whiteWidthPx, h);
@@ -91,11 +83,8 @@ export function trackDrawKeyabord(
     }
     let x = xCenterInPiano(midi, octaves, 0, w, whiteWidthPx);
     x = x - blackWidthPx / 2;
-    if (songExt.pressed.has(midi)) {
-      ctx.fillStyle = "gold";
-    } else {
-      ctx.fillStyle = "rgba(40, 20, 30)";
-    }
+    let fill = getFill(songExt.pressed.has(midi), deviceDown.has(midi));
+    ctx.fillStyle = fill ? fill : "rgba(40, 20, 30)";
     ctx.fillRect(pixelRound(x), 0, blackWidthPx, h * blackHeightRatio);
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
@@ -120,6 +109,7 @@ export function trackDrawKeyabord(
 
     ctx.save();
     ctx.translate(left, black ? 0 : h * blackHeightRatio);
+
     drawNote(ctx, midi, {
       ks,
       theme: black ? "dark" : "light",

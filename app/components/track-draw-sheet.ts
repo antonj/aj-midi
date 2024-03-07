@@ -18,8 +18,8 @@ import { Midi } from "@tonejs/midi";
 
 type TickNumber = number;
 
-const staffLinesTrebleClef = [64, 67, 71, 74, 77];
-const staffLinesBassClef = [43, 47, 50, 53, 57];
+export const staffLinesTrebleClef: Array<MidiNumber> = [64, 67, 71, 74, 77];
+export const staffLinesBassClef: Array<MidiNumber> = [43, 47, 50, 53, 57];
 const staffLineTrebleMiddle = 71;
 const staffLineBassMiddle = 50;
 const lineNotes = staffLinesBassClef.concat(staffLinesTrebleClef);
