@@ -318,7 +318,7 @@ export function Track() {
           ref={setCanvasEl}
         />
       </div>
-      <div className="relative h-1/6 bg-primary">
+      <div className="relative h-1/4 bg-primary">
         <canvas
           key={"canvas-keyboard"}
           className="absolute w-full h-full touch-none"

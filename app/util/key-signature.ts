@@ -115,3 +115,12 @@ export const noteIndex = {
   B: 11,
   "B#": 0,
 };
+
+export function noteIsInKeySignature(note: Note, ks: KeySignature): boolean {
+  for (const n of ks.notes) {
+    if (noteIndex(note) === noteIndex(n)) {
+      return true;
+    }
+  }
+  return false;
+}

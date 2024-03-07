@@ -2,28 +2,22 @@ import {
   isBlack,
   isWhite,
   midiToNote,
+  noteInKeySignature,
   numNotesInOctave,
   numWhiteInOctate,
   toMidiTone,
   whiteIndexInOctave,
 } from "../util/music";
-import {
-  blackWidthRatio,
-  mapRound,
-  miniMapWidthRatio,
-  pixelRound,
-  xCenterInPiano,
-} from "./track-draw";
+import { blackWidthRatio, pixelRound, xCenterInPiano } from "./track-draw";
 import type { Note } from "./use-song-sounds";
 import type { MidiEngine } from "./midi-valtio";
-
-function drawWhite(ctx: CanvasRenderingContext2D) {}
+import { drawNote } from "./track-draw-sheet";
 
 export function trackDrawKeyabord(
   ctx: CanvasRenderingContext2D,
   tick: number,
   songExt: MidiEngine,
-  pressed: Map<number, Note>
+  deviceDown: Map<number, Note>
 ) {
   let { width: w, height: h } = ctx.canvas;
   ctx.clearRect(0, 0, w, h);
@@ -31,6 +25,7 @@ export function trackDrawKeyabord(
   ctx.fillRect(0, 0, w, h);
 
   const { octaves } = songExt.octaves;
+  const ks = songExt.keySignature;
 
   const minMidi = toMidiTone(octaves[0], 0);
   const maxMidi = toMidiTone(octaves[octaves.length - 1], numNotesInOctave - 1);
@@ -38,6 +33,8 @@ export function trackDrawKeyabord(
 
   const whiteWidthPx = w / numWhites;
   const blackWidthPx = blackWidthRatio * whiteWidthPx;
+
+  const blackHeightRatio = 3 / 6;
 
   // draw bg whites
   for (let i = 0; i < octaves.length; i++) {
@@ -55,13 +52,34 @@ export function trackDrawKeyabord(
       if (wI % 1 === 0) {
         const left = pixelRound(i * octaveWidth + whiteWidthPx * wI);
         const midi = toMidiTone(o, k);
-        if (songExt.pressed.has(midi)) {
-          ctx.fillStyle = "gold";
+
+        const active = songExt.pressed.has(midi);
+        const down = deviceDown.has(midi);
+        let fill = "";
+        switch (true) {
+          case active && down:
+            {
+              fill = "green";
+            }
+            break;
+          case active:
+            {
+              fill = "gold";
+            }
+            break;
+          case down:
+            {
+              fill = "red";
+            }
+            break;
+        }
+        if (fill) {
+          ctx.fillStyle = fill;
           ctx.fillRect(left, 0, whiteWidthPx, h);
         }
         ctx.strokeRect(left, 0, whiteWidthPx, h);
-        const n = midiToNote(midi);
-        ctx.strokeText(n + "-" + midi, left, h / 2, whiteWidthPx);
+        // const n = midiToNote(midi);
+        // ctx.strokeText(n + "-" + midi, left, h / 2, whiteWidthPx);
       }
     }
   }
@@ -78,11 +96,42 @@ export function trackDrawKeyabord(
     } else {
       ctx.fillStyle = "rgba(40, 20, 30)";
     }
-    ctx.fillRect(pixelRound(x), 0, blackWidthPx, (h * 2) / 3);
+    ctx.fillRect(pixelRound(x), 0, blackWidthPx, h * blackHeightRatio);
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
-    ctx.strokeRect(pixelRound(x), 0, blackWidthPx, (h * 2) / 3);
+    ctx.strokeRect(pixelRound(x), 0, blackWidthPx, h * blackHeightRatio);
   }
+
+  // draw sheet notes
+  for (let midi = minMidi; midi <= maxMidi; midi++) {
+    const note = midiToNote(midi);
+    if (!noteInKeySignature(note, ks)) continue;
+    let left = xCenterInPiano(midi, octaves, 0, w, whiteWidthPx);
+    let width = whiteWidthPx;
+    let height = h - h * blackHeightRatio;
+    const black = isBlack(note);
+    if (black) {
+      left = left - blackWidthPx / 2;
+      width = blackWidthPx;
+      height = h * blackHeightRatio;
+    } else {
+      left = left - whiteWidthPx / 2;
+    }
+
+    ctx.save();
+    ctx.translate(left, black ? 0 : h * blackHeightRatio);
+    drawNote(ctx, midi, {
+      ks,
+      theme: black ? "dark" : "light",
+      midiMin: minMidi,
+      midiMax: maxMidi,
+      height,
+      width,
+    });
+    ctx.restore();
+  }
+
+  // top line
   ctx.fillStyle = "gold";
   ctx.fillRect(0, 0, w, 4);
 }

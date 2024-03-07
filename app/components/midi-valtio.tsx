@@ -7,6 +7,8 @@ import { Midi } from "@tonejs/midi";
 import { Note } from "@tonejs/midi/dist/Note";
 import { ParallelNotes } from "./parallel-notes";
 import { SongCtx } from "./engine-provider";
+import { Key, findKeySignature, keySignatures } from "~/util/key-signature";
+import { keySignatureForTick } from "./track-draw-sheet";
 
 function updateQuery(ctx: MidiEngine) {
   const url = new URL(window.location.href);
@@ -43,6 +45,8 @@ export function createMidiEngine(song: Midi) {
   const p = proxy({
     speed: speed ? parseFloat(speed) : 1,
     tick: start ? parseInt(start) : -1,
+    keySignature:
+      keySignatures[(song.header.keySignatures[0].key as Key) || "C-major"],
     tickStart: start ? parseInt(start) : -1,
     tickEnd: song.durationTicks,
     song: ref(song), // do not track internal nested objects, ex ppq was lost
@@ -147,6 +151,7 @@ export function createMidiEngine(song: Midi) {
           }
         }
         this.tick = tick;
+        this.keySignature = keySignatureForTick(tick, song);
         this.tickEnd = tickEnd;
         this.tickRepeatStart = tickRepeatStart;
         this.rid = requestAnimationFrame(step);
