@@ -11,7 +11,7 @@ import {
 import { blackWidthRatio, pixelRound, xCenterInPiano } from "./track-draw";
 import type { Note } from "./use-song-sounds";
 import type { MidiEngine } from "./midi-valtio";
-import { drawNote } from "./track-draw-sheet";
+import { drawNote } from "./track-draw-note";
 
 function getFill(active: boolean, down: boolean) {
   switch (true) {

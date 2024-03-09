@@ -46,7 +46,8 @@ export function createMidiEngine(song: Midi) {
     speed: speed ? parseFloat(speed) : 1,
     tick: start ? parseInt(start) : -1,
     keySignature:
-      keySignatures[(song.header.keySignatures[0].key as Key) || "C-major"],
+      keySignatures[song.header.keySignatures[0].key as Key] ||
+      keySignatures["C-major"],
     tickStart: start ? parseInt(start) : -1,
     tickEnd: song.durationTicks,
     song: ref(song), // do not track internal nested objects, ex ppq was lost

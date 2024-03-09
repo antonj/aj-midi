@@ -306,7 +306,10 @@ export function Track() {
 
   return (
     <div className="flex flex-col w-full h-full select-none">
-      <div className="relative w-full h-full touch-none overflow-hidden">
+      <div
+        className="relative w-full touch-none overflow-hidden"
+        style={{ flexGrow: 100 }}
+      >
         <canvas
           key={"canvas-bg"}
           className="absolute w-full h-full touch-none"
@@ -318,7 +321,7 @@ export function Track() {
           ref={setCanvasEl}
         />
       </div>
-      <div className="relative h-1/4 bg-primary">
+      <div className="relative bg-primary" style={{ flexGrow: 50 }}>
         <canvas
           key={"canvas-keyboard"}
           className="absolute w-full h-full touch-none"
@@ -327,7 +330,10 @@ export function Track() {
       </div>
 
       {showSheetNotation ? (
-        <div className="h-1/3 bg-secondary touch-none relative">
+        <div
+          className="bg-secondary touch-none relative"
+          style={{ flexGrow: 100 }}
+        >
           <canvas
             key={"canvas-sheet"}
             className="absolute w-full h-full"

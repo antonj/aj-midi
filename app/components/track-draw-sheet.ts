@@ -1,5 +1,4 @@
 import type { KeySignatureEvent } from "@tonejs/midi/dist/Header";
-import type { KeySignature } from "~/util/key-signature";
 import { findKeySignature, keySignatures } from "~/util/key-signature";
 import { map } from "~/util/map";
 import {
@@ -9,7 +8,7 @@ import {
   whiteIndexInOctave,
   whiteIndex,
   whiteIndexInKey,
-  MidiNumber,
+  WhiteIndex,
 } from "../util/music";
 import { drawGlyph } from "./glyph";
 import type { MidiEngine } from "./midi-valtio";
@@ -18,11 +17,16 @@ import { Midi } from "@tonejs/midi";
 
 type TickNumber = number;
 
-export const staffLinesTrebleClef: Array<MidiNumber> = [64, 67, 71, 74, 77];
-export const staffLinesBassClef: Array<MidiNumber> = [43, 47, 50, 53, 57];
-const staffLineTrebleMiddle = 71;
-const staffLineBassMiddle = 50;
-const lineNotes = staffLinesBassClef.concat(staffLinesTrebleClef);
+export const staffLinesTrebleClef = [64, 67, 71, 74, 77].map((i) =>
+  whiteIndex(i)
+);
+export const staffLinesBassClef = [43, 47, 50, 53, 57].map((i) =>
+  whiteIndex(i)
+);
+export const staffMiddleC = whiteIndex(60);
+export const staffLineTrebleMiddle = whiteIndex(71);
+export const staffLineBassMiddle = whiteIndex(50);
+export const lineNotes = staffLinesBassClef.concat(staffLinesTrebleClef);
 const tickHistoryRatio = 1 / 8;
 
 export function sheetTickWindow(tickWindow: TickNumber): number {
@@ -41,12 +45,11 @@ function toWhiteMidi(midi: number, direction: -1 | 1) {
   }
 }
 
-function onStaffLine(n: number, ks: KeySignature) {
-  const wIndex = Math.floor(whiteIndexInKey(n, ks)); // TODO we floor here to make every 0.5 note a sharp
-  return wIndex % 2 == whiteIndex(staffLinesBassClef[0]) % 2;
+function onStaffLine(wIndex: WhiteIndex) {
+  return wIndex % 2 == staffLinesBassClef[0] % 2;
 }
 
-function clefPosition(n: number): "over" | "under" | "between" | "in-clef" {
+function clefPosition(n: WhiteIndex): "over" | "under" | "between" | "in-clef" {
   // over top staff line
   if (n > staffLinesTrebleClef[staffLinesTrebleClef.length - 1]) {
     return "over";
@@ -134,8 +137,7 @@ export function drawTrackSheet(
   const lineWidth = Math.max(1, noteHeight * 0.1);
 
   // staff lines
-  for (const midi of lineNotes) {
-    const wIndex = whiteIndex(midi);
+  for (const wIndex of lineNotes) {
     let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
     ctx.strokeStyle = "rgba(0,0,0,0.9)";
     ctx.lineWidth = lineWidth;
@@ -148,14 +150,14 @@ export function drawTrackSheet(
   // bar lines
   {
     const barTopPbx = map(
-      whiteIndex(lineNotes[lineNotes.length - 1]),
+      lineNotes[lineNotes.length - 1],
       midiMinWhiteIndex,
       midiMaxWhiteIndex,
       h,
       0
     );
     const barBottomPbx = map(
-      whiteIndex(lineNotes[0]),
+      lineNotes[0],
       midiMinWhiteIndex,
       midiMaxWhiteIndex,
       h,
@@ -218,7 +220,10 @@ export function drawTrackSheet(
 
   let bar = -1;
   const barAccidentals = new Map<number, "sharp" | "flat">();
-  const extraStafflines = new Map<number, { high: number; low: number }>();
+  const extraStafflines = new Map<
+    WhiteIndex,
+    { high: WhiteIndex; low: WhiteIndex }
+  >();
   for (const n of notesInView) {
     // const wIndex =
     //   ks.accidental === "sharp"
@@ -232,48 +237,44 @@ export function drawTrackSheet(
 
     // lines for notes not on staff lines
     {
-      function drawExtraStaff(midi: number) {
-        const wIndex = Math.floor(whiteIndexInKey(midi, ks));
+      function drawExtraStaff(wIndex: WhiteIndex) {
         let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
-        ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
+        ctx.strokeStyle = "black";
         ctx.lineWidth = lineWidth;
         ctx.beginPath();
-        ctx.moveTo(x - noteHeight * 1.5, y);
-        ctx.lineTo(x + noteHeight * 1.5, y);
+        ctx.moveTo(x - noteHeight * 1.2, y);
+        ctx.lineTo(x + noteHeight * 1.2, y);
         ctx.stroke();
         ctx.closePath();
       }
-      if (clefPosition(n.midi) !== "in-clef") {
+      if (clefPosition(wIndex) !== "in-clef") {
         const before = extraStafflines.get(n.ticks) || {
           high: staffLinesTrebleClef[staffLinesTrebleClef.length - 1],
           low: staffLinesBassClef[0],
         };
         switch (true) {
-          case n.midi > before.high: {
+          case wIndex > before.high: {
             // draw new lines from
-            for (let i = before.high + 1; i <= n.midi; i++) {
+            for (let i = before.high + 2; i <= wIndex; i = i + 2) {
               // todo consider halftone semitone sharps and flats
               // to not draw more than once
-              if (onStaffLine(i, ks)) {
+              if (onStaffLine(i)) {
                 drawExtraStaff(i);
               }
             }
-            extraStafflines.set(n.ticks, { ...before, high: n.midi });
+            extraStafflines.set(n.ticks, { ...before, high: wIndex });
             break;
           }
-          case n.midi < before.low: {
-            for (let i = before.low - 3; i >= n.midi; i--) {
-              if (onStaffLine(i, ks)) {
-                drawExtraStaff(i);
-              }
+          case wIndex < before.low: {
+            for (let i = before.low - 2; i >= wIndex; i = i - 2) {
+              drawExtraStaff(i);
             }
-            extraStafflines.set(n.ticks, { ...before, low: n.midi });
+            extraStafflines.set(n.ticks, { ...before, low: wIndex });
             break;
           }
-          default:
-            // between
-            if (onStaffLine(n.midi, ks)) {
-              drawExtraStaff(n.midi);
+          case wIndex == staffMiddleC:
+            {
+              drawExtraStaff(wIndex);
             }
             break;
         }
@@ -316,7 +317,7 @@ export function drawTrackSheet(
       ctx.lineWidth = lineWidth;
       ctx.beginPath();
       let dir =
-        n.midi < staffLineBassMiddle || n.midi > staffLineTrebleMiddle ? -1 : 1; // up or down
+        wIndex < staffLineBassMiddle || wIndex > staffLineTrebleMiddle ? -1 : 1; // up or down
       ctx.moveTo(x + noteHeight * 0.7 * dir, y - noteHeight * 0.1);
       ctx.lineTo(x + noteHeight * 0.7 * dir, y - noteHeight * 3 * dir);
 
@@ -343,78 +344,5 @@ export function drawTrackSheet(
       // accidental
       drawGlyph(ctx, ks.accidental, x, y, noteHeight);
     }
-  }
-}
-
-export function drawNote(
-  ctx: CanvasRenderingContext2D,
-  midi: MidiNumber,
-  options: {
-    theme: "dark" | "light";
-    width: number;
-    height: number;
-    ks: KeySignature;
-    midiMin: MidiNumber;
-    midiMax: MidiNumber;
-  }
-) {
-  const o = options;
-  const { width: w, height: h } = o;
-  const wIndex = Math.floor(whiteIndexInKey(midi, o.ks));
-  const midiMinWhiteIndex = whiteIndex(o.midiMin);
-  const midiMaxWhiteIndex = whiteIndex(o.midiMax);
-  const numWhites = Math.floor(midiMaxWhiteIndex - midiMinWhiteIndex) + 1;
-
-  const y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
-  const x = w / 2;
-  const noteHeight = Math.floor(h / numWhites) * 2;
-  const lineWidth = Math.max(1, noteHeight * 0.1);
-
-  const color = o.theme === "dark" ? "white" : "black";
-
-  // staff lines
-  const staffPaddingRatio = 0.1;
-  for (const midi of lineNotes) {
-    const wIndex = whiteIndex(midi);
-    let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
-    ctx.strokeStyle = color;
-
-    ctx.lineWidth = lineWidth;
-    ctx.beginPath();
-
-    ctx.moveTo(staffPaddingRatio * w, y);
-    ctx.lineTo((1 - staffPaddingRatio) * w, y);
-    ctx.stroke();
-    ctx.closePath();
-  }
-
-  // head
-  {
-    ctx.fillStyle = color;
-    ctx.strokeStyle = color;
-    ctx.beginPath();
-    ctx.ellipse(
-      x,
-      y,
-      noteHeight * 0.8,
-      noteHeight * 0.5,
-      -Math.PI / 8,
-      0,
-      Math.PI * 2
-    );
-    ctx.fill();
-    ctx.closePath();
-  }
-  // stem
-  {
-    ctx.lineWidth = lineWidth;
-    ctx.beginPath();
-    let dir =
-      midi < staffLineBassMiddle || midi > staffLineTrebleMiddle ? -1 : 1; // up or down
-    ctx.moveTo(x + noteHeight * 0.7 * dir, y - noteHeight * 0.1);
-    ctx.lineTo(x + noteHeight * 0.7 * dir, y - noteHeight * 3 * dir);
-
-    ctx.stroke();
-    ctx.closePath();
   }
 }

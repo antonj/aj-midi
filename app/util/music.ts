@@ -4,6 +4,7 @@ import type { Note, KeySignature } from "./key-signature";
 import { noteIndex } from "./key-signature";
 
 export type MidiNumber = number;
+export type WhiteIndex = number;
 
 export const notes = ["C", "D", "E", "F", "G", "A", "B"];
 
@@ -270,7 +271,7 @@ export function whiteIndexInKey(midi: number, ks: KeySignature) {
 }
 
 /** White index in key C-major */
-export function whiteIndex(midi: number) {
+export function whiteIndex(midi: number): WhiteIndex {
   const oct = midiToOctave(midi);
   return oct.octave * 7 + whiteIndexInOctave(oct.index);
 }
