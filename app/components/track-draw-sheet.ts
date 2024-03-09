@@ -96,6 +96,23 @@ export function drawTrackSheet(
 
   const ks = songExt.keySignature;
 
+  let midiMin = 21; // 88 keys
+  let midiMax = 108; // 88 keys
+  if (false) {
+    midiMin = toWhiteMidi(Math.min(low, lineNotes[0]) - 4, -1);
+    midiMax = toWhiteMidi(
+      Math.max(high, lineNotes[lineNotes.length - 1]) + 4,
+      1
+    );
+  }
+
+  const midiMinWhiteIndex = whiteIndex(midiMin); //whiteIndexInKey(midiMin, ks);
+  const midiMaxWhiteIndex = whiteIndex(midiMax);
+
+  const numWhites = Math.floor(midiMaxWhiteIndex - midiMinWhiteIndex) + 1;
+  const noteHeight = Math.floor(h / numWhites) * 2;
+  const lineWidth = Math.max(1, noteHeight * 0.1);
+
   // tickline and bg
   ctx.clearRect(0, 0, w, h);
   ctx.fillStyle = "white";
@@ -117,24 +134,22 @@ export function drawTrackSheet(
     ctx.lineTo(tickX, h);
     ctx.stroke();
     ctx.closePath();
-  }
 
-  let midiMin = 21; // 88 keys
-  let midiMax = 108; // 88 keys
-  if (false) {
-    midiMin = toWhiteMidi(Math.min(low, lineNotes[0]) - 4, -1);
-    midiMax = toWhiteMidi(
-      Math.max(high, lineNotes[lineNotes.length - 1]) + 4,
-      1
+    drawGlyph(
+      ctx,
+      "treble_clef",
+      tickX / 2,
+      map(whiteIndex(67 /*G*/), midiMinWhiteIndex, midiMaxWhiteIndex, h, 0),
+      noteHeight
+    );
+    drawGlyph(
+      ctx,
+      "bas_clef",
+      tickX / 2,
+      map(whiteIndex(53 /*F*/), midiMinWhiteIndex, midiMaxWhiteIndex, h, 0),
+      noteHeight
     );
   }
-
-  const midiMinWhiteIndex = whiteIndex(midiMin); //whiteIndexInKey(midiMin, ks);
-  const midiMaxWhiteIndex = whiteIndex(midiMax);
-
-  const numWhites = Math.floor(midiMaxWhiteIndex - midiMinWhiteIndex) + 1;
-  const noteHeight = Math.floor(h / numWhites) * 2;
-  const lineWidth = Math.max(1, noteHeight * 0.1);
 
   // staff lines
   for (const wIndex of lineNotes) {
