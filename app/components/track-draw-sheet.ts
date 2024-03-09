@@ -225,11 +225,11 @@ export function drawTrackSheet(
     { high: WhiteIndex; low: WhiteIndex }
   >();
   for (const n of notesInView) {
-    // const wIndex =
-    //   ks.accidental === "sharp"
-    //     ? Math.floor(whiteIndexInKey(n.midi, ks)) // floor here to make every 0.5 note a sharp
-    //     : Math.ceil(whiteIndexInKey(n.midi, ks)); // ceil here to make every 0.5 note a flat
-    const wIndex = Math.floor(whiteIndexInKey(n.midi, ks)); // floor here to make every 0.5 note a sharp
+    const wIndex =
+      ks.accidental === "sharp"
+        ? Math.floor(whiteIndexInKey(n.midi, ks)) // floor here to make every 0.5 note a sharp
+        : Math.ceil(whiteIndexInKey(n.midi, ks)); // ceil here to make every 0.5 note a flat
+    // const wIndex = Math.floor(whiteIndexInKey(n.midi, ks)); // floor here to make every 0.5 note a sharp
     let note = midiToNote(n.midi);
     let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
     const x = map(n.ticks, minTick, maxTick, 0, w);
