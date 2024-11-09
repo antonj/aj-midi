@@ -6,7 +6,6 @@ import { useSongSound } from "../components/use-song-sounds";
 import { useSearchParams } from "@remix-run/react";
 import { Panel, links as PanelLinks } from "../components/panel";
 import { EngineProvider } from "../components/engine-provider";
-import { createScalesMidi } from "../util/create-scales-midi";
 import { files } from "./midi.$id[.midi]";
 
 export function links() {

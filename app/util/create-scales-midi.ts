@@ -1,5 +1,5 @@
 import midi from "@tonejs/midi";
-import type { Note } from "./key-signature";
+import type { Key, KeySignature, Note } from "./key-signature";
 import {
   keySignatures,
   noteIndex,
@@ -8,7 +8,9 @@ import {
 } from "./key-signature";
 const { Midi, Header } = midi;
 
-export function createScalesMidi() {
+function createScale(key: Array<Key>) {}
+
+export function createScalesMidi(listKs: Array<KeySignature>) {
   const m = new Midi();
 
   m.header = new Header();
@@ -21,14 +23,18 @@ export function createScalesMidi() {
   }
 
   let i = 0;
-  for (const ks of Object.values(keySignatures)) {
+  for (const ks of listKs) {
     // if (!new Set<Key>(["C-major", "C#-major", "E-major"]).has(ks.key)) {
     //   continue;
     // }
     let note = midiFromNote(ks.notes[0]);
     const key = ks.notes[0] || "C";
     const scale = ks.scale || "major";
-    console.log("key", key, ks);
+    m.header.tempos.push({
+      bpm: 120,
+      time: 0,
+      ticks: 0,
+    });
     m.header.keySignatures.push({
       key,
       scale,
@@ -44,12 +50,13 @@ export function createScalesMidi() {
         )) {
       track.addNote({
         midi: note,
-        time: i,
-        duration: 0.5,
+        time: i / 2,
+        duration: 1 / 2,
       });
       i++;
       note = note + halfSteps;
     }
+    i = i + 2;
     // chromatic scale
     for (
       let note = midiFromNote(ks.notes[0]) - 2 * 24, y = 0;
@@ -58,12 +65,12 @@ export function createScalesMidi() {
     ) {
       track.addNote({
         midi: note,
-        time: i,
-        duration: 0.5,
+        time: i / 2,
+        duration: 1 / 2,
       });
       i++;
     }
-    i = i + 10;
+    i = i + 4;
   }
 
   m.header.timeSignatures = [{ ticks: 0, timeSignature: [4, 4] }];
