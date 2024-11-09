@@ -1,8 +1,8 @@
 import type { Midi } from "@tonejs/midi";
 import type { KeySignatureEvent } from "@tonejs/midi/dist/Header";
 import { findKeySignature, keySignatures } from "~/util/key-signature";
-import { ceilTo, floorTo, map, roundTo } from "~/util/map";
-import type { WhiteIndex } from "../util/music";
+import { ceilTo, floorTo, map } from "~/util/map";
+import type { MidiNumber, WhiteIndex } from "../util/music";
 import {
   midiToNote,
   midiToOctave,
@@ -14,6 +14,7 @@ import {
 import { drawGlyph } from "./glyph";
 import type { MidiEngine } from "./midi-valtio";
 import type { Note } from "./use-song-sounds";
+import { detectChord } from "../util/music-chord";
 
 type TickNumber = number;
 
@@ -120,9 +121,9 @@ export function drawTrackSheet(
 
   ctx.fillStyle = "black";
   ctx.font = "16px sans-serif";
-  ctx.fillText(`${ks.key}  (${ks.notes.join(",")})`, 15, 15);
+  ctx.fillText(`${ks.key}  (${ks.notes.join(",")})`, 16, 16);
+  const tickX = map(tick, minTick, maxTick, 0, w);
   {
-    const tickX = map(tick, minTick, maxTick, 0, w);
     // bg to left of tickline
     ctx.fillStyle = "rgba(150, 140, 100, 0.2)";
     ctx.fillRect(0, 0, tickX, h);
@@ -243,6 +244,8 @@ export function drawTrackSheet(
     WhiteIndex,
     { high: WhiteIndex; low: WhiteIndex }
   >();
+
+  let notesOn: MidiNumber[] = [];
   for (const n of notesInView) {
     const wIndex =
       ks.accidental === "sharp"
@@ -301,6 +304,9 @@ export function drawTrackSheet(
     }
 
     const isOn = tick >= n.ticks && tick <= n.ticks + n.durationTicks;
+    if (isOn) {
+      notesOn.push(n.midi);
+    }
     if (n.isFromInput) {
       ctx.fillStyle = "red";
       ctx.strokeStyle = "red";
@@ -375,5 +381,18 @@ export function drawTrackSheet(
       // accidental
       drawGlyph(ctx, ks.accidental, x, y, noteHeight);
     }
+  }
+
+  const chord = detectChord(notesOn);
+  if (chord) {
+    ctx.fillStyle = "black";
+    ctx.font = "16px sans-serif";
+    ctx.fillText(`${chord.chord}`, tickX + 16, 16);
+  }
+  const chordPressed = detectChord(Array.from(pressed.keys()));
+  if (chordPressed) {
+    ctx.fillStyle = "black";
+    ctx.font = "16px sans-serif";
+    ctx.fillText(`${chordPressed?.chord}`, tickX + 16, 16 * 2);
   }
 }

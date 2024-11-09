@@ -8,8 +8,6 @@ import {
 } from "./key-signature";
 const { Midi, Header } = midi;
 
-function createScale(key: Array<Key>) {}
-
 export function createScalesMidi(listKs: Array<KeySignature>) {
   const m = new Midi();
 

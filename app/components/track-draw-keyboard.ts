@@ -70,8 +70,9 @@ export function trackDrawKeyabord(
           ctx.fillRect(left, 0, whiteWidthPx, h);
         }
         ctx.strokeRect(left, 0, whiteWidthPx, h);
-        // const n = midiToNote(midi);
-        // ctx.strokeText(n + "-" + midi, left, h / 2, whiteWidthPx);
+        // ctx.font = "24px sans-serif";
+        // ctx.fillStyle = "red";
+        // ctx.fillText("" + midi, left, h - 20, whiteWidthPx);
       }
     }
   }

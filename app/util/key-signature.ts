@@ -118,7 +118,7 @@ export const noteIndex = {
 
 export function noteIsInKeySignature(note: Note, ks: KeySignature): boolean {
   for (const n of ks.notes) {
-    if (noteIndex(note) === noteIndex(n)) {
+    if (noteIndex[note] === noteIndex[n]) {
       return true;
     }
   }
