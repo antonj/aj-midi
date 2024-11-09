@@ -37,7 +37,7 @@ export function InputRange(props: {
   });
 
   return (
-    <div data-input-range ref={setElInput}>
+    <div data-input-range ref={setElInput} className="flex items-center">
       <label>{props.label}</label>
       <input
         hidden={!props.focusable}
