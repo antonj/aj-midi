@@ -108,14 +108,14 @@ function SelectTracks() {
       <NumBool
         label="all-tracks"
         value={
-          snap.trackIndexs.size === 0 ||
-          snap.trackIndexs.size ===
+          snap.trackIndex.size === 0 ||
+          snap.trackIndex.size ===
             snap.tracks.filter((t) => t.notes.length > 0).length
         }
         onChange={(v) => {
           console.log(v);
           if (v) {
-            eng.trackIndexs = new Set(
+            eng.trackIndex = new Set(
               snap.tracks.filter((t) => t.notes.length > 0).map((_, i) => i)
             );
           }
@@ -127,15 +127,15 @@ function SelectTracks() {
             <NumBool
               key={i}
               label={x.name}
-              value={snap.trackIndexs.has(i)}
+              value={snap.trackIndex.has(i)}
               onChange={(v) => {
-                const newVals = new Set(snap.trackIndexs);
+                const newVals = new Set(snap.trackIndex);
                 if (v) {
                   newVals.add(i);
                 } else {
                   newVals.delete(i);
                 }
-                eng.trackIndexs = newVals;
+                eng.trackIndex = newVals;
               }}
             />
           );

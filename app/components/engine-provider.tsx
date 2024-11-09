@@ -31,7 +31,7 @@ export function EngineProvider({
   }, [song]);
 
   const snap = useSnapshot(store);
-  const trackIndexs = snap.trackIndexs;
+  const trackIndex = snap.trackIndex;
   useMemo(
     function ctxMemo() {
       console.log("provider", song);
@@ -39,7 +39,7 @@ export function EngineProvider({
 
       const ticksPerBar = getTicksPerBar(song);
       const allPianoNotes = mergeNotes(store.tracks);
-      const pianoNotes = mergeNotes(store.tracks, trackIndexs);
+      const pianoNotes = mergeNotes(store.tracks, trackIndex);
       const octaves = getOctaves(allPianoNotes);
       const tickConnections = new ParallelNotes(pianoNotes);
 
@@ -49,7 +49,7 @@ export function EngineProvider({
       store.octaves = octaves;
       store.tickConnections = tickConnections;
     },
-    [store, trackIndexs]
+    [store, trackIndex]
   );
 
   useEffect(() => {

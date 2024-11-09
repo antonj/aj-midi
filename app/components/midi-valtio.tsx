@@ -3,7 +3,7 @@ import { getTicksPerBar } from "../util/music";
 import { roundTo } from "../util/map";
 import { debounce } from "../util/debounce";
 import { subscribeKey } from "valtio/utils";
-import { Midi, Track } from "@tonejs/midi";
+import { Midi } from "@tonejs/midi";
 import { Note } from "@tonejs/midi/dist/Note";
 import { ParallelNotes } from "./parallel-notes";
 import { SongCtx } from "./engine-provider";
@@ -22,6 +22,8 @@ function updateQuery(ctx: MidiEngine) {
     url.searchParams.set("sheet", "false");
   }
   url.searchParams.set("warmup", Math.floor(ctx.repeatBarsWarmup).toString());
+  url.searchParams.set("trackIndex", Array.from(ctx.trackIndex).join(","));
+
   window.history.replaceState(null, "", url.toString());
 }
 const updateQueryDebounced = debounce(updateQuery, 300);
@@ -41,6 +43,7 @@ export function createMidiEngine(song: Midi) {
   const tickWindow = searchParams.get("window");
   const speed = searchParams.get("speed");
   const sheetNotation = searchParams.get("sheet");
+  const trackIndex = searchParams.get("trackIndex");
 
   const p = proxy({
     speed: speed ? parseFloat(speed) : 1,
@@ -64,7 +67,9 @@ export function createMidiEngine(song: Midi) {
     rid: 0,
     listeners: new Set<() => void>(),
 
-    trackIndexs: new Set<number>(),
+    trackIndex: trackIndex
+      ? new Set<number>(trackIndex.split(",").map((i) => parseInt(i)))
+      : new Set<number>(),
     ticksPerBar: 0,
     bpm: 0,
     instruments: ["piano"] as Array<"piano" | "organ">,
@@ -99,6 +104,7 @@ export function createMidiEngine(song: Midi) {
       this.listeners.add(subscribeKey(this, "repeatBars", update));
       this.listeners.add(subscribeKey(this, "repeatBarsWarmup", update));
       this.listeners.add(subscribeKey(this, "sheetNotation", update));
+      this.listeners.add(subscribeKey(this, "trackIndex", update));
 
       const {
         durationTicks,
