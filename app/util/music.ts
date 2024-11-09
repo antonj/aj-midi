@@ -1,4 +1,4 @@
-import type { Midi } from "@tonejs/midi";
+import type { Midi, Track } from "@tonejs/midi";
 import { floorTo } from "./map";
 import type { Note, KeySignature } from "./key-signature";
 import { noteIndex } from "./key-signature";
@@ -181,13 +181,13 @@ export function getOctaves(notes: { midi: number }[]) {
 }
 
 export function mergeNotes(
-  song: Midi,
-  filter = "piano",
-  tracks: Set<number> = new Set()
+  tracks: Track[],
+  tracksIndexesSelected: Set<number> = new Set()
 ) {
-  const pianoTracks = song.tracks
-    .filter((_, i) => (tracks.size === 0 ? true : tracks.has(i)))
-    .filter((t) => t.instrument.family === filter);
+  const pianoTracks = tracks.filter((_, i) =>
+    tracksIndexesSelected.size === 0 ? true : tracksIndexesSelected.has(i)
+  );
+
   // song.tracks = pianoTracks;
   // const blob = new Blob([song.toArray()], {
   //   type: "audio/midi",
@@ -197,7 +197,7 @@ export function mergeNotes(
 
   if (pianoTracks.length === 0) {
     // ignore instrument just use the first available track
-    return song.tracks[0].notes;
+    return tracks[0].notes;
   }
   let merged = pianoTracks[0].notes;
   for (let i = 1; i < pianoTracks.length; i++) {

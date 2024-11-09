@@ -3,11 +3,11 @@ import { getTicksPerBar } from "../util/music";
 import { roundTo } from "../util/map";
 import { debounce } from "../util/debounce";
 import { subscribeKey } from "valtio/utils";
-import { Midi } from "@tonejs/midi";
+import { Midi, Track } from "@tonejs/midi";
 import { Note } from "@tonejs/midi/dist/Note";
 import { ParallelNotes } from "./parallel-notes";
 import { SongCtx } from "./engine-provider";
-import { Key, findKeySignature, keySignatures } from "~/util/key-signature";
+import { Key, keySignatures } from "~/util/key-signature";
 import { keySignatureForTick } from "./track-draw-sheet";
 
 function updateQuery(ctx: MidiEngine) {
@@ -46,7 +46,7 @@ export function createMidiEngine(song: Midi) {
     speed: speed ? parseFloat(speed) : 1,
     tick: start ? parseInt(start) : -1,
     keySignature:
-      keySignatures[song.header.keySignatures[0].key as Key] ||
+      keySignatures[song.header.keySignatures[0]?.key as Key] ||
       keySignatures["C-major"],
     tickStart: start ? parseInt(start) : -1,
     tickEnd: song.durationTicks,
@@ -67,9 +67,20 @@ export function createMidiEngine(song: Midi) {
     trackIndexs: new Set<number>(),
     ticksPerBar: 0,
     bpm: 0,
+    instruments: ["piano"] as Array<"piano" | "organ">,
     pianoNotes: [] as Note[],
     octaves: {} as SongCtx["octaves"],
     tickConnections: new ParallelNotes([]),
+
+    get tracks() {
+      const filtered = song.tracks.filter(
+        (t) =>
+          t.notes.length > 0 &&
+          this.instruments.indexOf(t.instrument.family) >= 0
+      );
+      if (filtered.length === 0) return song.tracks;
+      return filtered;
+    },
 
     get bar() {
       return Math.floor(this.tick / ticksPerBar) + 1;

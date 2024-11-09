@@ -22,3 +22,27 @@
   background-color: var(--midi-bg-color);
   border-left: 1px solid black;
 }
+
+[data-panel-toggle] {
+  position: relative;
+  background-color: #000000;
+}
+[data-panel-toggle]::after {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  transform-origin: center center;
+  transition: transform 100ms ease-out;
+  content: "›"; /*‣➢›*/
+}
+[data-panel-state="open"] [data-panel-toggle]::after {
+  transform: translateY(-50%) rotate(-90deg);
+}
+[data-panel-toggle]:hover {
+  background-color: var(--midi-bg-color);
+}
+
+[data-panel-state="open"] [data-panel-toggle] {
+  border-top: 1px solid var(--midi-input-bg-color);
+}

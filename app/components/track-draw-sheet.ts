@@ -1,19 +1,19 @@
+import type { Midi } from "@tonejs/midi";
 import type { KeySignatureEvent } from "@tonejs/midi/dist/Header";
 import { findKeySignature, keySignatures } from "~/util/key-signature";
-import { map } from "~/util/map";
+import { ceilTo, floorTo, map, roundTo } from "~/util/map";
+import type { WhiteIndex } from "../util/music";
 import {
   midiToNote,
   midiToOctave,
   noteInKeySignature,
-  whiteIndexInOctave,
   whiteIndex,
   whiteIndexInKey,
-  WhiteIndex,
+  whiteIndexInOctave,
 } from "../util/music";
 import { drawGlyph } from "./glyph";
 import type { MidiEngine } from "./midi-valtio";
 import type { Note } from "./use-song-sounds";
-import { Midi } from "@tonejs/midi";
 
 type TickNumber = number;
 
@@ -213,12 +213,16 @@ export function drawTrackSheet(
     durationTicks: number;
     isFromInput?: boolean;
   }>();
+
+  const minBar = floorTo(minTick, songExt.ticksPerBar);
+  const maxBar = ceilTo(maxTick, songExt.ticksPerBar);
+
   for (const n of songExt.pianoNotes) {
-    if (n.ticks + n.durationTicks < minTick) {
+    if (n.ticks + n.durationTicks < minBar) {
       // out of bounds left
       continue;
     }
-    if (n.ticks > maxTick) {
+    if (n.ticks > maxBar) {
       continue;
     }
     notesInView.push(n);
@@ -307,6 +311,18 @@ export function drawTrackSheet(
       ctx.fillStyle = "black";
       ctx.strokeStyle = "black";
     }
+
+    // note length
+    {
+      const length = Math.pow(
+        2,
+        Math.round(Math.log2(songExt.ticksPerBar / n.durationTicks))
+      );
+      ctx.fillText("" + `${length}`, x + 20, y);
+    }
+
+    // 64, 32, 16, 8, 4, 1
+    //
 
     // ellipse note shape
     {

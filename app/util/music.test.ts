@@ -1,5 +1,6 @@
 import { expect, test } from "@jest/globals";
-import { KeySignature, Note, keySignatures } from "./key-signature";
+import { keySignatures } from "./key-signature";
+import type { KeySignature, Note } from "./key-signature";
 import {
   noteInKeySignature,
   offsetBetweenNotes,

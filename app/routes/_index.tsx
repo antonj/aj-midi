@@ -95,6 +95,12 @@ const songs: Array<SongType> = [
   },
 
   {
+    artist: "Queen",
+    title: "Bohemian Rhapsody",
+    url: "/static/midi/bohemian-rhapsody.midi",
+  },
+
+  {
     artist: "",
     title: "Holy Night",
     url: "/static/midi/o_holy_night.midi",

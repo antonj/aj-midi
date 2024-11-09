@@ -321,7 +321,7 @@ export function Track() {
           ref={setCanvasEl}
         />
       </div>
-      <div className="relative bg-primary" style={{ flexGrow: 50 }}>
+      <div className="relative bg-primary" style={{ flexGrow: 40 }}>
         <canvas
           key={"canvas-keyboard"}
           className="absolute w-full h-full touch-none"

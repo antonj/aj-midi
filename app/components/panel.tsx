@@ -25,7 +25,11 @@ export function Panel() {
   const [hidden, setHidden] = useState(false);
 
   return (
-    <div data-panel className="font-bold">
+    <div
+      data-panel
+      data-panel-state={hidden ? "hidden" : "open"}
+      className="font-bold"
+    >
       <section className={`p-2 font-bold ${hidden ? "hidden" : ""}`}>
         <div>
           {x.state}
@@ -83,6 +87,7 @@ export function Panel() {
         <NumBar />
       </section>
       <hgroup
+        data-panel-toggle
         className="font-bold p-2 cursor-pointer select-none"
         onClick={() => setHidden((hidden) => !hidden)}
       >
@@ -95,7 +100,7 @@ export function Panel() {
 function SelectTracks() {
   const eng = useEnginge();
   const snap = useSnapshot(eng);
-  if (snap.song.tracks.length < 2) {
+  if (snap.tracks.length < 2) {
     return null;
   }
   return (
@@ -105,22 +110,20 @@ function SelectTracks() {
         value={
           snap.trackIndexs.size === 0 ||
           snap.trackIndexs.size ===
-            snap.song.tracks.filter((t) => t.notes.length > 0).length
+            snap.tracks.filter((t) => t.notes.length > 0).length
         }
         onChange={(v) => {
           console.log(v);
           if (v) {
             eng.trackIndexs = new Set(
-              snap.song.tracks
-                .filter((t) => t.notes.length > 0)
-                .map((_, i) => i)
+              snap.tracks.filter((t) => t.notes.length > 0).map((_, i) => i)
             );
           }
         }}
       />
       <div className="ml-2">
-        {snap.song.tracks.map((x, i) => {
-          return x.notes.length > 0 ? (
+        {snap.tracks.map((x, i) => {
+          return (
             <NumBool
               key={i}
               label={x.name}
@@ -135,7 +138,7 @@ function SelectTracks() {
                 eng.trackIndexs = newVals;
               }}
             />
-          ) : null;
+          );
         })}
       </div>
     </>

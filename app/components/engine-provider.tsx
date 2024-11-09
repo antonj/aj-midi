@@ -32,14 +32,14 @@ export function EngineProvider({
 
   const snap = useSnapshot(store);
   const trackIndexs = snap.trackIndexs;
-  useMemo<SongCtx>(
+  useMemo(
     function ctxMemo() {
       console.log("provider", song);
       let bpm = song.header.tempos[0]?.bpm || 120;
 
       const ticksPerBar = getTicksPerBar(song);
-      const allPianoNotes = mergeNotes(song, "piano");
-      const pianoNotes = mergeNotes(song, "piano", trackIndexs);
+      const allPianoNotes = mergeNotes(store.tracks);
+      const pianoNotes = mergeNotes(store.tracks, trackIndexs);
       const octaves = getOctaves(allPianoNotes);
       const tickConnections = new ParallelNotes(pianoNotes);
 
@@ -48,15 +48,6 @@ export function EngineProvider({
       store.pianoNotes = pianoNotes;
       store.octaves = octaves;
       store.tickConnections = tickConnections;
-
-      return {
-        song,
-        bpm,
-        ticksPerBar,
-        tickConnections,
-        pianoNotes,
-        octaves,
-      };
     },
     [store, trackIndexs]
   );
