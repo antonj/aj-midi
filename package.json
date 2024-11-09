@@ -17,8 +17,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@remix-run/react": "^2.3.1",
-    "@remix-run/serve": "^2.3.1",
+    "@remix-run/react": "^2.14.0",
+    "@remix-run/serve": "^2.14.0",
     "@remix-run/vercel": "^1.19.3",
     "@tonejs/midi": "^2.0.28",
     "esbuild": "^0.19.2",
@@ -26,7 +26,7 @@
     "pitchfinder": "^2.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "remix": "^2.3.1",
+    "remix": "^2.14.0",
     "rxjs": "^7.8.1",
     "valtio": "^1.12.1",
     "zustand": "^4.3.3"
