@@ -304,13 +304,11 @@ export function drawTrackSheet(
     }
 
     const isOn = tick >= n.ticks && tick <= n.ticks + n.durationTicks;
-    if (isOn) {
-      notesOn.push(n.midi);
-    }
     if (n.isFromInput) {
       ctx.fillStyle = "red";
       ctx.strokeStyle = "red";
     } else if (isOn) {
+      notesOn.push(n.midi);
       ctx.fillStyle = "gold";
       ctx.strokeStyle = "black";
     } else {
