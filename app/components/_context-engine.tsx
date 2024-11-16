@@ -1,8 +1,7 @@
-import type { Midi } from "@tonejs/midi";
 import { createContext, useContext, useEffect, useRef } from "react";
 import type { ReactNode } from "react";
-import type { SongCtx } from "./context-song";
 import { MidiEngine } from "./midi-engine";
+import { SongCtx } from "./engine-provider";
 
 const EngineContext = createContext<MidiEngine | null>(null);
 

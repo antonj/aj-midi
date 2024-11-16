@@ -3,7 +3,7 @@ import { useSnapshot } from "valtio";
 import { AjScroller } from "../util/aj-scroller";
 import { map } from "../util/map";
 import { Scroller } from "../util/scroller";
-import { useEnginge } from "./engine-provider";
+import { getEngine, useEngineSnapshot } from "./engine-provider";
 import { miniMapWidthRatio, trackDraw } from "./track-draw";
 import { trackDrawBg } from "./track-draw-bg";
 import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
@@ -71,14 +71,13 @@ function useElementSize(elem: HTMLElement | null) {
 }
 
 function useTracksChange() {
-  const engine = useEnginge();
-  const pianoTracks = useSnapshot(engine).pianoNotes;
+  const pianoTracks = useEngineSnapshot().pianoNotes;
   const prevPianoTracks = usePrevious(pianoTracks);
   return pianoTracks !== prevPianoTracks;
 }
 
 export function Track() {
-  const engine = useEnginge();
+  const engine = getEngine();
   const showSheetNotation = useSnapshot(engine).sheetNotation;
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
   const [canvasBgEl, setCanvasBgEl] = useState<HTMLCanvasElement | null>(null);

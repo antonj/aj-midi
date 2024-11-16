@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useRef } from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
 import type { ReactNode } from "react";
 import type { Midi } from "@tonejs/midi";
 import type { Note } from "@tonejs/midi/dist/Note";
@@ -66,8 +66,12 @@ export function EngineProvider({
   );
 }
 
-export function useEnginge(): MidiEngine {
+export function getEngine(): MidiEngine {
   const store = useContext(EngineContext);
   if (!store) throw new Error("Missing EngineProvider.Provider in the tree");
   return store;
+}
+
+export function useEngineSnapshot() {
+  return useSnapshot(getEngine());
 }

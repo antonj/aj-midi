@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Player } from "./use-song-sounds";
 import { create } from "zustand";
+import { useEngineSnapshot } from "./engine-provider";
 
 export type Note = {
   /**
@@ -17,23 +18,28 @@ export type Note = {
 export const useDevicesStore = create<{
   devices: Array<WebMidi.MIDIInput>;
   setDevices: (devices: Array<WebMidi.MIDIInput>) => void;
-  state: "" | "requesting" | "fetched devices" | "no midi support";
+  state:
+    | { kind: "" }
+    | { kind: "requesting" }
+    | { kind: "fetched devices" }
+    | { kind: "no midi support" }
+    | { kind: "error"; error: Error };
   requestMIDIAccess: () => void;
   pressed: Map<number, Note>;
   setPressed: (pressed: Map<number, Note>) => void;
 }>((set, get) => ({
-  state: "",
+  state: { kind: "" },
   devices: [],
   setDevices: (devices) => set(() => ({ devices })),
   pressed: new Map<number, Note>(),
   setPressed: (pressed) => set(() => ({ pressed })),
   requestMIDIAccess: () => {
     const store = get();
-    if (store.state !== "") {
+    if (store.state.kind !== "") {
       return;
     }
     if ("requestMIDIAccess" in navigator) {
-      set(() => ({ state: "requesting" }));
+      set(() => ({ state: { kind: "requesting" } }));
       navigator
         .requestMIDIAccess()
         .then((access) => {
@@ -42,7 +48,7 @@ export const useDevicesStore = create<{
           const inputs = access.inputs.values();
           set(() => ({
             devices: Array.from(inputs),
-            state: "fetched devices",
+            state: { kind: "fetched devices" },
           }));
           access.onstatechange = (event) => {
             console.log("onstatechange", event);
@@ -58,9 +64,10 @@ export const useDevicesStore = create<{
         })
         .catch((e) => {
           console.error("failed to get midi", e);
+          set(() => ({ state: { kind: "error", error: e } }));
         });
     } else {
-      set(() => ({ state: "no midi support" }));
+      set(() => ({ state: { kind: "no midi support" } }));
     }
   },
 }));
@@ -75,6 +82,7 @@ export function useWebMidiDevices() {
 
 export function useMidiInput() {
   const devices = useWebMidiDevices();
+  const volume = useEngineSnapshot().volume;
   const d = devices[0];
   const player = useRef<Player>();
   const { pressed, setPressed } = useDevicesStore((state) => ({
@@ -83,8 +91,11 @@ export function useMidiInput() {
   }));
   useEffect(() => {
     player.current = new Player();
-    player.current.setVolume(1);
   }, []);
+
+  useEffect(() => {
+    player.current?.setVolume(volume);
+  }, [volume]);
 
   useEffect(() => {
     if (!d) {

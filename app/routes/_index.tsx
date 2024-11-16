@@ -189,7 +189,6 @@ function Song({ file }: { file: string }) {
   return (
     <EngineProvider song={m}>
       <Sounds />
-      {/* <Settings /> */}
       <div className="flex">
         <div className="h-s-screen flex-1">
           <Track />

@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useMidiInput } from "./use-web-midi";
-import { useEnginge } from "./engine-provider";
-import { useSnapshot } from "valtio";
+import { getEngine, useEngineSnapshot } from "./engine-provider";
 import { eqSet } from "./keyboard";
 
 function usePlayContext() {
-  const ctx = useEnginge();
-  const snap = useSnapshot(ctx);
+  const snap = useEngineSnapshot();
   const pressed = snap.pressed;
   const tickStart = snap.tickStart;
 
@@ -94,7 +92,7 @@ function okKey(n: { midi: number; ticks: number }) {
 }
 
 export function usePlayController() {
-  const ctx = useEnginge();
+  const ctx = getEngine();
   const [d, missing] = usePlayContext();
   const prevSpeed = useRef(ctx.speed);
   useEffect(() => {

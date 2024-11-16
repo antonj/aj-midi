@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
-import { useSnapshot } from "valtio";
 import { map } from "~/util/map";
 import { noteToFreq } from "../util/music";
-import { useEnginge } from "./engine-provider";
+import { useEngineSnapshot } from "./engine-provider";
 import { useVisibilityChange } from "./use-visibility-change";
 
 export type Note = {
@@ -18,8 +17,7 @@ export type Note = {
 
 export function useSongSound() {
   const visible = useVisibilityChange();
-  const eng = useEnginge();
-  const state = useSnapshot(eng);
+  const state = useEngineSnapshot();
 
   const volume = state.volume;
   const speed = state.speed;
@@ -92,7 +90,7 @@ export class Player {
   }
 
   setVolume(volume: number) {
-    const fadeSeconds = 0.5;
+    const fadeSeconds = 0.25;
     this.gain.gain.setTargetAtTime(volume, this.ctx.currentTime, fadeSeconds);
   }
 

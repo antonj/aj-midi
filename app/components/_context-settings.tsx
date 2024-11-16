@@ -5,7 +5,6 @@ import { createStore, useStore } from "zustand";
 import { debounce } from "~/util/debounce";
 import type { SongCtx } from "./context-song";
 import { getTicksPerBar } from "~/util/music";
-import { MidiEngine } from "./midi-engine";
 
 export type SongSettings = {
   speed: number;
@@ -30,8 +29,14 @@ export type SongSettings = {
 };
 
 type SettingsStore = ReturnType<typeof createSettingsStore>;
+/**
+ * @deprecated
+ */
 export const SettingsContext = createContext<SettingsStore | null>(null);
 
+/**
+ * @deprecated
+ */
 export function SettingsProvider({
   children,
   ctx,
@@ -50,6 +55,9 @@ export function SettingsProvider({
   );
 }
 
+/**
+ * @deprecated
+ */
 export function useSettings<T>(
   selector: (state: SongSettings) => T,
   equalityFn?: (left: T, right: T) => boolean

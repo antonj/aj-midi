@@ -1,6 +1,6 @@
 import { isBlack, notesWithSharps, toMidiTone } from "../util/music";
 import { useMidiInput } from "./use-web-midi";
-import { useEnginge } from "./engine-provider";
+import { getEngine, useEngineSnapshot } from "./engine-provider";
 import { useSnapshot } from "valtio";
 import styles from "./keyboard.css";
 
@@ -19,9 +19,7 @@ interface Has<T> {
 }
 
 export function Keyboard() {
-  const eng = useEnginge();
-  const state = useSnapshot(eng);
-
+  const state = useEngineSnapshot();
   const octaves = state.octaves.octaves;
 
   const [_, midiPressed] = useMidiInput();

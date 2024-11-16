@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { PianoMessageData } from "../../public/audio-worklet";
-import { useEnginge } from "./engine-provider";
-import { useSnapshot } from "valtio";
+import { useEngineSnapshot } from "./engine-provider";
 
 export function useToneDetector(on: boolean) {
   const detector = useRef<SoundDetector>();
-  const eng = useEnginge();
-  const octaves = useSnapshot(eng).octaves;
+  const octaves = useEngineSnapshot().octaves;
   const [connected, setConnected] = useState(false);
   const [tones, setTones] = useState<Array<number>>([]);
   useEffect(() => {
