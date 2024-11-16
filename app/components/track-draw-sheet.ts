@@ -159,10 +159,11 @@ export function drawTrackSheet(
       sharp: ["F#", "C#", "G#", "D#", "A#", "E#", "B#"],
       flat: ["Bb", "Eb", "Ab", "Db", "Gb", "Cb", "Fb"],
     };
-    for (const n of ks.notes) {
-      if (n.length === 1) continue;
+    const ksAccidentals = ks.notes.filter((n) => n.length > 1);
+    for (const n of ksAccidentals) {
       const accidental = n[1] === "#" ? "sharp" : "flat";
       const i = order[accidental].indexOf(n);
+
       const y = map(
         whiteIndex(72 /*C*/ + offsetBetweenNotes("C", n) - 1), // -1 since it is a sharp but key signature should not mark it as one
         midiMinWhiteIndex,
@@ -173,7 +174,7 @@ export function drawTrackSheet(
       drawGlyph(
         ctx,
         accidental,
-        noteHeight * 5 + noteHeight * i,
+        map(i, 0, ksAccidentals.length, noteHeight * 5, tickX),
         y,
         noteHeight
       );
