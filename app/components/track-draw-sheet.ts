@@ -7,6 +7,8 @@ import {
   midiToNote,
   midiToOctave,
   noteInKeySignature,
+  offsetBetweenNotes,
+  toMidiTone,
   whiteIndex,
   whiteIndexInKey,
   whiteIndexInOctave,
@@ -139,17 +141,43 @@ export function drawTrackSheet(
     drawGlyph(
       ctx,
       "treble_clef",
-      tickX / 2,
+      tickX / 8,
       map(whiteIndex(67 /*G*/), midiMinWhiteIndex, midiMaxWhiteIndex, h, 0),
       noteHeight
     );
     drawGlyph(
       ctx,
       "bas_clef",
-      tickX / 2,
+      tickX / 8,
       map(whiteIndex(53 /*F*/), midiMinWhiteIndex, midiMaxWhiteIndex, h, 0),
       noteHeight
     );
+
+    let i = 0;
+
+    const order = {
+      sharp: ["F#", "C#", "G#", "D#", "A#", "E#", "B#"],
+      flat: ["Bb", "Eb", "Ab", "Db", "Gb", "Cb", "Fb"],
+    };
+    for (const n of ks.notes) {
+      if (n.length === 1) continue;
+      const accidental = n[1] === "#" ? "sharp" : "flat";
+      const i = order[accidental].indexOf(n);
+      const y = map(
+        whiteIndex(72 /*C*/ + offsetBetweenNotes("C", n) - 1), // -1 since it is a sharp but key signature should not mark it as one
+        midiMinWhiteIndex,
+        midiMaxWhiteIndex,
+        h,
+        0
+      );
+      drawGlyph(
+        ctx,
+        accidental,
+        noteHeight * 5 + noteHeight * i,
+        y,
+        noteHeight
+      );
+    }
   }
 
   // staff lines
@@ -195,7 +223,7 @@ export function drawTrackSheet(
       ctx.lineWidth = lineWidth * 2;
       ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
       // at bar
-      let x = map(barTick, minTick, maxTick, 0, w) - songExt.ticksPerBar / 64; // - noteHeight put the bar lines to the left of the notes
+      let x = map(barTick, minTick, maxTick, 0, w); //- songExt.ticksPerBar / 64; // - noteHeight put the bar lines to the left of the notes
       ctx.beginPath();
       ctx.moveTo(x, barTopPbx);
       ctx.lineTo(x, barBottomPbx);
@@ -255,6 +283,11 @@ export function drawTrackSheet(
     let note = midiToNote(n.midi);
     let y = map(wIndex, midiMinWhiteIndex, midiMaxWhiteIndex, h, 0);
     const x = map(n.ticks, minTick, maxTick, 0, w);
+    // note length, 1, 2, 4, 8, 16, 32, 64, 128
+    const noteLength = Math.pow(
+      2,
+      Math.round(Math.log2(songExt.ticksPerBar / n.durationTicks))
+    );
     ctx.fillStyle = "black";
 
     // lines for notes not on staff lines
@@ -264,8 +297,8 @@ export function drawTrackSheet(
         ctx.strokeStyle = "black";
         ctx.lineWidth = lineWidth;
         ctx.beginPath();
-        ctx.moveTo(x - noteHeight * 1.2, y);
-        ctx.lineTo(x + noteHeight * 1.2, y);
+        ctx.moveTo(x - noteHeight * 0.4, y);
+        ctx.lineTo(x + noteHeight * 1.6 * (noteLength === 1 ? 1.4 : 1), y);
         ctx.stroke();
         ctx.closePath();
       }
@@ -316,48 +349,54 @@ export function drawTrackSheet(
       ctx.strokeStyle = "black";
     }
 
-    // note length
-    {
-      const length = Math.pow(
-        2,
-        Math.round(Math.log2(songExt.ticksPerBar / n.durationTicks))
-      );
-      ctx.fillText("" + `${length}`, x + 20, y);
-    }
-
-    // 64, 32, 16, 8, 4, 1
-    //
-
     // ellipse note shape
     {
-      ctx.beginPath();
-      ctx.ellipse(
+      //ctx.fillText("" + `${noteLength}`, x + 40, y);
+      drawGlyph(
+        ctx,
+        noteLength === 1 ? "note1th" : noteLength === 2 ? "note2th" : "note4th",
         x,
         y,
-        noteHeight * 0.8,
-        noteHeight * 0.5,
-        -Math.PI / 8,
-        0,
-        Math.PI * 2
+        noteHeight,
+        isOn ? "gold" : "black"
       );
-      ctx.fill();
-      if (isOn) {
-        ctx.lineWidth = lineWidth;
-        ctx.stroke();
-      }
-      ctx.closePath();
     }
     // stem
-    {
+    if (noteLength > 1) {
       ctx.lineWidth = lineWidth;
       ctx.beginPath();
       let dir =
         wIndex < staffLineBassMiddle || wIndex > staffLineTrebleMiddle ? -1 : 1; // up or down
-      ctx.moveTo(x + noteHeight * 0.7 * dir, y - noteHeight * 0.1);
-      ctx.lineTo(x + noteHeight * 0.7 * dir, y - noteHeight * 3 * dir);
-
+      let stemX = x + noteHeight * 0.6 + noteHeight * 0.5 * dir;
+      let stemYstart = y - noteHeight * 0.1;
+      let stemYstop = y - noteHeight * 3 * dir;
+      ctx.moveTo(stemX, stemYstart);
+      ctx.lineTo(stemX, stemYstop);
+      ctx.strokeStyle = isOn ? "gold" : "black";
       ctx.stroke();
       ctx.closePath();
+      // stem flag
+      if (noteLength > 4) {
+        drawGlyph(
+          ctx,
+          noteLength === 8
+            ? "note8thFlag"
+            : noteLength === 16
+            ? "note16thFlag"
+            : noteLength === 32
+            ? "note32thFlag"
+            : noteLength === 64
+            ? "note64thFlag"
+            : noteLength === 128
+            ? "note128thFlag"
+            : "note8thFlag",
+          stemX,
+          stemYstop,
+          noteHeight,
+          isOn ? "gold" : "black",
+          stemYstart < stemYstop
+        );
+      }
     }
     // in the same bar:
     // 1. if midi note has sharp before we do not need to draw it again
