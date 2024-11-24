@@ -161,7 +161,7 @@ function SongPicker() {
             Upload MIDI
             <br />
             <input
-              className="pt-2"
+              className="pt-2 w-full"
               type="file"
               accept="audio/midi"
               onChange={(e) => {
