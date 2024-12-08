@@ -7,6 +7,7 @@ import { useSearchParams } from "@remix-run/react";
 import { Panel, links as PanelLinks } from "../components/panel";
 import { EngineProvider } from "../components/engine-provider";
 import { files } from "./midi.$id[.midi]";
+import { useStoredSettingsParams } from "../components/use-stored-settings-params";
 
 export function links() {
   return [...trackLinks(), ...PanelLinks()];
@@ -24,7 +25,7 @@ function useMidi(path: string) {
   return x;
 }
 
-type SongType = {
+export type SongType = {
   artist: string;
   title: string;
   url: string;
@@ -138,6 +139,7 @@ const songs: Array<SongType> = [
 
 function SongPicker() {
   const [file, setFile] = useState<string>("");
+  const songsWithSettings = useStoredSettingsParams(songs);
 
   if (file) {
     return <Song file={file} />;
@@ -146,10 +148,10 @@ function SongPicker() {
   return (
     <main className="p-8">
       <ul>
-        {songs.map((s) => {
+        {songsWithSettings.map((s) => {
           return (
             <li key={s.url} className="pb-4">
-              <a href={`/?file=${s.url}`} className="block hover:text-accent">
+              <a href={s.url} className="block hover:text-accent">
                 <h3 className="font-bold underline">{s.title}</h3>
                 <span>{s.artist || "-"}</span>
               </a>

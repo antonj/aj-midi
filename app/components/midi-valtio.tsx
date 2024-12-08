@@ -1,31 +1,76 @@
+import type { Midi } from "@tonejs/midi";
+import type { Note } from "@tonejs/midi/dist/Note";
 import { proxy, ref } from "valtio";
-import { getTicksPerBar } from "../util/music";
-import { roundTo } from "../util/map";
-import { debounce } from "../util/debounce";
 import { subscribeKey } from "valtio/utils";
-import { Midi } from "@tonejs/midi";
-import { Note } from "@tonejs/midi/dist/Note";
+import { keySignatures } from "~/util/key-signature";
+import type { Key } from "~/util/key-signature";
+import { debounce } from "../util/debounce";
+import { roundTo } from "../util/map";
+import { getTicksPerBar } from "../util/music";
+import type { SongCtx } from "./engine-provider";
 import { ParallelNotes } from "./parallel-notes";
-import { SongCtx } from "./engine-provider";
-import { Key, keySignatures } from "~/util/key-signature";
 import { keySignatureForTick } from "./track-draw-sheet";
+
+export const QUERY_SETTING_KEYS = [
+  "speed",
+  "volume",
+  "window",
+  "start",
+  "repeat",
+  "sheet",
+  "warmup",
+  "trackIndex",
+] as const;
+type QuerySettingsKey = (typeof QUERY_SETTING_KEYS)[number];
+
+export function getQueryWithPreviousSettings(urlStr: string) {
+  const result = new URLSearchParams();
+  for (const key of QUERY_SETTING_KEYS) {
+    const val = localStorage.getItem(`${urlStr}:${key}`);
+    if (val !== null) {
+      result.set(key, val);
+    }
+  }
+
+  let sp: URLSearchParams;
+  try {
+    let url = new URL(urlStr);
+    for (const [key, value] of result.entries()) {
+      url.searchParams.set(key, value);
+    }
+    sp = url.searchParams;
+  } catch (e) {
+    let url = new URL(urlStr, "https://antonj.se");
+    for (const [key, value] of result.entries()) {
+      url.searchParams.set(key, value);
+    }
+    sp = url.searchParams;
+  }
+  sp.set("file", urlStr);
+  return `?${sp.toString()}`;
+}
+function setVal(url: URL, key: QuerySettingsKey, val: string) {
+  url.searchParams.set(key, val);
+  const file = url.searchParams.get("file");
+  localStorage.setItem(`${file}:${key}`, val);
+}
+function getVal(url: URL, key: QuerySettingsKey) {
+  return url.searchParams.get(key);
+}
 
 function updateQuery(ctx: MidiEngine) {
   const url = new URL(window.location.href);
-  url.searchParams.set("speed", ctx.speed.toString());
-  url.searchParams.set("window", Math.floor(ctx.tickWindow).toString());
-  url.searchParams.set("start", ctx.tickStart.toString());
-  url.searchParams.set("repeat", Math.floor(ctx.repeatBars).toString());
-  if (ctx.sheetNotation) {
-    url.searchParams.set("sheet", "true");
-  } else {
-    url.searchParams.set("sheet", "false");
-  }
-  url.searchParams.set("warmup", Math.floor(ctx.repeatBarsWarmup).toString());
-  url.searchParams.set("trackIndex", Array.from(ctx.trackIndex).join(","));
-
+  setVal(url, "speed", ctx.speed.toString());
+  setVal(url, "window", Math.floor(ctx.tickWindow).toString());
+  setVal(url, "start", ctx.tickStart.toString());
+  setVal(url, "repeat", Math.floor(ctx.repeatBars).toString());
+  setVal(url, "sheet", ctx.sheetNotation ? "true" : "false");
+  setVal(url, "volume", ctx.volume.toString());
+  setVal(url, "warmup", Math.floor(ctx.repeatBarsWarmup).toString());
+  setVal(url, "trackIndex", Array.from(ctx.trackIndex).join(","));
   window.history.replaceState(null, "", url.toString());
 }
+
 const updateQueryDebounced = debounce(updateQuery, 300);
 
 export type MidiEngine = ReturnType<typeof createMidiEngine>;
@@ -36,14 +81,14 @@ export function createMidiEngine(song: Midi) {
 
   // intial settings from  query params
   const url = new URL(window.location.href);
-  const searchParams = url.searchParams;
-  const start = searchParams.get("start");
-  const repeatBars = searchParams.get("repeat");
-  const warmup = searchParams.get("warmup");
-  const tickWindow = searchParams.get("window");
-  const speed = searchParams.get("speed");
-  const sheetNotation = searchParams.get("sheet");
-  const trackIndex = searchParams.get("trackIndex");
+  const start = getVal(url, "start");
+  const repeatBars = getVal(url, "repeat");
+  const warmup = getVal(url, "warmup");
+  const tickWindow = getVal(url, "window");
+  const speed = getVal(url, "speed");
+  const sheetNotation = getVal(url, "sheet");
+  const trackIndex = getVal(url, "trackIndex");
+  const volume = getVal(url, "volume");
 
   const p = proxy({
     speed: speed ? parseFloat(speed) : 1,
@@ -60,7 +105,7 @@ export function createMidiEngine(song: Midi) {
     repeatBarsWarmup: warmup ? parseInt(warmup) : 0,
     tickWindow: tickWindow ? parseInt(tickWindow) : ticksPerBar * 4,
     sheetNotation: sheetNotation ? sheetNotation === "true" : true,
-    volume: 0,
+    volume: volume ? parseFloat(volume) : 0,
     movingTimestamp: 0,
     pressed: new Map<number, PressedNote>(),
     pressedFuture: new Map<number, PressedNote>(),
@@ -99,6 +144,7 @@ export function createMidiEngine(song: Midi) {
     start() {
       const update = () => updateQueryDebounced(this);
       this.listeners.add(subscribeKey(this, "speed", update));
+      this.listeners.add(subscribeKey(this, "volume", update));
       this.listeners.add(subscribeKey(this, "tickStart", update));
       this.listeners.add(subscribeKey(this, "tickWindow", update));
       this.listeners.add(subscribeKey(this, "repeatBars", update));
