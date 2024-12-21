@@ -72,6 +72,11 @@ const songs: Array<SongType> = [
     url: "/static/midi/chpn_op25_e11.midi",
   },
   {
+    artist: "Erik Satie",
+    title: "Gymnopédie No. 1",
+    url: "/static/midi/gymnopedie_1.midi",
+  },
+  {
     artist: "Pyotr Ilyich Tchaikovsky",
     title:
       "Swan Lake, Op. 20, TH. 12: Dance of the Four Swans (Arr. Wild for Piano)",
