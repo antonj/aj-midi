@@ -344,7 +344,7 @@ export function drawTrackSheet(
     } else if (isOn) {
       notesOn.push(n.midi);
       ctx.fillStyle = "gold";
-      ctx.strokeStyle = "black";
+      ctx.strokeStyle = "gold";
     } else {
       ctx.fillStyle = "black";
       ctx.strokeStyle = "black";
@@ -359,11 +359,11 @@ export function drawTrackSheet(
         x,
         y,
         noteHeight,
-        isOn ? "gold" : "black"
+        ctx.fillStyle
       );
     }
     // stem
-    if (noteLength > 1) {
+    if (noteLength > 1 && !n.isFromInput) {
       ctx.lineWidth = lineWidth;
       ctx.beginPath();
       let dir =
@@ -373,7 +373,6 @@ export function drawTrackSheet(
       let stemYstop = y - noteHeight * 3 * dir;
       ctx.moveTo(stemX, stemYstart);
       ctx.lineTo(stemX, stemYstop);
-      ctx.strokeStyle = isOn ? "gold" : "black";
       ctx.stroke();
       ctx.closePath();
       // stem flag
@@ -394,7 +393,7 @@ export function drawTrackSheet(
           stemX,
           stemYstop,
           noteHeight,
-          isOn ? "gold" : "black",
+          ctx.fillStyle,
           stemYstart < stemYstop
         );
       }
