@@ -19,6 +19,7 @@ export function Input(props: {
       data-input
       value={v}
       type="number"
+      onFocus={(e) => e.currentTarget.select()}
       onChange={(ev) => {
         setV(ev.target.valueAsNumber);
         if (isNaN(ev.target.valueAsNumber)) return;
