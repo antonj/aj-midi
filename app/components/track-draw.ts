@@ -130,7 +130,7 @@ export function trackDraw(
     barTick < maxTick;
     barTick = barTick + songExt.ticksPerBar
   ) {
-    if (barTick < minTick) {
+    if (barTick < minTick - songExt.ticksPerBar) {
       continue;
     }
     if (barTick > maxTick) {
@@ -142,15 +142,26 @@ export function trackDraw(
     // at bar
     let y = mapRound(barTick, minTick, maxTick, h, 0);
     ctx.fillRect(-1, y, w, 2);
-    // half bar previous
-    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-    y = mapRound(barTick - songExt.ticksPerBar / 2, minTick, maxTick, h, 0);
 
     ctx.fillRect(-1, y, w, 2);
-    // half bar next
-    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-    y = mapRound(barTick + songExt.ticksPerBar / 2, minTick, maxTick, h, 0);
-    ctx.fillRect(-1, y, w, 2);
+    // in tempo for tick
+    const ts = songExt.song.header.timeSignatures
+      .reverse()
+      .find((t) => t.ticks <= Math.max(1, tick)); // TODO tick is not what we are drawing here, should be tick for current bar
+    if (ts?.timeSignature && ts.timeSignature.length > 0) {
+      let x = ts.timeSignature[0]; // 4/4 3/4 etc => 4 or 3
+      for (let i = 1; i < x; i++) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+        y = mapRound(
+          barTick + (i * songExt.ticksPerBar) / x,
+          minTick,
+          maxTick,
+          h,
+          0
+        );
+        ctx.fillRect(-1, y, w, 2);
+      }
+    }
   }
 
   // draw moving mini stuff
