@@ -300,6 +300,18 @@ export function Track() {
           requestAnimationFrame(anim);
         }
         break;
+      case "zoom":
+        {
+          const w = ev.data.width;
+          const dx = ev.data.dy;
+          let tickWindow = sheetTickWindow(engine.tickWindow);
+          let history = tickWindow - engine.tickWindow;
+          const zoomPoint = map(ev.data.x, 0, w, 0, tickWindow); // zoom around still finger
+          const scale = 1 + map(dx, 0, 10, 0, -0.05); // tweak
+          engine.tickWindow = scale * engine.tickWindow;
+          engine.seek(engine.tick + (zoomPoint - history) * (1 - scale));
+        }
+        break;
     }
   });
 
