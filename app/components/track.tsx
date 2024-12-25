@@ -76,6 +76,22 @@ function useTracksChange() {
   return pianoTracks !== prevPianoTracks;
 }
 
+function useRerenderBackgroundRef() {
+  const rerenderBackground = useRef(true);
+  if (useTracksChange()) {
+    rerenderBackground.current = true;
+  }
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      rerenderBackground.current = true;
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+  return rerenderBackground;
+}
+
 export function Track() {
   const engine = getEngine();
   const showSheetNotation = useSnapshot(engine).sheetNotation;
@@ -100,11 +116,7 @@ export function Track() {
   const tickToneRef = useRef(new Map<number, Set<number>>());
   const scrollerRef = useRef(Scroller());
 
-  const tracksChanged = useTracksChange();
-  const rerenderBackground = useRef(true);
-  if (tracksChanged) {
-    rerenderBackground.current = true;
-  }
+  const rerenderBackground = useRerenderBackgroundRef();
 
   useSongTicker(function trackTicker(tick, songCtx) {
     tickToneRef.current.set(tick, sDetected);
