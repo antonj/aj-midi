@@ -1,20 +1,17 @@
-@tailwind base;
+@import 'tailwindcss';
 
 /* Write your own custom base styles here */
 
 /* Start purging... */
-@tailwind components;
-/* Stop purging. */
+@layer components {
+  /* Stop purging. */
 
-html,
-body {
-  @apply bg-primary;
-  @apply text-primary;
-  @apply antialiased;
+  html,
+  body {
+  }
+
+  /* Start purging... */
 }
-
-/* Start purging... */
-@tailwind utilities;
 /* Stop purging. */
 
 .visuallyhidden {
