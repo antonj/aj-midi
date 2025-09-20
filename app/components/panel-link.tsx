@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import styles from "./panel-link.css";
 
 export function links() {
@@ -7,7 +7,7 @@ export function links() {
 
 export function PanelLink(props: { href: string; children: ReactNode }) {
   return (
-    <a data-panel-link href={props.href}>
+    <a data-panel-link href={props.href} className="select-none">
       <span>{props.children}</span>
     </a>
   );

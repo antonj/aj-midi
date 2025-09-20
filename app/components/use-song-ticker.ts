@@ -1,7 +1,7 @@
 import { Midi } from "@tonejs/midi";
 import { useEffect, useRef } from "react";
 import { subscribeKey } from "valtio/utils";
-import { SongCtx, getEngine } from "./engine-provider";
+import { SongCtx, useEngine } from "./engine-provider";
 import { MidiEngine } from "./midi-valtio";
 
 export type SongSettingsExtended = {
@@ -24,7 +24,7 @@ export type SongSettingsExtended = {
 type TickerCallback = (tick: number, songCtx: MidiEngine) => void;
 
 export function useSongTicker(onTick: TickerCallback) {
-  const ctx = getEngine();
+  const ctx = useEngine();
   const callbackRef = useRef(onTick);
   if (onTick != callbackRef.current) {
     callbackRef.current = onTick;

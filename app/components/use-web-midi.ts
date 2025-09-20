@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Player } from "./use-song-sounds";
 import { create } from "zustand";
 import { useEngineSnapshot } from "./engine-provider";
+import type { PressedNote } from "./midi-valtio";
 
 export type Note = {
   /**
@@ -16,8 +17,8 @@ export type Note = {
 };
 
 export const useDevicesStore = create<{
-  devices: Array<WebMidi.MIDIInput>;
-  setDevices: (devices: Array<WebMidi.MIDIInput>) => void;
+  inputs: Array<WebMidi.MIDIInput>;
+  outputs: Array<WebMidi.MIDIOutput>;
   state:
     | { kind: "" }
     | { kind: "requesting" }
@@ -29,61 +30,64 @@ export const useDevicesStore = create<{
   setPressed: (pressed: Map<number, Note>) => void;
 }>((set, get) => ({
   state: { kind: "" },
-  devices: [],
-  setDevices: (devices) => set(() => ({ devices })),
+  inputs: [],
+  outputs: [],
   pressed: new Map<number, Note>(),
-  setPressed: (pressed) => set(() => ({ pressed })),
+  setPressed: (pressed) => set({ pressed }),
   requestMIDIAccess: () => {
-    const store = get();
-    if (store.state.kind !== "") {
+    const state = get().state.kind;
+    if (state !== "" && state !== "error") {
       return;
     }
-    if ("requestMIDIAccess" in navigator) {
-      set(() => ({ state: { kind: "requesting" } }));
-      navigator
-        .requestMIDIAccess()
-        .then((access) => {
-          console.log("access", access);
-          // Get lists of available MIDI controllers
-          const inputs = access.inputs.values();
-          set(() => ({
-            devices: Array.from(inputs),
-            state: { kind: "fetched devices" },
-          }));
-          access.onstatechange = (event) => {
-            console.log("onstatechange", event);
-            const inputs = access.inputs.values();
-            set(() => ({ devices: Array.from(inputs) }));
-            // Print information about the (dis)connected MIDI controller
-            console.log(
-              event.port.name,
-              event.port.manufacturer,
-              event.port.state
-            );
-          };
-        })
-        .catch((e) => {
-          console.error("failed to get midi", e);
-          set(() => ({ state: { kind: "error", error: e } }));
-        });
-    } else {
-      set(() => ({ state: { kind: "no midi support" } }));
+    if (!("requestMIDIAccess" in navigator)) {
+      set({ state: { kind: "no midi support" } });
+      return;
     }
+    set({ state: { kind: "requesting" } });
+    navigator
+      .requestMIDIAccess()
+      .then((access) => {
+        console.log("access", access);
+        // Get lists of available MIDI controllers
+        const inputs = access.inputs.values();
+        const outputs = access.outputs.values();
+
+        set({
+          inputs: Array.from(inputs),
+          outputs: Array.from(outputs),
+          state: { kind: "fetched devices" },
+        });
+        access.onstatechange = (event) => {
+          console.log("onstatechange", event);
+          const inputs = access.inputs.values();
+          set({ inputs: Array.from(inputs) });
+          // Print information about the (dis)connected MIDI controller
+          console.log(
+            event.port.name,
+            event.port.manufacturer,
+            event.port.state
+          );
+        };
+      })
+      .catch((e) => {
+        console.error("failed to get midi", e);
+        set({ state: { kind: "error", error: e } });
+      });
   },
 }));
 
 export function useWebMidiDevices() {
-  const { devices, requestMIDIAccess } = useDevicesStore();
+  const { inputs, outputs, requestMIDIAccess } = useDevicesStore();
   useEffect(() => {
     requestMIDIAccess();
   }, [requestMIDIAccess]);
-  return devices;
+  return { inputs, outputs };
 }
 
 export function useMidiInput() {
-  const devices = useWebMidiDevices();
+  const { inputs } = useWebMidiDevices();
   const volume = useEngineSnapshot().volume;
-  const d = devices[0];
+  const d = inputs[0];
   const player = useRef<Player>();
   const { pressed, setPressed } = useDevicesStore((state) => ({
     pressed: state.pressed,
@@ -101,7 +105,7 @@ export function useMidiInput() {
     if (!d) {
       return;
     }
-
+    console.log("useMidiInput");
     const notes = new Map<number, Note>();
     d.onmidimessage = (evt) => {
       const [command, note, velocity] = evt.data;
@@ -120,4 +124,36 @@ export function useMidiInput() {
     };
   }, [d, setPressed]);
   return [d, pressed] as const;
+}
+
+export function useMidiOutput() {
+  const { outputs } = useDevicesStore();
+  const o = outputs[0];
+  const pressed = useEngineSnapshot().pressed;
+  const prevPressed = useRef(new Map<string, PressedNote>());
+
+  useEffect(() => {
+    if (!o) {
+      return;
+    }
+
+    // Check for notes that were released
+    for (const [k, p] of prevPressed.current) {
+      if (!pressed.has(k)) {
+        // Note was released - send MIDI note off
+        o.send([0x80, p.midi, 0]);
+      }
+    }
+    // Check for new notes that were just pressed
+    for (const [k, p] of pressed) {
+      if (!prevPressed.current.has(k)) {
+        // New note pressed - send MIDI note on
+        const velocity = Math.floor(p.velocity * 127);
+        o.send([0x90, p.midi, velocity]);
+      }
+    }
+
+    // Update previous pressed state
+    prevPressed.current = new Map(pressed);
+  }, [o, pressed]);
 }

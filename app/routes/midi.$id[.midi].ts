@@ -21,7 +21,7 @@ const routes = (() => {
 
   for (const k of Object.values(keySignatures)) {
     result[keyToString(k.key)] = {
-      artist: k.scale,
+      artist: "scale-" + k.scale,
       title: k.key,
       url: `/midi/${keyToString(k.key)}.midi`,
       content: createScalesMidi([keySignatures[k.key]]).toArray(),

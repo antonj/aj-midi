@@ -6,7 +6,7 @@ import { keySignatures } from "~/util/key-signature";
 import type { Key } from "~/util/key-signature";
 import { debounce } from "../util/debounce";
 import { roundTo } from "../util/map";
-import { getTicksPerBar } from "../util/music";
+import { getTicksPerBar, MidiNumber } from "../util/music";
 import type { SongCtx } from "./engine-provider";
 import { ParallelNotes } from "./parallel-notes";
 import { keySignatureForTick } from "./track-draw-sheet";
@@ -74,7 +74,11 @@ function updateQuery(ctx: MidiEngine) {
 const updateQueryDebounced = debounce(updateQuery, 300);
 
 export type MidiEngine = ReturnType<typeof createMidiEngine>;
-type PressedNote = { midi: number; velocity: number; ticks: number };
+export type PressedNote = { midi: number; velocity: number; ticks: number };
+export type NoteId = string;
+export function noteId(n: { midi: number; ticks: number }): NoteId {
+  return `${n.midi}:${n.ticks}`;
+}
 
 export function createMidiEngine(song: Midi) {
   const ticksPerBar = getTicksPerBar(song);
@@ -105,10 +109,12 @@ export function createMidiEngine(song: Midi) {
     repeatBarsWarmup: warmup ? parseInt(warmup) : 0,
     tickWindow: tickWindow ? parseInt(tickWindow) : ticksPerBar * 4,
     sheetNotation: sheetNotation ? sheetNotation === "true" : true,
+    pauseForMidi: true,
     volume: volume ? parseFloat(volume) : 0,
     movingTimestamp: 0,
-    pressed: new Map<number, PressedNote>(),
-    pressedFuture: new Map<number, PressedNote>(),
+    pressed: new Map<NoteId, PressedNote>(), // unique midi notes pressed
+    pressedMidi: new Map<MidiNumber, PressedNote>(), // currently active midi notes
+    pressedFuture: new Map<MidiNumber, PressedNote>(),
     rid: 0,
     listeners: new Set<() => void>(),
 
@@ -188,7 +194,7 @@ export function createMidiEngine(song: Midi) {
 
         // find pressed
         {
-          const pressed = new Map<number, PressedNote>();
+          const pressed = new Map<NoteId, PressedNote>();
           const pressedFuture = new Map<number, PressedNote>();
           for (const n of this.pianoNotes) {
             // current
@@ -197,7 +203,7 @@ export function createMidiEngine(song: Midi) {
               tick > n.ticks &&
               tick < n.ticks + n.durationTicks
             ) {
-              pressed.set(n.midi, n);
+              pressed.set(noteId(n), n);
             } else if (
               tick < n.ticks &&
               tick > n.ticks - this.tickWindow &&
@@ -209,6 +215,9 @@ export function createMidiEngine(song: Midi) {
           }
           if (!mapEquals(this.pressed, pressed)) {
             this.pressed = pressed;
+            let midis = new Map<number, PressedNote>();
+            pressed.forEach((v) => midis.set(v.midi, v));
+            this.pressedMidi = midis;
           }
           if (!mapEquals(this.pressedFuture, pressedFuture)) {
             this.pressedFuture = pressedFuture;
@@ -232,7 +241,10 @@ export function createMidiEngine(song: Midi) {
   return p;
 }
 
-function mapEquals(m1: Map<number, PressedNote>, m2: Map<number, PressedNote>) {
+function mapEquals(
+  m1: Map<string | number, PressedNote>,
+  m2: Map<string | number, PressedNote>
+) {
   if (m1.size !== m2.size) {
     return false;
   }

@@ -2,7 +2,7 @@ import styles from "./panel.css";
 
 import { useId, useState } from "react";
 import { useSnapshot } from "valtio";
-import { getEngine, useEngineSnapshot } from "./engine-provider";
+import { useEngine, useEngineSnapshot } from "./engine-provider";
 import { Input, links as InputLinks } from "./input";
 import { links as InputCheckboxLinks } from "./input-checkbox";
 import { InputRange, links as InputRangeLinks } from "./input-range";
@@ -20,7 +20,7 @@ export function links() {
 }
 
 export function Panel() {
-  const engine = getEngine();
+  const engine = useEngine();
   const settings = useEngineSnapshot();
   const devices = useWebMidiDevices();
   const x = useDevicesStore();
@@ -30,13 +30,13 @@ export function Panel() {
     <div
       data-panel
       data-panel-state={hidden ? "hidden" : "open"}
-      className="font-bold"
+      className="font-bold select-none"
     >
       <section className={`p-2 font-bold ${hidden ? "hidden" : ""}`}>
         <div className="pb-2 pr-1 font-mono font-normal text-right opacity-50">
           midi: {x.state.kind === "error" ? x.state.error.name : x.state.kind}
           <br />
-          {devices.map((d) => (
+          {devices.inputs.map((d) => (
             <div key={d.id}>{d.name}</div>
           ))}
         </div>
@@ -48,6 +48,11 @@ export function Panel() {
           onChange={(value) =>
             value ? (engine.volume = 0.5) : (engine.volume = 0)
           }
+        />
+        <NumBool
+          label="pause for midi"
+          value={settings.pauseForMidi}
+          onChange={(value) => (engine.pauseForMidi = value)}
         />
         <NumBool
           label="sheet-notation"
@@ -100,7 +105,7 @@ export function Panel() {
 }
 
 function SelectTracks() {
-  const eng = getEngine();
+  const eng = useEngine();
   const snap = useSnapshot(eng);
   if (snap.tracks.length < 2) {
     return null;
@@ -148,7 +153,7 @@ function SelectTracks() {
 }
 
 function NumBar() {
-  const engine = getEngine();
+  const engine = useEngine();
   const bar = useSnapshot(engine).bar;
 
   return (

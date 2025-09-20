@@ -3,7 +3,7 @@ import { useSnapshot } from "valtio";
 import { AjScroller } from "../util/aj-scroller";
 import { map } from "../util/map";
 import { Scroller } from "../util/scroller";
-import { getEngine, useEngineSnapshot } from "./engine-provider";
+import { useEngine, useEngineSnapshot } from "./engine-provider";
 import { miniMapWidthRatio, trackDraw } from "./track-draw";
 import { trackDrawBg } from "./track-draw-bg";
 import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
@@ -12,7 +12,7 @@ import { usePlayController } from "./use-play-controller";
 import { usePrevious } from "./use-previous";
 import { useSongTicker } from "./use-song-ticker";
 import { useToneDetector } from "./use-tone-detector";
-import { useDevicesStore } from "./use-web-midi";
+import { useDevicesStore, useMidiOutput } from "./use-web-midi";
 import { trackDrawKeyabord } from "./track-draw-keyboard";
 
 export function links() {
@@ -93,7 +93,7 @@ function useRerenderBackgroundRef() {
 }
 
 export function Track() {
-  const engine = getEngine();
+  const engine = useEngine();
   const showSheetNotation = useSnapshot(engine).sheetNotation;
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
   const [canvasBgEl, setCanvasBgEl] = useState<HTMLCanvasElement | null>(null);
@@ -111,6 +111,7 @@ export function Track() {
   const pressedNotes = useDevicesStore((state) => state.pressed);
 
   usePlayController();
+  useMidiOutput();
   const tones = useToneDetector(engine.detect);
   const sDetected = new Set(tones);
   const tickToneRef = useRef(new Map<number, Set<number>>());
@@ -310,6 +311,29 @@ export function Track() {
             requestAnimationFrame(anim);
           }
           requestAnimationFrame(anim);
+        }
+        break;
+      case "pinch":
+        {
+          const w = ev.data.moving.width;
+          const x1 = ev.data.still.x;
+          const x2 = ev.data.moving.x;
+          const dx = ev.data.moving.dx;
+          let tickWindow = sheetTickWindow(engine.tickWindow);
+          let startTick = engine.tick;
+          const zoomPoint = map(ev.data.still.x, w, 0, 0, tickWindow); // zoom around still finger
+          const d1 = Math.abs(x1 - (x2 + dx)); // distance before
+          const d2 = Math.abs(x1 - x2); // distance after
+          const scale = d1 === 0 || d2 === 0 ? 1 : d2 / d1;
+          const windowScaled = scale * engine.tickWindow;
+          if (
+            windowScaled < engine.ticksPerBar / 4 ||
+            windowScaled > engine.song.durationTicks
+          ) {
+            return;
+          }
+          engine.tickWindow = windowScaled;
+          engine.seek(startTick + zoomPoint * (1 - scale));
         }
         break;
       case "zoom":

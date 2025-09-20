@@ -1,7 +1,6 @@
 import { isBlack, notesWithSharps, toMidiTone } from "../util/music";
 import { useMidiInput } from "./use-web-midi";
-import { getEngine, useEngineSnapshot } from "./engine-provider";
-import { useSnapshot } from "valtio";
+import { useEngineSnapshot } from "./engine-provider";
 import styles from "./keyboard.css";
 
 export function links() {
@@ -22,7 +21,7 @@ export function Keyboard() {
   const state = useEngineSnapshot();
   const octaves = state.octaves.octaves;
 
-  const [_, midiPressed] = useMidiInput();
+  const [, midiPressed] = useMidiInput();
   return (
     <div data-keyboard>
       {octaves.map((o) => (
@@ -30,7 +29,7 @@ export function Keyboard() {
           key={o}
           octaveIndex={o}
           pressedMidiTone={midiPressed}
-          pressedMidiToneFacit={state.pressed}
+          pressedMidiToneFacit={state.pressedMidi}
           pressedMidiToneFuture={state.pressedFuture}
         />
       ))}

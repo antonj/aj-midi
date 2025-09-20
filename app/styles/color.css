@@ -5,66 +5,69 @@ https://designsystem.morningstar.com/legacy/visual-language/color.html
 */
 
 .bright {
-	--color-bg-primary: #fff;
-	--color-bg-secondary: #fafafa;
-  
-	--color-bg-action-primary: var(--color-yellow-500);
-  
-	--color-text-primary: #000;
-	--color-text-secondary: #000;
-	--color-text-action-primary: #fff;
-  
-	--color-text-icon-primary: #000;
-	--color-text-icon-secondary: #000;
-  }
-  
-  .dark {
-	--color-bg-primary: #181818;
-	--color-bg-secondary: #202020;
-  
-	--color-text-primary: #fff;
-	--color-text-secondary: #ccc;
-	--color-text-tertiary: #aaa;
-  
-	--color-text-action-primary: #fff;
-  
-	--color-text-icon-primary: #fff;
-	--color-text-icon-secondary: #ccc;
-  
-	--color-border-secondary: #202020;
-  }
-  
-  :root {
-	--color-yellow-500: #ffe600;
-  
-	--color-bg-primary: #fff;
-	--color-bg-secondary: #eee;
-  
-	--color-text-primary: #333;
-	--color-text-secondary: #ccc;
-	--color-text-tertiary: #aaa;
-	--color-text-accent: #5e6ad3;
-	--color-text-success: #4cb782;
-  
-	--color-text-icon-primary: #fff;
-	--color-text-icon-secondary: #fafafa;
-	--color-text-icon-accent: #5e6ad3;
-  
-	--color-border-primary: #505050;
-	--color-border-secondary: #303235;
-	--color-border-accent: #5e6ad3;
-  
-	--color-bg-input-primary: #27282b;
-	--color-bg-input-primary-hover: #2f3033;
-	--color-text-input-primary: #fff;
-	--color-text-input-placeholder: var(--color-text-tertiary);
-  
-	--color-bg-action-primary: var(--color-yellow-500);
-	--color-text-action-primary: #000;
-  
-	--color-bg-action-tertiary: var(--color-bg-primary);
-	--color-bg-action-tertiary-hover: #191919;
-	--color-border-action-tertiary: #202020;
-	--color-border-action-tertiary-hover: #505050;
-	--color-text-action-tertiary: var(--color-text-primary);
-  }
+  --color-bg-primary: #fff;
+  --color-bg-secondary: #fafafa;
+
+  --color-bg-action-primary: var(--color-yellow-500);
+  --color-bg-action-primary-hover: var(--color-yellow-300);
+
+  --color-text-primary: #000;
+  --color-text-secondary: #000;
+  --color-text-action-primary: #fff;
+
+  --color-text-icon-primary: #000;
+  --color-text-icon-secondary: #000;
+}
+
+.dark {
+  --color-bg-primary: #181818;
+  --color-bg-secondary: #202020;
+
+  --color-text-primary: #fff;
+  --color-text-secondary: #ccc;
+  --color-text-tertiary: #aaa;
+
+  --color-text-action-primary: #fff;
+
+  --color-text-icon-primary: #fff;
+  --color-text-icon-secondary: #ccc;
+
+  --color-border-secondary: #202020;
+}
+
+:root {
+  --color-yellow-500: #ffe600;
+  --color-yellow-300: #edda2f;
+
+  --color-bg-primary: #fff;
+  --color-bg-secondary: #eee;
+
+  --color-text-primary: #333;
+  --color-text-secondary: #ccc;
+  --color-text-tertiary: #aaa;
+  --color-text-accent: #5e6ad3;
+  --color-text-success: #4cb782;
+
+  --color-text-icon-primary: #fff;
+  --color-text-icon-secondary: #fafafa;
+  --color-text-icon-accent: #5e6ad3;
+
+  --color-border-primary: #505050;
+  --color-border-secondary: #303235;
+  --color-border-accent: #5e6ad3;
+
+  --color-bg-input-primary: #27282b;
+  --color-bg-input-primary-hover: #2f3033;
+  --color-text-input-primary: #fff;
+  --color-text-input-placeholder: var(--color-text-tertiary);
+
+  --color-bg-action-primary: var(--color-yellow-500);
+  --color-bg-action-primary-hover: var(--color-yellow-300);
+  --color-text-action-primary: #000;
+
+  --color-bg-action-tertiary: var(--color-bg-primary);
+  --color-bg-action-tertiary-hover: #191919;
+  --color-border-action-tertiary: #202020;
+  --color-border-action-tertiary-hover: #505050;
+  --color-text-action-tertiary: var(--color-text-primary);
+}

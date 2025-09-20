@@ -22,7 +22,7 @@ export function useSongSound() {
   const volume = state.volume;
   const speed = state.speed;
   const lastMove = state.movingTimestamp;
-  const pressed = state.pressed;
+  const pressed = state.pressedMidi;
 
   const player = useRef<Player>() as React.MutableRefObject<Player>;
   if (!player.current) {

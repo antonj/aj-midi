@@ -14,16 +14,20 @@ export default function handleRequest(
   );
 
   const url = new URL(request.url);
+
+  const isHttps =
+    request.headers.get("x-forwarded-proto")?.toLowerCase() === "https" ||
+    url.protocol === "https:";
+
   if (
     url.hostname !== "localhost" &&
     !url.hostname.startsWith("192") &&
-    !url.protocol.startsWith("https")
+    !isHttps
   ) {
+    console.log("redirecting to HTTPS");
+    url.protocol = "https:";
     return redirect(url.toString(), {
       status: 301,
-      headers: {
-        "X-Forwarded-Proto": "https",
-      },
     });
   }
 

@@ -64,7 +64,7 @@ export function trackDrawKeyabord(
       if (wI % 1 === 0) {
         const left = pixelRound(i * octaveWidth + whiteWidthPx * wI);
         const midi = toMidiTone(o, k);
-        let fill = getFill(songExt.pressed.has(midi), deviceDown.has(midi));
+        let fill = getFill(songExt.pressedMidi.has(midi), deviceDown.has(midi));
         if (fill) {
           ctx.fillStyle = fill;
           ctx.fillRect(left, 0, whiteWidthPx, h);
@@ -84,7 +84,7 @@ export function trackDrawKeyabord(
     }
     let x = xCenterInPiano(midi, octaves, 0, w, whiteWidthPx);
     x = x - blackWidthPx / 2;
-    let fill = getFill(songExt.pressed.has(midi), deviceDown.has(midi));
+    let fill = getFill(songExt.pressedMidi.has(midi), deviceDown.has(midi));
     ctx.fillStyle = fill ? fill : "rgba(40, 20, 30)";
     ctx.fillRect(pixelRound(x), 0, blackWidthPx, h * blackHeightRatio);
     ctx.lineWidth = 1;

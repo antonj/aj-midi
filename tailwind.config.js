@@ -21,6 +21,7 @@ module.exports = {
       primary: "var(--color-bg-primary)",
       secondary: "var(--color-bg-secondary)",
       "action-primary": "var(--color-bg-action-primary)",
+      "action-primary-hover": "var(--color-bg-action-primary-hover)",
       "action-tertiary": "var(--color-bg-action-tertiary)",
       "action-tertiary-hover": "var(--color-bg-action-tertiary-hover)",
       "input-primary": "var(--color-bg-input-primary)",

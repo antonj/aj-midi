@@ -8,7 +8,6 @@ import {
   midiToOctave,
   noteInKeySignature,
   offsetBetweenNotes,
-  toMidiTone,
   whiteIndex,
   whiteIndexInKey,
   whiteIndexInOctave,
@@ -174,7 +173,7 @@ export function drawTrackSheet(
       drawGlyph(
         ctx,
         accidental,
-        map(i, 0, ksAccidentals.length, noteHeight * 5, tickX),
+        map(i, 0, ksAccidentals.length, noteHeight * 6, tickX),
         y,
         noteHeight
       );

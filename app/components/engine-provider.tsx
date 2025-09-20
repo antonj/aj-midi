@@ -2,7 +2,8 @@ import { createContext, useContext, useEffect, useMemo } from "react";
 import type { ReactNode } from "react";
 import type { Midi } from "@tonejs/midi";
 import type { Note } from "@tonejs/midi/dist/Note";
-import { createMidiEngine, MidiEngine } from "./midi-valtio";
+import type { MidiEngine } from "./midi-valtio";
+import { createMidiEngine } from "./midi-valtio";
 import { getOctaves, getTicksPerBar, mergeNotes } from "../util/music";
 import { ParallelNotes } from "./parallel-notes";
 import { useSnapshot } from "valtio";
@@ -34,6 +35,7 @@ export function EngineProvider({
   const trackIndex = snap.trackIndex;
   useMemo(
     function ctxMemo() {
+      const song = store.song;
       console.log("provider", song);
       let bpm = song.header.tempos[0]?.bpm || 120;
 
@@ -66,12 +68,12 @@ export function EngineProvider({
   );
 }
 
-export function getEngine(): MidiEngine {
+export function useEngine(): MidiEngine {
   const store = useContext(EngineContext);
   if (!store) throw new Error("Missing EngineProvider.Provider in the tree");
   return store;
 }
 
 export function useEngineSnapshot() {
-  return useSnapshot(getEngine());
+  return useSnapshot(useEngine());
 }

@@ -1,0 +1,2348 @@
+[
+  {
+    "name": "Albéniz, Isaac",
+    "url": "http://piano-midi.de/albeniz.htm",
+    "pieces": [
+      {
+        "name": "España, Opus 165 (1890)",
+        "parts": [
+          {
+            "name": "Prélude",
+            "url": "http://piano-midi.de/midis/albeniz/alb_esp1.mid",
+            "localPath": "midi/alb_niz__isaac_pr_lude_espa_a__opus_165__1890__pr_lude_0.mid"
+          },
+          {
+            "name": "Tango",
+            "url": "http://piano-midi.de/midis/albeniz/alb_esp2.mid",
+            "localPath": "midi/alb_niz__isaac_tango_espa_a__opus_165__1890__tango_1.mid"
+          },
+          {
+            "name": "Malagueña",
+            "url": "http://piano-midi.de/midis/albeniz/alb_esp3.mid",
+            "localPath": "midi/alb_niz__isaac_malague_a_espa_a__opus_165__1890__malague_a_2.mid"
+          },
+          {
+            "name": "Serenata",
+            "url": "http://piano-midi.de/midis/albeniz/alb_esp4.mid",
+            "localPath": "midi/alb_niz__isaac_serenata_espa_a__opus_165__1890__serenata_3.mid"
+          },
+          {
+            "name": "Capricho Catalan",
+            "url": "http://piano-midi.de/midis/albeniz/alb_esp5.mid",
+            "localPath": "midi/alb_niz__isaac_capricho_catalan_espa_a__opus_165__1890__capricho_catalan_4.mid"
+          },
+          {
+            "name": "Zortzico",
+            "url": "http://piano-midi.de/midis/albeniz/alb_esp6.mid",
+            "localPath": "midi/alb_niz__isaac_zortzico_espa_a__opus_165__1890__zortzico_5.mid"
+          }
+        ]
+      },
+      {
+        "name": "Suite española (1886)",
+        "parts": [
+          {
+            "name": "Granada",
+            "url": "http://piano-midi.de/midis/albeniz/alb_se1.mid",
+            "localPath": "midi/alb_niz__isaac_granada_suite_espa_ola__1886__granada_0.mid"
+          },
+          {
+            "name": "Cataluña (Curranda)",
+            "url": "http://piano-midi.de/midis/albeniz/alb_se2.mid",
+            "localPath": "midi/alb_niz__isaac_catalu_a__curranda__suite_espa_ola__1886__catalu_a__curranda__1.mid"
+          },
+          {
+            "name": "Sevilla",
+            "url": "http://piano-midi.de/midis/albeniz/alb_se3.mid",
+            "localPath": "midi/alb_niz__isaac_sevilla_suite_espa_ola__1886__sevilla_2.mid"
+          },
+          {
+            "name": "Cádiz (Saeta)",
+            "url": "http://piano-midi.de/midis/albeniz/alb_se4.mid",
+            "localPath": "midi/alb_niz__isaac_c_diz__saeta__suite_espa_ola__1886__c_diz__saeta__3.mid"
+          },
+          {
+            "name": "Asturias (Leyenda)",
+            "url": "http://piano-midi.de/midis/albeniz/alb_se5.mid",
+            "localPath": "midi/alb_niz__isaac_asturias__leyenda__suite_espa_ola__1886__asturias__leyenda__4.mid"
+          },
+          {
+            "name": "Aragon (Fantasia)",
+            "url": "http://piano-midi.de/midis/albeniz/alb_se6.mid",
+            "localPath": "midi/alb_niz__isaac_aragon__fantasia__suite_espa_ola__1886__aragon__fantasia__5.mid"
+          },
+          {
+            "name": "Castilla (Seguidillas)",
+            "url": "http://piano-midi.de/midis/albeniz/alb_se7.mid",
+            "localPath": "midi/alb_niz__isaac_castilla__seguidillas__suite_espa_ola__1886__castilla__seguidillas__6.mid"
+          },
+          {
+            "name": "Cuba (Notturno)",
+            "url": "http://piano-midi.de/midis/albeniz/alb_se8.mid",
+            "localPath": "midi/alb_niz__isaac_cuba__notturno__suite_espa_ola__1886__cuba__notturno__7.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Bach, Johann Sebastian",
+    "url": "http://piano-midi.de/bach.htm",
+    "pieces": [
+      {
+        "name": "The Well-Tempered Clavier Part I, BWV 846-869 (1722)",
+        "parts": [
+          {
+            "name": "Prelude and Fugue in C major BWV 846",
+            "url": "http://piano-midi.de/midis/bach/bach_846.mid",
+            "localPath": "midi/bach__johann_sebastian_prelude_and_fugue_in_c_major_bwv_846_the_well_tempered_clavier_part_i__bwv_846_869__1722__prelude_and_fugue_in_c_major_bwv_846_0.mid"
+          },
+          {
+            "name": "Prelude and Fugue in C minor BWV 847",
+            "url": "http://piano-midi.de/midis/bach/bach_847.mid",
+            "localPath": "midi/bach__johann_sebastian_prelude_and_fugue_in_c_minor_bwv_847_the_well_tempered_clavier_part_i__bwv_846_869__1722__prelude_and_fugue_in_c_minor_bwv_847_1.mid"
+          },
+          {
+            "name": "Prelude and Fugue in D major BWV 850",
+            "url": "http://piano-midi.de/midis/bach/bach_850.mid",
+            "localPath": "midi/bach__johann_sebastian_prelude_and_fugue_in_d_major_bwv_850_the_well_tempered_clavier_part_i__bwv_846_869__1722__prelude_and_fugue_in_d_major_bwv_850_2.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Balakirew, Mili Alexejewitsch",
+    "url": "http://piano-midi.de/balak.htm",
+    "pieces": [
+      {
+        "name": "Islamej (Oriental fantasia) (1869)",
+        "parts": [
+          {
+            "name": "Islamej",
+            "url": "http://piano-midi.de/midis/balakirew/islamei.mid",
+            "localPath": "midi/balakirew__mili_alexejewitsch_islamej_islamej__oriental_fantasia___1869__islamej_0.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Beethoven, Ludwig van",
+    "url": "http://piano-midi.de/beeth.htm",
+    "pieces": [
+      {
+        "name": "Sonata No. 5 C minor, Opus 10/1 (1798)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_opus10_1.mid",
+            "localPath": "midi/beethoven__ludwig_van_1__movement_sonata_no__5_c_minor__opus_10_1__1798__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_opus10_2.mid",
+            "localPath": "midi/beethoven__ludwig_van_2__movement_sonata_no__5_c_minor__opus_10_1__1798__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_opus10_3.mid",
+            "localPath": "midi/beethoven__ludwig_van_3__movement_sonata_no__5_c_minor__opus_10_1__1798__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 8 C minor (Pathetique) , Opus 13 (1799)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/pathetique_1.mid",
+            "localPath": "midi/beethoven__ludwig_van_1__movement_sonata_no__8_c_minor__pathetique____opus_13__1799__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/pathetique_2.mid",
+            "localPath": "midi/beethoven__ludwig_van_2__movement_sonata_no__8_c_minor__pathetique____opus_13__1799__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/pathetique_3.mid",
+            "localPath": "midi/beethoven__ludwig_van_3__movement_sonata_no__8_c_minor__pathetique____opus_13__1799__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 11 Bb major, Opus 22 (1800)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_opus22_1.mid",
+            "localPath": "midi/beethoven__ludwig_van_1__movement_sonata_no__11_bb_major__opus_22__1800__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_opus22_2.mid",
+            "localPath": "midi/beethoven__ludwig_van_2__movement_sonata_no__11_bb_major__opus_22__1800__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_opus22_3.mid",
+            "localPath": "midi/beethoven__ludwig_van_3__movement_sonata_no__11_bb_major__opus_22__1800__3__movement_2.mid"
+          },
+          {
+            "name": "4. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_opus22_4.mid",
+            "localPath": "midi/beethoven__ludwig_van_4__movement_sonata_no__11_bb_major__opus_22__1800__4__movement_3.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 14 C# minor (Moonlight) , Opus 27/2 (1801)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/mond_1.mid",
+            "localPath": "midi/beethoven__ludwig_van_1__movement_sonata_no__14_c__minor__moonlight____opus_27_2__1801__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/mond_2.mid",
+            "localPath": "midi/beethoven__ludwig_van_2__movement_sonata_no__14_c__minor__moonlight____opus_27_2__1801__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/mond_3.mid",
+            "localPath": "midi/beethoven__ludwig_van_3__movement_sonata_no__14_c__minor__moonlight____opus_27_2__1801__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 21 C major (Waldstein) , Opus 53 (1804)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/waldstein_1.mid",
+            "localPath": "midi/beethoven__ludwig_van_1__movement_sonata_no__21_c_major__waldstein____opus_53__1804__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/waldstein_2.mid",
+            "localPath": "midi/beethoven__ludwig_van_2__movement_sonata_no__21_c_major__waldstein____opus_53__1804__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/waldstein_3.mid",
+            "localPath": "midi/beethoven__ludwig_van_3__movement_sonata_no__21_c_major__waldstein____opus_53__1804__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 23 F minor (Appassionata) , Opus 57 (1804)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/appass_1.mid",
+            "localPath": "midi/beethoven__ludwig_van_1__movement_sonata_no__23_f_minor__appassionata____opus_57__1804__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/appass_2.mid",
+            "localPath": "midi/beethoven__ludwig_van_2__movement_sonata_no__23_f_minor__appassionata____opus_57__1804__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/appass_3.mid",
+            "localPath": "midi/beethoven__ludwig_van_3__movement_sonata_no__23_f_minor__appassionata____opus_57__1804__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 26 Eb major (Les Adieux) , Opus 81a (1809)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_les_adieux_1.mid",
+            "localPath": "midi/beethoven__ludwig_van_1__movement_sonata_no__26_eb_major__les_adieux____opus_81a__1809__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_les_adieux_2.mid",
+            "localPath": "midi/beethoven__ludwig_van_2__movement_sonata_no__26_eb_major__les_adieux____opus_81a__1809__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_les_adieux_3.mid",
+            "localPath": "midi/beethoven__ludwig_van_3__movement_sonata_no__26_eb_major__les_adieux____opus_81a__1809__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "For Elise (1810)",
+        "parts": [
+          {
+            "name": "For Elise",
+            "url": "http://piano-midi.de/midis/beethoven/elise.mid",
+            "localPath": "midi/beethoven__ludwig_van_for_elise_for_elise__1810__for_elise_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 27 E minor, Opus 90 (1814)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_opus90_1.mid",
+            "localPath": "midi/beethoven__ludwig_van_1__movement_sonata_no__27_e_minor__opus_90__1814__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_opus90_2.mid",
+            "localPath": "midi/beethoven__ludwig_van_2__movement_sonata_no__27_e_minor__opus_90__1814__2__movement_1.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 29 Bb major (Hammerklavier) , Opus 106 (1818)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_hammerklavier_1.mid",
+            "localPath": "midi/beethoven__ludwig_van_1__movement_sonata_no__29_bb_major__hammerklavier____opus_106__1818__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_hammerklavier_2.mid",
+            "localPath": "midi/beethoven__ludwig_van_2__movement_sonata_no__29_bb_major__hammerklavier____opus_106__1818__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_hammerklavier_3.mid",
+            "localPath": "midi/beethoven__ludwig_van_3__movement_sonata_no__29_bb_major__hammerklavier____opus_106__1818__3__movement_2.mid"
+          },
+          {
+            "name": "4. Movement",
+            "url": "http://piano-midi.de/midis/beethoven/beethoven_hammerklavier_4.mid",
+            "localPath": "midi/beethoven__ludwig_van_4__movement_sonata_no__29_bb_major__hammerklavier____opus_106__1818__4__movement_3.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Borodin, Alexander",
+    "url": "http://piano-midi.de/borodin.htm",
+    "pieces": [
+      {
+        "name": "Petite Suite (1885)",
+        "parts": [
+          {
+            "name": "In the monastery",
+            "url": "http://piano-midi.de/midis/borodin/bor_ps1.mid",
+            "localPath": "midi/borodin__alexander_in_the_monastery_petite_suite__1885__in_the_monastery_0.mid"
+          },
+          {
+            "name": "Intermezzo",
+            "url": "http://piano-midi.de/midis/borodin/bor_ps2.mid",
+            "localPath": "midi/borodin__alexander_intermezzo_petite_suite__1885__intermezzo_1.mid"
+          },
+          {
+            "name": "Mazurka",
+            "url": "http://piano-midi.de/midis/borodin/bor_ps3.mid",
+            "localPath": "midi/borodin__alexander_mazurka_petite_suite__1885__mazurka_2.mid"
+          },
+          {
+            "name": "Mazurka",
+            "url": "http://piano-midi.de/midis/borodin/bor_ps4.mid",
+            "localPath": "midi/borodin__alexander_mazurka_petite_suite__1885__mazurka_3.mid"
+          },
+          {
+            "name": "Réverie",
+            "url": "http://piano-midi.de/midis/borodin/bor_ps5.mid",
+            "localPath": "midi/borodin__alexander_r_verie_petite_suite__1885__r_verie_4.mid"
+          },
+          {
+            "name": "Serenade",
+            "url": "http://piano-midi.de/midis/borodin/bor_ps6.mid",
+            "localPath": "midi/borodin__alexander_serenade_petite_suite__1885__serenade_5.mid"
+          },
+          {
+            "name": "Nocturne",
+            "url": "http://piano-midi.de/midis/borodin/bor_ps7.mid",
+            "localPath": "midi/borodin__alexander_nocturne_petite_suite__1885__nocturne_6.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Brahms, Johannes",
+    "url": "http://piano-midi.de/brahms.htm",
+    "pieces": [
+      {
+        "name": "Sonata C major, Opus 1 (1853)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/brahms/brahms_opus1_1.mid",
+            "localPath": "midi/brahms__johannes_1__movement_sonata_c_major__opus_1__1853__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/brahms/brahms_opus1_2.mid",
+            "localPath": "midi/brahms__johannes_2__movement_sonata_c_major__opus_1__1853__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/brahms/brahms_opus1_3.mid",
+            "localPath": "midi/brahms__johannes_3__movement_sonata_c_major__opus_1__1853__3__movement_2.mid"
+          },
+          {
+            "name": "4. Movement",
+            "url": "http://piano-midi.de/midis/brahms/brahms_opus1_4.mid",
+            "localPath": "midi/brahms__johannes_4__movement_sonata_c_major__opus_1__1853__4__movement_3.mid"
+          }
+        ]
+      },
+      {
+        "name": "7 Fantasia, Opus 116 (1892)",
+        "parts": [
+          {
+            "name": "No. 2 - Intermezzo",
+            "url": "http://piano-midi.de/midis/brahms/br_im2.mid",
+            "localPath": "midi/brahms__johannes_no__2___intermezzo_7_fantasia__opus_116__1892__no__2___intermezzo_0.mid"
+          },
+          {
+            "name": "No. 5 - Intermezzo",
+            "url": "http://piano-midi.de/midis/brahms/br_im5.mid",
+            "localPath": "midi/brahms__johannes_no__5___intermezzo_7_fantasia__opus_116__1892__no__5___intermezzo_1.mid"
+          },
+          {
+            "name": "No. 6 - Intermezzo",
+            "url": "http://piano-midi.de/midis/brahms/br_im6.mid",
+            "localPath": "midi/brahms__johannes_no__6___intermezzo_7_fantasia__opus_116__1892__no__6___intermezzo_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "3 Intermezzi, Opus 117 (1892)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/brahms/brahms_opus117_1.mid",
+            "localPath": "midi/brahms__johannes_no__1_3_intermezzi__opus_117__1892__no__1_0.mid"
+          },
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/brahms/brahms_opus117_2.mid",
+            "localPath": "midi/brahms__johannes_no__2_3_intermezzi__opus_117__1892__no__2_1.mid"
+          }
+        ]
+      },
+      {
+        "name": "4 Piano pieces, Opus 119 (1893)",
+        "parts": [
+          {
+            "name": "Rhapsodie",
+            "url": "http://piano-midi.de/midis/brahms/br_rhap.mid",
+            "localPath": "midi/brahms__johannes_rhapsodie_4_piano_pieces__opus_119__1893__rhapsodie_0.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Burgmueller, Friedrich",
+    "url": "http://piano-midi.de/burgm.htm",
+    "pieces": [
+      {
+        "name": "Etudes, Opus 109",
+        "parts": [
+          {
+            "name": "The pearls",
+            "url": "http://piano-midi.de/midis/burgmueller/burg_perlen.mid",
+            "localPath": "midi/burgmueller__friedrich_the_pearls_etudes__opus_109_the_pearls_0.mid"
+          },
+          {
+            "name": "The Fountain",
+            "url": "http://piano-midi.de/midis/burgmueller/burg_quelle.mid",
+            "localPath": "midi/burgmueller__friedrich_the_fountain_etudes__opus_109_the_fountain_1.mid"
+          },
+          {
+            "name": "Agitato",
+            "url": "http://piano-midi.de/midis/burgmueller/burg_agitato.mid",
+            "localPath": "midi/burgmueller__friedrich_agitato_etudes__opus_109_agitato_2.mid"
+          },
+          {
+            "name": "Velocity",
+            "url": "http://piano-midi.de/midis/burgmueller/burg_geschwindigkeit.mid",
+            "localPath": "midi/burgmueller__friedrich_velocity_etudes__opus_109_velocity_3.mid"
+          },
+          {
+            "name": "Awaking in the woods",
+            "url": "http://piano-midi.de/midis/burgmueller/burg_erwachen.mid",
+            "localPath": "midi/burgmueller__friedrich_awaking_in_the_woods_etudes__opus_109_awaking_in_the_woods_4.mid"
+          },
+          {
+            "name": "Thunderstorm",
+            "url": "http://piano-midi.de/midis/burgmueller/burg_gewitter.mid",
+            "localPath": "midi/burgmueller__friedrich_thunderstorm_etudes__opus_109_thunderstorm_5.mid"
+          },
+          {
+            "name": "The sylphs",
+            "url": "http://piano-midi.de/midis/burgmueller/burg_sylphen.mid",
+            "localPath": "midi/burgmueller__friedrich_the_sylphs_etudes__opus_109_the_sylphs_6.mid"
+          },
+          {
+            "name": "Separation",
+            "url": "http://piano-midi.de/midis/burgmueller/burg_trennung.mid",
+            "localPath": "midi/burgmueller__friedrich_separation_etudes__opus_109_separation_7.mid"
+          },
+          {
+            "name": "Spinning Song",
+            "url": "http://piano-midi.de/midis/burgmueller/burg_spinnerlied.mid",
+            "localPath": "midi/burgmueller__friedrich_spinning_song_etudes__opus_109_spinning_song_8.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Chopin, Frédéric",
+    "url": "http://piano-midi.de/chopin.htm",
+    "pieces": [
+      {
+        "name": "5 Mazurkas, Opus 7 (1831)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op7_1.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__1_5_mazurkas__opus_7__1831__no__1_0.mid"
+          },
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op7_2.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__2_5_mazurkas__opus_7__1831__no__2_1.mid"
+          }
+        ]
+      },
+      {
+        "name": "Etudes, Opus 10 (1832)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op10_e01.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__1_etudes__opus_10__1832__no__1_0.mid"
+          },
+          {
+            "name": "No. 5 - Black Key",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op10_e05.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__5___black_key_etudes__opus_10__1832__no__5___black_key_1.mid"
+          },
+          {
+            "name": "No. 12 - Revolutionary",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op10_e12.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__12___revolutionary_etudes__opus_10__1832__no__12___revolutionary_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Grande Valse Brillante, Opus 18 (1831)",
+        "parts": [
+          {
+            "name": "Grande Valse Brillante",
+            "url": "http://piano-midi.de/midis/chopin/chp_op18.mid",
+            "localPath": "midi/chopin__fr_d_ric_grande_valse_brillante_grande_valse_brillante__opus_18__1831__grande_valse_brillante_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Ballade G minor, Opus 23 (1835)",
+        "parts": [
+          {
+            "name": "Ballade",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op23.mid",
+            "localPath": "midi/chopin__fr_d_ric_ballade_ballade_g_minor__opus_23__1835__ballade_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Etudes, Opus 25 (1836)",
+        "parts": [
+          {
+            "name": "No. 1 - Harp etude",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op25_e1.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__1___harp_etude_etudes__opus_25__1836__no__1___harp_etude_0.mid"
+          },
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op25_e2.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__2_etudes__opus_25__1836__no__2_1.mid"
+          },
+          {
+            "name": "No. 3",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op25_e3.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__3_etudes__opus_25__1836__no__3_2.mid"
+          },
+          {
+            "name": "No. 4",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op25_e4.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__4_etudes__opus_25__1836__no__4_3.mid"
+          },
+          {
+            "name": "No. 11 - Winter Wind",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op25_e11.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__11___winter_wind_etudes__opus_25__1836__no__11___winter_wind_4.mid"
+          },
+          {
+            "name": "No. 12",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op25_e12.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__12_etudes__opus_25__1836__no__12_5.mid"
+          }
+        ]
+      },
+      {
+        "name": "2 Nocturnes, Opus 27 (1835)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op27_1.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__1_2_nocturnes__opus_27__1835__no__1_0.mid"
+          },
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op27_2.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__2_2_nocturnes__opus_27__1835__no__2_1.mid"
+          }
+        ]
+      },
+      {
+        "name": "Préludes, Opus 28 (1838)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p1.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__1_pr_ludes__opus_28__1838__no__1_0.mid"
+          },
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p2.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__2_pr_ludes__opus_28__1838__no__2_1.mid"
+          },
+          {
+            "name": "No. 3",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p3.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__3_pr_ludes__opus_28__1838__no__3_2.mid"
+          },
+          {
+            "name": "No. 4",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p4.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__4_pr_ludes__opus_28__1838__no__4_3.mid"
+          },
+          {
+            "name": "No. 5",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p5.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__5_pr_ludes__opus_28__1838__no__5_4.mid"
+          },
+          {
+            "name": "No. 6",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p6.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__6_pr_ludes__opus_28__1838__no__6_5.mid"
+          },
+          {
+            "name": "No. 7",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p7.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__7_pr_ludes__opus_28__1838__no__7_6.mid"
+          },
+          {
+            "name": "No. 8",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p8.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__8_pr_ludes__opus_28__1838__no__8_7.mid"
+          },
+          {
+            "name": "No. 9",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p9.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__9_pr_ludes__opus_28__1838__no__9_8.mid"
+          },
+          {
+            "name": "No. 10",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p10.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__10_pr_ludes__opus_28__1838__no__10_9.mid"
+          },
+          {
+            "name": "No. 11",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p11.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__11_pr_ludes__opus_28__1838__no__11_10.mid"
+          },
+          {
+            "name": "No. 12",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p12.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__12_pr_ludes__opus_28__1838__no__12_11.mid"
+          },
+          {
+            "name": "No. 13",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p13.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__13_pr_ludes__opus_28__1838__no__13_12.mid"
+          },
+          {
+            "name": "No. 14",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p14.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__14_pr_ludes__opus_28__1838__no__14_13.mid"
+          },
+          {
+            "name": "No. 15 - Raindrop",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p15.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__15___raindrop_pr_ludes__opus_28__1838__no__15___raindrop_14.mid"
+          },
+          {
+            "name": "No. 16",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p16.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__16_pr_ludes__opus_28__1838__no__16_15.mid"
+          },
+          {
+            "name": "No. 17",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p17.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__17_pr_ludes__opus_28__1838__no__17_16.mid"
+          },
+          {
+            "name": "No. 18",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p18.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__18_pr_ludes__opus_28__1838__no__18_17.mid"
+          },
+          {
+            "name": "No. 19",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p19.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__19_pr_ludes__opus_28__1838__no__19_18.mid"
+          },
+          {
+            "name": "No. 20",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p20.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__20_pr_ludes__opus_28__1838__no__20_19.mid"
+          },
+          {
+            "name": "No. 21",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p21.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__21_pr_ludes__opus_28__1838__no__21_20.mid"
+          },
+          {
+            "name": "No. 22",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p22.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__22_pr_ludes__opus_28__1838__no__22_21.mid"
+          },
+          {
+            "name": "No. 23",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p23.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__23_pr_ludes__opus_28__1838__no__23_22.mid"
+          },
+          {
+            "name": "No. 24",
+            "url": "http://piano-midi.de/midis/chopin/chpn-p24.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__24_pr_ludes__opus_28__1838__no__24_23.mid"
+          }
+        ]
+      },
+      {
+        "name": "Scherzo Bb minor, Opus 31 (1837)",
+        "parts": [
+          {
+            "name": "Scherzo",
+            "url": "http://piano-midi.de/midis/chopin/chp_op31.mid",
+            "localPath": "midi/chopin__fr_d_ric_scherzo_scherzo_bb_minor__opus_31__1837__scherzo_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "4 Mazurkas, Opus 33 (1838)",
+        "parts": [
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op33_2.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__2_4_mazurkas__opus_33__1838__no__2_0.mid"
+          },
+          {
+            "name": "No. 4",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op33_4.mid",
+            "localPath": "midi/chopin__fr_d_ric_no__4_4_mazurkas__opus_33__1838__no__4_1.mid"
+          }
+        ]
+      },
+      {
+        "name": "Piano sonata No. 2 Bb minor, Opus 35 (1839)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op35_1.mid",
+            "localPath": "midi/chopin__fr_d_ric_1__movement_piano_sonata_no__2_bb_minor__opus_35__1839__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op35_2.mid",
+            "localPath": "midi/chopin__fr_d_ric_2__movement_piano_sonata_no__2_bb_minor__opus_35__1839__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op35_3.mid",
+            "localPath": "midi/chopin__fr_d_ric_3__movement_piano_sonata_no__2_bb_minor__opus_35__1839__3__movement_2.mid"
+          },
+          {
+            "name": "4. Movement",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op35_4.mid",
+            "localPath": "midi/chopin__fr_d_ric_4__movement_piano_sonata_no__2_bb_minor__opus_35__1839__4__movement_3.mid"
+          }
+        ]
+      },
+      {
+        "name": "Polonaise Ab major, Opus 53 (1842)",
+        "parts": [
+          {
+            "name": "Polonaise",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op53.mid",
+            "localPath": "midi/chopin__fr_d_ric_polonaise_polonaise_ab_major__opus_53__1842__polonaise_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Fantaisie-Impromptu, Opus 66 (1834)",
+        "parts": [
+          {
+            "name": "Fantaisie-Impromptu",
+            "url": "http://piano-midi.de/midis/chopin/chpn_op66.mid",
+            "localPath": "midi/chopin__fr_d_ric_fantaisie_impromptu_fantaisie_impromptu__opus_66__1834__fantaisie_impromptu_0.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Clementi, Muzio",
+    "url": "http://piano-midi.de/clementi.htm",
+    "pieces": [
+      {
+        "name": "Sonatina Opus 36 No. 1, Opus 36 (1797)",
+        "parts": [
+          {
+            "name": "1. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_1_1.mid",
+            "localPath": "midi/clementi__muzio_1__movement_sonatina_opus_36_no__1__opus_36__1797__1__movement_0.mid"
+          },
+          {
+            "name": "2. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_1_2.mid",
+            "localPath": "midi/clementi__muzio_2__movement_sonatina_opus_36_no__1__opus_36__1797__2__movement_1.mid"
+          },
+          {
+            "name": "3. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_1_3.mid",
+            "localPath": "midi/clementi__muzio_3__movement_sonatina_opus_36_no__1__opus_36__1797__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonatina Opus 36 No. 2, Opus 36 (1797)",
+        "parts": [
+          {
+            "name": "1. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_2_1.mid",
+            "localPath": "midi/clementi__muzio_1__movement_sonatina_opus_36_no__2__opus_36__1797__1__movement_0.mid"
+          },
+          {
+            "name": "2. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_2_2.mid",
+            "localPath": "midi/clementi__muzio_2__movement_sonatina_opus_36_no__2__opus_36__1797__2__movement_1.mid"
+          },
+          {
+            "name": "3. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_2_3.mid",
+            "localPath": "midi/clementi__muzio_3__movement_sonatina_opus_36_no__2__opus_36__1797__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonatina Opus 36 No. 3, Opus 36 (1797)",
+        "parts": [
+          {
+            "name": "1. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_3_1.mid",
+            "localPath": "midi/clementi__muzio_1__movement_sonatina_opus_36_no__3__opus_36__1797__1__movement_0.mid"
+          },
+          {
+            "name": "2. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_3_2.mid",
+            "localPath": "midi/clementi__muzio_2__movement_sonatina_opus_36_no__3__opus_36__1797__2__movement_1.mid"
+          },
+          {
+            "name": "3. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_3_3.mid",
+            "localPath": "midi/clementi__muzio_3__movement_sonatina_opus_36_no__3__opus_36__1797__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonatina Opus 36 No. 4, Opus 36 (1797)",
+        "parts": [
+          {
+            "name": "1. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_4_1.mid",
+            "localPath": "midi/clementi__muzio_1__movement_sonatina_opus_36_no__4__opus_36__1797__1__movement_0.mid"
+          },
+          {
+            "name": "2. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_4_2.mid",
+            "localPath": "midi/clementi__muzio_2__movement_sonatina_opus_36_no__4__opus_36__1797__2__movement_1.mid"
+          },
+          {
+            "name": "3. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_4_3.mid",
+            "localPath": "midi/clementi__muzio_3__movement_sonatina_opus_36_no__4__opus_36__1797__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonatina Opus 36 No. 5, Opus 36 (1797)",
+        "parts": [
+          {
+            "name": "1. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_5_1.mid",
+            "localPath": "midi/clementi__muzio_1__movement_sonatina_opus_36_no__5__opus_36__1797__1__movement_0.mid"
+          },
+          {
+            "name": "2. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_5_2.mid",
+            "localPath": "midi/clementi__muzio_2__movement_sonatina_opus_36_no__5__opus_36__1797__2__movement_1.mid"
+          },
+          {
+            "name": "3. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_5_3.mid",
+            "localPath": "midi/clementi__muzio_3__movement_sonatina_opus_36_no__5__opus_36__1797__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonatina Opus 36 No. 6, Opus 36 (1797)",
+        "parts": [
+          {
+            "name": "1. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_6_1.mid",
+            "localPath": "midi/clementi__muzio_1__movement_sonatina_opus_36_no__6__opus_36__1797__1__movement_0.mid"
+          },
+          {
+            "name": "2. movement",
+            "url": "http://piano-midi.de/midis/clementi/clementi_opus36_6_2.mid",
+            "localPath": "midi/clementi__muzio_2__movement_sonatina_opus_36_no__6__opus_36__1797__2__movement_1.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Debussy, Claude",
+    "url": "http://piano-midi.de/debuss.htm",
+    "pieces": [
+      {
+        "name": "Suite bergamasque (1905)",
+        "parts": [
+          {
+            "name": "Prélude",
+            "url": "http://piano-midi.de/midis/debussy/deb_prel.mid",
+            "localPath": "midi/debussy__claude_pr_lude_suite_bergamasque__1905__pr_lude_0.mid"
+          },
+          {
+            "name": "Menuet",
+            "url": "http://piano-midi.de/midis/debussy/deb_menu.mid",
+            "localPath": "midi/debussy__claude_menuet_suite_bergamasque__1905__menuet_1.mid"
+          },
+          {
+            "name": "Clair de Lune",
+            "url": "http://piano-midi.de/midis/debussy/deb_clai.mid",
+            "localPath": "midi/debussy__claude_clair_de_lune_suite_bergamasque__1905__clair_de_lune_2.mid"
+          },
+          {
+            "name": "Passepied",
+            "url": "http://piano-midi.de/midis/debussy/deb_pass.mid",
+            "localPath": "midi/debussy__claude_passepied_suite_bergamasque__1905__passepied_3.mid"
+          }
+        ]
+      },
+      {
+        "name": "Children's Corner (1908)",
+        "parts": [
+          {
+            "name": "I. Doctor Gradus ad Parnassum",
+            "url": "http://piano-midi.de/midis/debussy/debussy_cc_1.mid",
+            "localPath": "midi/debussy__claude_i__doctor_gradus_ad_parnassum_children_s_corner__1908__i__doctor_gradus_ad_parnassum_0.mid"
+          },
+          {
+            "name": "Jimbo's Lullaby",
+            "url": "http://piano-midi.de/midis/debussy/debussy_cc_2.mid",
+            "localPath": "midi/debussy__claude_jimbo_s_lullaby_children_s_corner__1908__jimbo_s_lullaby_1.mid"
+          },
+          {
+            "name": "Serenade of the Doll",
+            "url": "http://piano-midi.de/midis/debussy/debussy_cc_3.mid",
+            "localPath": "midi/debussy__claude_serenade_of_the_doll_children_s_corner__1908__serenade_of_the_doll_2.mid"
+          },
+          {
+            "name": "The snow is dancing",
+            "url": "http://piano-midi.de/midis/debussy/debussy_cc_4.mid",
+            "localPath": "midi/debussy__claude_the_snow_is_dancing_children_s_corner__1908__the_snow_is_dancing_3.mid"
+          },
+          {
+            "name": "The little Shepherd",
+            "url": "http://piano-midi.de/midis/debussy/debussy_cc_5.mid",
+            "localPath": "midi/debussy__claude_the_little_shepherd_children_s_corner__1908__the_little_shepherd_4.mid"
+          },
+          {
+            "name": "Golli's cake walk",
+            "url": "http://piano-midi.de/midis/debussy/debussy_cc_6.mid",
+            "localPath": "midi/debussy__claude_golli_s_cake_walk_children_s_corner__1908__golli_s_cake_walk_5.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Godowsky, Leopold",
+    "url": "http://piano-midi.de/godowsky.htm",
+    "pieces": [
+      {
+        "name": "53 Studies on Études on Frédéric Chopin (1914)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/godowsky/god_chpn_op10_e01.mid",
+            "localPath": "midi/godowsky__leopold_no__1_53_studies_on__tudes_on_fr_d_ric_chopin__1914__no__1_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Transcription Albéniz: Tango (1921)",
+        "parts": [
+          {
+            "name": "Tango",
+            "url": "http://piano-midi.de/midis/godowsky/god_alb_esp2.mid",
+            "localPath": "midi/godowsky__leopold_tango_transcription_alb_niz__tango__1921__tango_0.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Granados, Enrique",
+    "url": "http://piano-midi.de/grana.htm",
+    "pieces": [
+      {
+        "name": "Danzas españolas (1900)",
+        "parts": [
+          {
+            "name": "No. 2 - Oriental",
+            "url": "http://piano-midi.de/midis/granados/gra_esp_2.mid",
+            "localPath": "midi/granados__enrique_no__2___oriental_danzas_espa_olas__1900__no__2___oriental_0.mid"
+          },
+          {
+            "name": "No. 3 - Zarabanda",
+            "url": "http://piano-midi.de/midis/granados/gra_esp_3.mid",
+            "localPath": "midi/granados__enrique_no__3___zarabanda_danzas_espa_olas__1900__no__3___zarabanda_1.mid"
+          },
+          {
+            "name": "No. 4 - Villanesca",
+            "url": "http://piano-midi.de/midis/granados/gra_esp_4.mid",
+            "localPath": "midi/granados__enrique_no__4___villanesca_danzas_espa_olas__1900__no__4___villanesca_2.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Grieg, Edvard",
+    "url": "http://piano-midi.de/grieg.htm",
+    "pieces": [
+      {
+        "name": "Lyric Pieces Book I, Opus 12 (1867)",
+        "parts": [
+          {
+            "name": "No. 2 - Valse",
+            "url": "http://piano-midi.de/midis/grieg/grieg_walzer.mid",
+            "localPath": "midi/grieg__edvard_no__2___valse_lyric_pieces_book_i__opus_12__1867__no__2___valse_0.mid"
+          },
+          {
+            "name": "No. 3 - Watchman's song",
+            "url": "http://piano-midi.de/midis/grieg/grieg_waechter.mid",
+            "localPath": "midi/grieg__edvard_no__3___watchman_s_song_lyric_pieces_book_i__opus_12__1867__no__3___watchman_s_song_1.mid"
+          },
+          {
+            "name": "No. 4 - Fairy Dance",
+            "url": "http://piano-midi.de/midis/grieg/grieg_elfentanz.mid",
+            "localPath": "midi/grieg__edvard_no__4___fairy_dance_lyric_pieces_book_i__opus_12__1867__no__4___fairy_dance_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Lyric Pieces Book II , Opus 38 (1883)",
+        "parts": [
+          {
+            "name": "No. 1 - Berceuse",
+            "url": "http://piano-midi.de/midis/grieg/grieg_berceuse.mid",
+            "localPath": "midi/grieg__edvard_no__1___berceuse_lyric_pieces_book_ii___opus_38__1883__no__1___berceuse_0.mid"
+          },
+          {
+            "name": "No. 4 - Halling",
+            "url": "http://piano-midi.de/midis/grieg/grieg_halling.mid",
+            "localPath": "midi/grieg__edvard_no__4___halling_lyric_pieces_book_ii___opus_38__1883__no__4___halling_1.mid"
+          }
+        ]
+      },
+      {
+        "name": "Lyric Pieces Book III, Opus 43 (1886)",
+        "parts": [
+          {
+            "name": "No. 1 - Butterfly",
+            "url": "http://piano-midi.de/midis/grieg/grieg_butterfly.mid",
+            "localPath": "midi/grieg__edvard_no__1___butterfly_lyric_pieces_book_iii__opus_43__1886__no__1___butterfly_0.mid"
+          },
+          {
+            "name": "No. 2 - Solitary Traveller",
+            "url": "http://piano-midi.de/midis/grieg/grieg_wanderer.mid",
+            "localPath": "midi/grieg__edvard_no__2___solitary_traveller_lyric_pieces_book_iii__opus_43__1886__no__2___solitary_traveller_1.mid"
+          },
+          {
+            "name": "No. 4 - Little Bird",
+            "url": "http://piano-midi.de/midis/grieg/grieg_voeglein.mid",
+            "localPath": "midi/grieg__edvard_no__4___little_bird_lyric_pieces_book_iii__opus_43__1886__no__4___little_bird_2.mid"
+          },
+          {
+            "name": "No. 6 - To Spring",
+            "url": "http://piano-midi.de/midis/grieg/grieg_spring.mid",
+            "localPath": "midi/grieg__edvard_no__6___to_spring_lyric_pieces_book_iii__opus_43__1886__no__6___to_spring_3.mid"
+          }
+        ]
+      },
+      {
+        "name": "Lyric Pieces Book IV , Opus 47",
+        "parts": [
+          {
+            "name": "No. 2 - Album Leaf",
+            "url": "http://piano-midi.de/midis/grieg/grieg_album.mid",
+            "localPath": "midi/grieg__edvard_no__2___album_leaf_lyric_pieces_book_iv___opus_47_no__2___album_leaf_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Lyric Pieces Book V, Opus 54 (1891)",
+        "parts": [
+          {
+            "name": "No. 2 - Norwegian March",
+            "url": "http://piano-midi.de/midis/grieg/grieg_march.mid",
+            "localPath": "midi/grieg__edvard_no__2___norwegian_march_lyric_pieces_book_v__opus_54__1891__no__2___norwegian_march_0.mid"
+          },
+          {
+            "name": "No. 3 - March of the Dwarfs",
+            "url": "http://piano-midi.de/midis/grieg/grieg_zwerge.mid",
+            "localPath": "midi/grieg__edvard_no__3___march_of_the_dwarfs_lyric_pieces_book_v__opus_54__1891__no__3___march_of_the_dwarfs_1.mid"
+          }
+        ]
+      },
+      {
+        "name": "Lyric Pieces Book VII , Opus 62 (1895)",
+        "parts": [
+          {
+            "name": "No. 4 - Brooklet",
+            "url": "http://piano-midi.de/midis/grieg/grieg_brooklet.mid",
+            "localPath": "midi/grieg__edvard_no__4___brooklet_lyric_pieces_book_vii___opus_62__1895__no__4___brooklet_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Lyric Pieces Book VIII, Opus 65",
+        "parts": [
+          {
+            "name": "No. 6 - Wedding-day at Troldhaugen",
+            "url": "http://piano-midi.de/midis/grieg/grieg_wedding.mid",
+            "localPath": "midi/grieg__edvard_no__6___wedding_day_at_troldhaugen_lyric_pieces_book_viii__opus_65_no__6___wedding_day_at_troldhaugen_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Lyric Pieces Book X, Opus 71 (1901)",
+        "parts": [
+          {
+            "name": "No. 1 - Once upon a Time",
+            "url": "http://piano-midi.de/midis/grieg/grieg_once_upon_a_time.mid",
+            "localPath": "midi/grieg__edvard_no__1___once_upon_a_time_lyric_pieces_book_x__opus_71__1901__no__1___once_upon_a_time_0.mid"
+          },
+          {
+            "name": "No. 3 - Puck",
+            "url": "http://piano-midi.de/midis/grieg/grieg_kobold.mid",
+            "localPath": "midi/grieg__edvard_no__3___puck_lyric_pieces_book_x__opus_71__1901__no__3___puck_1.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Haydn, Joseph",
+    "url": "http://piano-midi.de/haydn.htm",
+    "pieces": [
+      {
+        "name": "Piano Sonata in C major, Hoboken XVI:7 (1766)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_7_1.mid",
+            "localPath": "midi/haydn__joseph_1__movement_piano_sonata_in_c_major__hoboken_xvi_7__1766__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_7_2.mid",
+            "localPath": "midi/haydn__joseph_2__movement_piano_sonata_in_c_major__hoboken_xvi_7__1766__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_7_3.mid",
+            "localPath": "midi/haydn__joseph_3__movement_piano_sonata_in_c_major__hoboken_xvi_7__1766__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Piano Sonata in G major, Hoboken XVI:8 (1766)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_8_1.mid",
+            "localPath": "midi/haydn__joseph_1__movement_piano_sonata_in_g_major__hoboken_xvi_8__1766__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_8_2.mid",
+            "localPath": "midi/haydn__joseph_2__movement_piano_sonata_in_g_major__hoboken_xvi_8__1766__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_8_3.mid",
+            "localPath": "midi/haydn__joseph_3__movement_piano_sonata_in_g_major__hoboken_xvi_8__1766__3__movement_2.mid"
+          },
+          {
+            "name": "4. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_8_4.mid",
+            "localPath": "midi/haydn__joseph_4__movement_piano_sonata_in_g_major__hoboken_xvi_8__1766__4__movement_3.mid"
+          }
+        ]
+      },
+      {
+        "name": "Piano Sonata in F major, Hoboken XVI:9 (1766)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_9_1.mid",
+            "localPath": "midi/haydn__joseph_1__movement_piano_sonata_in_f_major__hoboken_xvi_9__1766__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_9_2.mid",
+            "localPath": "midi/haydn__joseph_2__movement_piano_sonata_in_f_major__hoboken_xvi_9__1766__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_9_3.mid",
+            "localPath": "midi/haydn__joseph_3__movement_piano_sonata_in_f_major__hoboken_xvi_9__1766__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Piano Sonata in D major, Hoboken XVI:33 (1778)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_33_1.mid",
+            "localPath": "midi/haydn__joseph_1__movement_piano_sonata_in_d_major__hoboken_xvi_33__1778__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_33_2.mid",
+            "localPath": "midi/haydn__joseph_2__movement_piano_sonata_in_d_major__hoboken_xvi_33__1778__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_33_3.mid",
+            "localPath": "midi/haydn__joseph_3__movement_piano_sonata_in_d_major__hoboken_xvi_33__1778__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Piano Sonata in C major, Hoboken XVI:35 (1780)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_35_1.mid",
+            "localPath": "midi/haydn__joseph_1__movement_piano_sonata_in_c_major__hoboken_xvi_35__1780__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_35_2.mid",
+            "localPath": "midi/haydn__joseph_2__movement_piano_sonata_in_c_major__hoboken_xvi_35__1780__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_35_3.mid",
+            "localPath": "midi/haydn__joseph_3__movement_piano_sonata_in_c_major__hoboken_xvi_35__1780__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Piano Sonata in G major, Hoboken XVI:40 (1784)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/haydn/hay_40_1.mid",
+            "localPath": "midi/haydn__joseph_1__movement_piano_sonata_in_g_major__hoboken_xvi_40__1784__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/haydn/hay_40_2.mid",
+            "localPath": "midi/haydn__joseph_2__movement_piano_sonata_in_g_major__hoboken_xvi_40__1784__2__movement_1.mid"
+          }
+        ]
+      },
+      {
+        "name": "Piano Sonata in Ab major, Hoboken XVI:43 (1783)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_43_1.mid",
+            "localPath": "midi/haydn__joseph_1__movement_piano_sonata_in_ab_major__hoboken_xvi_43__1783__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_43_2.mid",
+            "localPath": "midi/haydn__joseph_2__movement_piano_sonata_in_ab_major__hoboken_xvi_43__1783__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/haydn/haydn_43_3.mid",
+            "localPath": "midi/haydn__joseph_3__movement_piano_sonata_in_ab_major__hoboken_xvi_43__1783__3__movement_2.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Liszt, Franz",
+    "url": "http://piano-midi.de/liszt.htm",
+    "pieces": [
+      {
+        "name": "Reminiscences de Don Juan (Fantasia on Mozart's Don Giovanni) (1841)",
+        "parts": [
+          {
+            "name": "Reminiscences de Don Juan",
+            "url": "http://piano-midi.de/midis/liszt/liz_donjuan.mid",
+            "localPath": "midi/liszt__franz_reminiscences_de_don_juan_reminiscences_de_don_juan__fantasia_on_mozart_s_don_giovanni___1841__reminiscences_de_don_juan_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Love dreams (1850)",
+        "parts": [
+          {
+            "name": "No. 3",
+            "url": "http://piano-midi.de/midis/liszt/liz_liebestraum.mid",
+            "localPath": "midi/liszt__franz_no__3_love_dreams__1850__no__3_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Grandes Etudes de Paganini (1851)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/liszt/liz_et1.mid",
+            "localPath": "midi/liszt__franz_no__1_grandes_etudes_de_paganini__1851__no__1_0.mid"
+          },
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/liszt/liz_et2.mid",
+            "localPath": "midi/liszt__franz_no__2_grandes_etudes_de_paganini__1851__no__2_1.mid"
+          },
+          {
+            "name": "No. 3 - La Campanella",
+            "url": "http://piano-midi.de/midis/liszt/liz_et3.mid",
+            "localPath": "midi/liszt__franz_no__3___la_campanella_grandes_etudes_de_paganini__1851__no__3___la_campanella_2.mid"
+          },
+          {
+            "name": "No. 4",
+            "url": "http://piano-midi.de/midis/liszt/liz_et4.mid",
+            "localPath": "midi/liszt__franz_no__4_grandes_etudes_de_paganini__1851__no__4_3.mid"
+          },
+          {
+            "name": "No. 5",
+            "url": "http://piano-midi.de/midis/liszt/liz_et5.mid",
+            "localPath": "midi/liszt__franz_no__5_grandes_etudes_de_paganini__1851__no__5_4.mid"
+          },
+          {
+            "name": "No. 6",
+            "url": "http://piano-midi.de/midis/liszt/liz_et6.mid",
+            "localPath": "midi/liszt__franz_no__6_grandes_etudes_de_paganini__1851__no__6_5.mid"
+          }
+        ]
+      },
+      {
+        "name": "Études d'exécution transcendante (1851)",
+        "parts": [
+          {
+            "name": "No. 4 - Mazeppa",
+            "url": "http://piano-midi.de/midis/liszt/liz_et_trans4.mid",
+            "localPath": "midi/liszt__franz_no__4___mazeppa__tudes_d_ex_cution_transcendante__1851__no__4___mazeppa_0.mid"
+          },
+          {
+            "name": "No. 5 - Feux Follets",
+            "url": "http://piano-midi.de/midis/liszt/liz_et_trans5.mid",
+            "localPath": "midi/liszt__franz_no__5___feux_follets__tudes_d_ex_cution_transcendante__1851__no__5___feux_follets_1.mid"
+          },
+          {
+            "name": "No. 8 - Wild Hunt",
+            "url": "http://piano-midi.de/midis/liszt/liz_et_trans8.mid",
+            "localPath": "midi/liszt__franz_no__8___wild_hunt__tudes_d_ex_cution_transcendante__1851__no__8___wild_hunt_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "19 Hungarian Rhapsodies (1885)",
+        "parts": [
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/liszt/liz_rhap02.mid",
+            "localPath": "midi/liszt__franz_no__2_19_hungarian_rhapsodies__1885__no__2_0.mid"
+          },
+          {
+            "name": "No. 9 - Carnival in Pest",
+            "url": "http://piano-midi.de/midis/liszt/liz_rhap09.mid",
+            "localPath": "midi/liszt__franz_no__9___carnival_in_pest_19_hungarian_rhapsodies__1885__no__9___carnival_in_pest_1.mid"
+          },
+          {
+            "name": "No. 10",
+            "url": "http://piano-midi.de/midis/liszt/liz_rhap10.mid",
+            "localPath": "midi/liszt__franz_no__10_19_hungarian_rhapsodies__1885__no__10_2.mid"
+          },
+          {
+            "name": "No. 12",
+            "url": "http://piano-midi.de/midis/liszt/liz_rhap12.mid",
+            "localPath": "midi/liszt__franz_no__12_19_hungarian_rhapsodies__1885__no__12_3.mid"
+          },
+          {
+            "name": "No. 15 - Rákóczy March",
+            "url": "http://piano-midi.de/midis/liszt/liz_rhap15.mid",
+            "localPath": "midi/liszt__franz_no__15___r_k_czy_march_19_hungarian_rhapsodies__1885__no__15___r_k_czy_march_4.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mendelssohn, Felix",
+    "url": "http://piano-midi.de/mendelssohn.htm",
+    "pieces": [
+      {
+        "name": "Songs without Words Book 1, Opus 19 (1830)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op19_1.mid",
+            "localPath": "midi/mendelssohn__felix_no__1_songs_without_words_book_1__opus_19__1830__no__1_0.mid"
+          },
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op19_2.mid",
+            "localPath": "midi/mendelssohn__felix_no__2_songs_without_words_book_1__opus_19__1830__no__2_1.mid"
+          },
+          {
+            "name": "No. 3",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op19_3.mid",
+            "localPath": "midi/mendelssohn__felix_no__3_songs_without_words_book_1__opus_19__1830__no__3_2.mid"
+          },
+          {
+            "name": "No. 4",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op19_4.mid",
+            "localPath": "midi/mendelssohn__felix_no__4_songs_without_words_book_1__opus_19__1830__no__4_3.mid"
+          },
+          {
+            "name": "No. 5",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op19_5.mid",
+            "localPath": "midi/mendelssohn__felix_no__5_songs_without_words_book_1__opus_19__1830__no__5_4.mid"
+          },
+          {
+            "name": "No. 6 - Venetian Gondola Song",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op19_6.mid",
+            "localPath": "midi/mendelssohn__felix_no__6___venetian_gondola_song_songs_without_words_book_1__opus_19__1830__no__6___venetian_gondola_song_5.mid"
+          }
+        ]
+      },
+      {
+        "name": "Songs without Words Book 2, Opus 30 (1834)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op30_1.mid",
+            "localPath": "midi/mendelssohn__felix_no__1_songs_without_words_book_2__opus_30__1834__no__1_0.mid"
+          },
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op30_2.mid",
+            "localPath": "midi/mendelssohn__felix_no__2_songs_without_words_book_2__opus_30__1834__no__2_1.mid"
+          },
+          {
+            "name": "No. 3",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op30_3.mid",
+            "localPath": "midi/mendelssohn__felix_no__3_songs_without_words_book_2__opus_30__1834__no__3_2.mid"
+          },
+          {
+            "name": "No. 4",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op30_4.mid",
+            "localPath": "midi/mendelssohn__felix_no__4_songs_without_words_book_2__opus_30__1834__no__4_3.mid"
+          },
+          {
+            "name": "No. 5",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op30_5.mid",
+            "localPath": "midi/mendelssohn__felix_no__5_songs_without_words_book_2__opus_30__1834__no__5_4.mid"
+          }
+        ]
+      },
+      {
+        "name": "Songs without Words Book 4, Opus 53 (1841)",
+        "parts": [
+          {
+            "name": "No. 5 - Folk song",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op53_5.mid",
+            "localPath": "midi/mendelssohn__felix_no__5___folk_song_songs_without_words_book_4__opus_53__1841__no__5___folk_song_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Songs without Words Book 5, Opus 62 (1844)",
+        "parts": [
+          {
+            "name": "No. 3 - Funeral march",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op62_3.mid",
+            "localPath": "midi/mendelssohn__felix_no__3___funeral_march_songs_without_words_book_5__opus_62__1844__no__3___funeral_march_0.mid"
+          },
+          {
+            "name": "No. 4 - Morning Song",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op62_4.mid",
+            "localPath": "midi/mendelssohn__felix_no__4___morning_song_songs_without_words_book_5__opus_62__1844__no__4___morning_song_1.mid"
+          },
+          {
+            "name": "No. 5 - Venetian Gondola Song",
+            "url": "http://piano-midi.de/midis/mendelssohn/mendel_op62_5.mid",
+            "localPath": "midi/mendelssohn__felix_no__5___venetian_gondola_song_songs_without_words_book_5__opus_62__1844__no__5___venetian_gondola_song_2.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Moszkowski, Moritz",
+    "url": "http://piano-midi.de/moszkowski.htm",
+    "pieces": [
+      {
+        "name": "Étincelles, Opus 36",
+        "parts": [
+          {
+            "name": "No. 6",
+            "url": "http://piano-midi.de/midis/moszkowski/mos_op36_6.mid",
+            "localPath": "midi/moszkowski__moritz_no__6__tincelles__opus_36_no__6_0.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mozart, Wolfgang Amadeus",
+    "url": "http://piano-midi.de/mozart.htm",
+    "pieces": [
+      {
+        "name": "Sonata No. 8 D major, KV 311 (1777)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_311_1.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_1__movement_sonata_no__8_d_major__kv_311__1777__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_311_2.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_2__movement_sonata_no__8_d_major__kv_311__1777__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_311_3.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_3__movement_sonata_no__8_d_major__kv_311__1777__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 10 C major, KV 330 (1783)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_330_1.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_1__movement_sonata_no__10_c_major__kv_330__1783__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_330_2.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_2__movement_sonata_no__10_c_major__kv_330__1783__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_330_3.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_3__movement_sonata_no__10_c_major__kv_330__1783__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 11 A major (Alla Turca) , KV 331 (1783)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_331_1.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_1__movement_sonata_no__11_a_major__alla_turca____kv_331__1783__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_331_2.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_2__movement_sonata_no__11_a_major__alla_turca____kv_331__1783__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement - Alla Turca",
+            "url": "http://piano-midi.de/midis/mozart/mz_331_3.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_3__movement___alla_turca_sonata_no__11_a_major__alla_turca____kv_331__1783__3__movement___alla_turca_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 12 F major, KV 332 (1783)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_332_1.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_1__movement_sonata_no__12_f_major__kv_332__1783__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_332_2.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_2__movement_sonata_no__12_f_major__kv_332__1783__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_332_3.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_3__movement_sonata_no__12_f_major__kv_332__1783__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 13 Bb major, KV 333 (1783)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_333_1.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_1__movement_sonata_no__13_bb_major__kv_333__1783__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_333_2.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_2__movement_sonata_no__13_bb_major__kv_333__1783__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_333_3.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_3__movement_sonata_no__13_bb_major__kv_333__1783__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 16 C major (Sonata facile) , KV 545 (1788)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_545_1.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_1__movement_sonata_no__16_c_major__sonata_facile____kv_545__1788__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_545_2.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_2__movement_sonata_no__16_c_major__sonata_facile____kv_545__1788__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_545_3.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_3__movement_sonata_no__16_c_major__sonata_facile____kv_545__1788__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "Sonata No. 17 Bb major, KV 570 (1789)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_570_1.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_1__movement_sonata_no__17_bb_major__kv_570__1789__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_570_2.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_2__movement_sonata_no__17_bb_major__kv_570__1789__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/mozart/mz_570_3.mid",
+            "localPath": "midi/mozart__wolfgang_amadeus_3__movement_sonata_no__17_bb_major__kv_570__1789__3__movement_2.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mussorgsky, Modest",
+    "url": "http://piano-midi.de/muss.htm",
+    "pieces": [
+      {
+        "name": "Pictures at an Exhibition (1874)",
+        "parts": [
+          {
+            "name": "Promenade - Gnomus",
+            "url": "http://piano-midi.de/midis/mussorgsky/muss_1.mid",
+            "localPath": "midi/mussorgsky__modest_promenade___gnomus_pictures_at_an_exhibition__1874__promenade___gnomus_0.mid"
+          },
+          {
+            "name": "Promenade - Il vecchio Castello",
+            "url": "http://piano-midi.de/midis/mussorgsky/muss_2.mid",
+            "localPath": "midi/mussorgsky__modest_promenade___il_vecchio_castello_pictures_at_an_exhibition__1874__promenade___il_vecchio_castello_1.mid"
+          },
+          {
+            "name": "Promenade - The Tuileries",
+            "url": "http://piano-midi.de/midis/mussorgsky/muss_3.mid",
+            "localPath": "midi/mussorgsky__modest_promenade___the_tuileries_pictures_at_an_exhibition__1874__promenade___the_tuileries_2.mid"
+          },
+          {
+            "name": "Bydlo",
+            "url": "http://piano-midi.de/midis/mussorgsky/muss_4.mid",
+            "localPath": "midi/mussorgsky__modest_bydlo_pictures_at_an_exhibition__1874__bydlo_3.mid"
+          },
+          {
+            "name": "Promenade - Ballet of the Unhatched Chickens",
+            "url": "http://piano-midi.de/midis/mussorgsky/muss_5.mid",
+            "localPath": "midi/mussorgsky__modest_promenade___ballet_of_the_unhatched_chickens_pictures_at_an_exhibition__1874__promenade___ballet_of_the_unhatched_chickens_4.mid"
+          },
+          {
+            "name": "Samuel Goldenberg and Schmuyle",
+            "url": "http://piano-midi.de/midis/mussorgsky/muss_6.mid",
+            "localPath": "midi/mussorgsky__modest_samuel_goldenberg_and_schmuyle_pictures_at_an_exhibition__1874__samuel_goldenberg_and_schmuyle_5.mid"
+          },
+          {
+            "name": "Promenade - The Market Place of Limoges - Catacombae - Con mortuis in lingua mortua",
+            "url": "http://piano-midi.de/midis/mussorgsky/muss_7.mid",
+            "localPath": "midi/mussorgsky__modest_promenade___the_market_place_of_limoges___catacombae___con_mortuis_in_lingua_mortua_pictures_at_an_exhibition__1874__promenade___the_market_place_of_limoges___catacombae___con_mortuis_in_lingua_mortua_6.mid"
+          },
+          {
+            "name": "The Hut on Chicken's Legs (Baba-Yaga) - The Great Gate of Kiev",
+            "url": "http://piano-midi.de/midis/mussorgsky/muss_8.mid",
+            "localPath": "midi/mussorgsky__modest_the_hut_on_chicken_s_legs__baba_yaga____the_great_gate_of_kiev_pictures_at_an_exhibition__1874__the_hut_on_chicken_s_legs__baba_yaga____the_great_gate_of_kiev_7.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Rachmaninov, Sergey",
+    "url": "http://piano-midi.de/rach.htm",
+    "pieces": [
+      {
+        "name": "Prélude C# minor, Opus 3/2 (1892)",
+        "parts": [
+          {
+            "name": "Prélude",
+            "url": "http://piano-midi.de/midis/rachmaninow/rac_op3_2.mid",
+            "localPath": "midi/rachmaninov__sergey_pr_lude_pr_lude_c__minor__opus_3_2__1892__pr_lude_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "10 Préludes, Opus 23 (1903)",
+        "parts": [
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/rachmaninow/rac_op23_2.mid",
+            "localPath": "midi/rachmaninov__sergey_no__2_10_pr_ludes__opus_23__1903__no__2_0.mid"
+          },
+          {
+            "name": "No. 3",
+            "url": "http://piano-midi.de/midis/rachmaninow/rac_op23_3.mid",
+            "localPath": "midi/rachmaninov__sergey_no__3_10_pr_ludes__opus_23__1903__no__3_1.mid"
+          },
+          {
+            "name": "No. 5",
+            "url": "http://piano-midi.de/midis/rachmaninow/rac_op23_5.mid",
+            "localPath": "midi/rachmaninov__sergey_no__5_10_pr_ludes__opus_23__1903__no__5_2.mid"
+          },
+          {
+            "name": "No. 7",
+            "url": "http://piano-midi.de/midis/rachmaninow/rac_op23_7.mid",
+            "localPath": "midi/rachmaninov__sergey_no__7_10_pr_ludes__opus_23__1903__no__7_3.mid"
+          }
+        ]
+      },
+      {
+        "name": "13 Préludes, Opus 32 (1910)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/rachmaninow/rac_op32_1.mid",
+            "localPath": "midi/rachmaninov__sergey_no__1_13_pr_ludes__opus_32__1910__no__1_0.mid"
+          },
+          {
+            "name": "No. 13",
+            "url": "http://piano-midi.de/midis/rachmaninow/rac_op32_13.mid",
+            "localPath": "midi/rachmaninov__sergey_no__13_13_pr_ludes__opus_32__1910__no__13_1.mid"
+          }
+        ]
+      },
+      {
+        "name": "8 Études-tableaux, Opus 33 (1914)",
+        "parts": [
+          {
+            "name": "No. 5",
+            "url": "http://piano-midi.de/midis/rachmaninow/rac_op33_5.mid",
+            "localPath": "midi/rachmaninov__sergey_no__5_8__tudes_tableaux__opus_33__1914__no__5_0.mid"
+          },
+          {
+            "name": "No. 6",
+            "url": "http://piano-midi.de/midis/rachmaninow/rac_op33_6.mid",
+            "localPath": "midi/rachmaninov__sergey_no__6_8__tudes_tableaux__opus_33__1914__no__6_1.mid"
+          },
+          {
+            "name": "No. 8",
+            "url": "http://piano-midi.de/midis/rachmaninow/rac_op33_8.mid",
+            "localPath": "midi/rachmaninov__sergey_no__8_8__tudes_tableaux__opus_33__1914__no__8_2.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Ravel, Maurice",
+    "url": "http://piano-midi.de/ravel.htm",
+    "pieces": [
+      {
+        "name": "Jeux d'eau (1901)",
+        "parts": [
+          {
+            "name": "Jeux d'eau",
+            "url": "http://piano-midi.de/midis/ravel/rav_eau.mid",
+            "localPath": "midi/ravel__maurice_jeux_d_eau_jeux_d_eau__1901__jeux_d_eau_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Miroirs (1905)",
+        "parts": [
+          {
+            "name": "Noctuelles",
+            "url": "http://piano-midi.de/midis/ravel/ravel_miroirs_1.mid",
+            "localPath": "midi/ravel__maurice_noctuelles_miroirs__1905__noctuelles_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Gaspard de la Nuit (1908)",
+        "parts": [
+          {
+            "name": "Ondine",
+            "url": "http://piano-midi.de/midis/ravel/rav_ondi.mid",
+            "localPath": "midi/ravel__maurice_ondine_gaspard_de_la_nuit__1908__ondine_0.mid"
+          },
+          {
+            "name": "Le Gibet",
+            "url": "http://piano-midi.de/midis/ravel/rav_gib.mid",
+            "localPath": "midi/ravel__maurice_le_gibet_gaspard_de_la_nuit__1908__le_gibet_1.mid"
+          },
+          {
+            "name": "Scarbo",
+            "url": "http://piano-midi.de/midis/ravel/rav_scarbo.mid",
+            "localPath": "midi/ravel__maurice_scarbo_gaspard_de_la_nuit__1908__scarbo_2.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Schubert, Franz",
+    "url": "http://piano-midi.de/schub.htm",
+    "pieces": [
+      {
+        "name": "Piano Sonata in D major, D 850, Opus 53 (1825)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schubert_D850_1.mid",
+            "localPath": "midi/schubert__franz_1__movement_piano_sonata_in_d_major__d_850__opus_53__1825__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schubert_D850_2.mid",
+            "localPath": "midi/schubert__franz_2__movement_piano_sonata_in_d_major__d_850__opus_53__1825__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schubert_D850_3.mid",
+            "localPath": "midi/schubert__franz_3__movement_piano_sonata_in_d_major__d_850__opus_53__1825__3__movement_2.mid"
+          },
+          {
+            "name": "4. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schubert_D850_4.mid",
+            "localPath": "midi/schubert__franz_4__movement_piano_sonata_in_d_major__d_850__opus_53__1825__4__movement_3.mid"
+          }
+        ]
+      },
+      {
+        "name": "Fantasia C major (Wanderer) , D 760, Opus 15 (1822)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schub_d760_1.mid",
+            "localPath": "midi/schubert__franz_1__movement_fantasia_c_major__wanderer____d_760__opus_15__1822__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schub_d760_2.mid",
+            "localPath": "midi/schubert__franz_2__movement_fantasia_c_major__wanderer____d_760__opus_15__1822__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schub_d760_3.mid",
+            "localPath": "midi/schubert__franz_3__movement_fantasia_c_major__wanderer____d_760__opus_15__1822__3__movement_2.mid"
+          },
+          {
+            "name": "4. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schub_d760_4.mid",
+            "localPath": "midi/schubert__franz_4__movement_fantasia_c_major__wanderer____d_760__opus_15__1822__4__movement_3.mid"
+          }
+        ]
+      },
+      {
+        "name": "6 Moments musicaux, D 780, Opus 94 (1828)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/schubert/schumm-1.mid",
+            "localPath": "midi/schubert__franz_no__1_6_moments_musicaux__d_780__opus_94__1828__no__1_0.mid"
+          },
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/schubert/schumm-2.mid",
+            "localPath": "midi/schubert__franz_no__2_6_moments_musicaux__d_780__opus_94__1828__no__2_1.mid"
+          },
+          {
+            "name": "No. 3",
+            "url": "http://piano-midi.de/midis/schubert/schumm-3.mid",
+            "localPath": "midi/schubert__franz_no__3_6_moments_musicaux__d_780__opus_94__1828__no__3_2.mid"
+          },
+          {
+            "name": "No. 4",
+            "url": "http://piano-midi.de/midis/schubert/schumm-4.mid",
+            "localPath": "midi/schubert__franz_no__4_6_moments_musicaux__d_780__opus_94__1828__no__4_3.mid"
+          },
+          {
+            "name": "No. 5",
+            "url": "http://piano-midi.de/midis/schubert/schumm-5.mid",
+            "localPath": "midi/schubert__franz_no__5_6_moments_musicaux__d_780__opus_94__1828__no__5_4.mid"
+          },
+          {
+            "name": "No. 6",
+            "url": "http://piano-midi.de/midis/schubert/schumm-6.mid",
+            "localPath": "midi/schubert__franz_no__6_6_moments_musicaux__d_780__opus_94__1828__no__6_5.mid"
+          }
+        ]
+      },
+      {
+        "name": "Piano Sonata in A minor, D 784, Opus 143 (1823)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schu_143_1.mid",
+            "localPath": "midi/schubert__franz_1__movement_piano_sonata_in_a_minor__d_784__opus_143__1823__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schu_143_2.mid",
+            "localPath": "midi/schubert__franz_2__movement_piano_sonata_in_a_minor__d_784__opus_143__1823__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schu_143_3.mid",
+            "localPath": "midi/schubert__franz_3__movement_piano_sonata_in_a_minor__d_784__opus_143__1823__3__movement_2.mid"
+          }
+        ]
+      },
+      {
+        "name": "4 Impromptus, D 899, Opus 90 (1827)",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/schubert/schuim-1.mid",
+            "localPath": "midi/schubert__franz_no__1_4_impromptus__d_899__opus_90__1827__no__1_0.mid"
+          },
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/schubert/schuim-2.mid",
+            "localPath": "midi/schubert__franz_no__2_4_impromptus__d_899__opus_90__1827__no__2_1.mid"
+          },
+          {
+            "name": "No. 3",
+            "url": "http://piano-midi.de/midis/schubert/schuim-3.mid",
+            "localPath": "midi/schubert__franz_no__3_4_impromptus__d_899__opus_90__1827__no__3_2.mid"
+          },
+          {
+            "name": "No. 4",
+            "url": "http://piano-midi.de/midis/schubert/schuim-4.mid",
+            "localPath": "midi/schubert__franz_no__4_4_impromptus__d_899__opus_90__1827__no__4_3.mid"
+          }
+        ]
+      },
+      {
+        "name": "4 Impromptus, D 935, Opus posth. 142",
+        "parts": [
+          {
+            "name": "No. 1",
+            "url": "http://piano-midi.de/midis/schubert/schubert_d935_1.mid",
+            "localPath": "midi/schubert__franz_no__1_4_impromptus__d_935__opus_posth__142_no__1_0.mid"
+          },
+          {
+            "name": "No. 2",
+            "url": "http://piano-midi.de/midis/schubert/schubert_d935_2.mid",
+            "localPath": "midi/schubert__franz_no__2_4_impromptus__d_935__opus_posth__142_no__2_1.mid"
+          },
+          {
+            "name": "No. 3",
+            "url": "http://piano-midi.de/midis/schubert/schubert_d935_3.mid",
+            "localPath": "midi/schubert__franz_no__3_4_impromptus__d_935__opus_posth__142_no__3_2.mid"
+          },
+          {
+            "name": "No. 4",
+            "url": "http://piano-midi.de/midis/schubert/schubert_d935_4.mid",
+            "localPath": "midi/schubert__franz_no__4_4_impromptus__d_935__opus_posth__142_no__4_3.mid"
+          }
+        ]
+      },
+      {
+        "name": "Piano Sonata in Bb major, D 960 (1828)",
+        "parts": [
+          {
+            "name": "1. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schub_d960_1.mid",
+            "localPath": "midi/schubert__franz_1__movement_piano_sonata_in_bb_major__d_960__1828__1__movement_0.mid"
+          },
+          {
+            "name": "2. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schub_d960_2.mid",
+            "localPath": "midi/schubert__franz_2__movement_piano_sonata_in_bb_major__d_960__1828__2__movement_1.mid"
+          },
+          {
+            "name": "3. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schub_d960_3.mid",
+            "localPath": "midi/schubert__franz_3__movement_piano_sonata_in_bb_major__d_960__1828__3__movement_2.mid"
+          },
+          {
+            "name": "4. Movement",
+            "url": "http://piano-midi.de/midis/schubert/schub_d960_4.mid",
+            "localPath": "midi/schubert__franz_4__movement_piano_sonata_in_bb_major__d_960__1828__4__movement_3.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Schumann, Robert",
+    "url": "http://piano-midi.de/schum.htm",
+    "pieces": [
+      {
+        "name": "Abegg Variations, Opus 1 (1830)",
+        "parts": [
+          {
+            "name": "Thema, Var.I, Var.II, Var.III, Finale alla Fantasia",
+            "url": "http://piano-midi.de/midis/schumann/schum_abegg.mid",
+            "localPath": "midi/schumann__robert_thema__var_i__var_ii__var_iii__finale_alla_fantasia_abegg_variations__opus_1__1830__thema__var_i__var_ii__var_iii__finale_alla_fantasia_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Scenes from Childhood, Opus 15 (1838)",
+        "parts": [
+          {
+            "name": "A Tale of Distant Lands",
+            "url": "http://piano-midi.de/midis/schumann/scn15_1.mid",
+            "localPath": "midi/schumann__robert_a_tale_of_distant_lands_scenes_from_childhood__opus_15__1838__a_tale_of_distant_lands_0.mid"
+          },
+          {
+            "name": "Curious Story",
+            "url": "http://piano-midi.de/midis/schumann/scn15_2.mid",
+            "localPath": "midi/schumann__robert_curious_story_scenes_from_childhood__opus_15__1838__curious_story_1.mid"
+          },
+          {
+            "name": "Blindman's Buff",
+            "url": "http://piano-midi.de/midis/schumann/scn15_3.mid",
+            "localPath": "midi/schumann__robert_blindman_s_buff_scenes_from_childhood__opus_15__1838__blindman_s_buff_2.mid"
+          },
+          {
+            "name": "Pleading Child",
+            "url": "http://piano-midi.de/midis/schumann/scn15_4.mid",
+            "localPath": "midi/schumann__robert_pleading_child_scenes_from_childhood__opus_15__1838__pleading_child_3.mid"
+          },
+          {
+            "name": "Perfect Happiness",
+            "url": "http://piano-midi.de/midis/schumann/scn15_5.mid",
+            "localPath": "midi/schumann__robert_perfect_happiness_scenes_from_childhood__opus_15__1838__perfect_happiness_4.mid"
+          },
+          {
+            "name": "Great Adventure",
+            "url": "http://piano-midi.de/midis/schumann/scn15_6.mid",
+            "localPath": "midi/schumann__robert_great_adventure_scenes_from_childhood__opus_15__1838__great_adventure_5.mid"
+          },
+          {
+            "name": "Reverie",
+            "url": "http://piano-midi.de/midis/schumann/scn15_7.mid",
+            "localPath": "midi/schumann__robert_reverie_scenes_from_childhood__opus_15__1838__reverie_6.mid"
+          },
+          {
+            "name": "By the Fire-side",
+            "url": "http://piano-midi.de/midis/schumann/scn15_8.mid",
+            "localPath": "midi/schumann__robert_by_the_fire_side_scenes_from_childhood__opus_15__1838__by_the_fire_side_7.mid"
+          },
+          {
+            "name": "On the Rocking Horse",
+            "url": "http://piano-midi.de/midis/schumann/scn15_9.mid",
+            "localPath": "midi/schumann__robert_on_the_rocking_horse_scenes_from_childhood__opus_15__1838__on_the_rocking_horse_8.mid"
+          },
+          {
+            "name": "Almost Too Serious",
+            "url": "http://piano-midi.de/midis/schumann/scn15_10.mid",
+            "localPath": "midi/schumann__robert_almost_too_serious_scenes_from_childhood__opus_15__1838__almost_too_serious_9.mid"
+          },
+          {
+            "name": "Hobgoblin",
+            "url": "http://piano-midi.de/midis/schumann/scn15_11.mid",
+            "localPath": "midi/schumann__robert_hobgoblin_scenes_from_childhood__opus_15__1838__hobgoblin_10.mid"
+          },
+          {
+            "name": "In Slumberland",
+            "url": "http://piano-midi.de/midis/schumann/scn15_12.mid",
+            "localPath": "midi/schumann__robert_in_slumberland_scenes_from_childhood__opus_15__1838__in_slumberland_11.mid"
+          },
+          {
+            "name": "The Poet speaks",
+            "url": "http://piano-midi.de/midis/schumann/scn15_13.mid",
+            "localPath": "midi/schumann__robert_the_poet_speaks_scenes_from_childhood__opus_15__1838__the_poet_speaks_12.mid"
+          }
+        ]
+      },
+      {
+        "name": "Kreisleriana, Opus 16 (1838)",
+        "parts": [
+          {
+            "name": "No.1",
+            "url": "http://piano-midi.de/midis/schumann/scn16_1.mid",
+            "localPath": "midi/schumann__robert_no_1_kreisleriana__opus_16__1838__no_1_0.mid"
+          },
+          {
+            "name": "No.2",
+            "url": "http://piano-midi.de/midis/schumann/scn16_2.mid",
+            "localPath": "midi/schumann__robert_no_2_kreisleriana__opus_16__1838__no_2_1.mid"
+          },
+          {
+            "name": "No.3",
+            "url": "http://piano-midi.de/midis/schumann/scn16_3.mid",
+            "localPath": "midi/schumann__robert_no_3_kreisleriana__opus_16__1838__no_3_2.mid"
+          },
+          {
+            "name": "No.4",
+            "url": "http://piano-midi.de/midis/schumann/scn16_4.mid",
+            "localPath": "midi/schumann__robert_no_4_kreisleriana__opus_16__1838__no_4_3.mid"
+          },
+          {
+            "name": "No.5",
+            "url": "http://piano-midi.de/midis/schumann/scn16_5.mid",
+            "localPath": "midi/schumann__robert_no_5_kreisleriana__opus_16__1838__no_5_4.mid"
+          },
+          {
+            "name": "No.6",
+            "url": "http://piano-midi.de/midis/schumann/scn16_6.mid",
+            "localPath": "midi/schumann__robert_no_6_kreisleriana__opus_16__1838__no_6_5.mid"
+          },
+          {
+            "name": "No.7",
+            "url": "http://piano-midi.de/midis/schumann/scn16_7.mid",
+            "localPath": "midi/schumann__robert_no_7_kreisleriana__opus_16__1838__no_7_6.mid"
+          },
+          {
+            "name": "No.8",
+            "url": "http://piano-midi.de/midis/schumann/scn16_8.mid",
+            "localPath": "midi/schumann__robert_no_8_kreisleriana__opus_16__1838__no_8_7.mid"
+          }
+        ]
+      },
+      {
+        "name": "Album for the young, Opus 68 (1848)",
+        "parts": [
+          {
+            "name": "The happy Farmer",
+            "url": "http://piano-midi.de/midis/schumann/scn68_10.mid",
+            "localPath": "midi/schumann__robert_the_happy_farmer_album_for_the_young__opus_68__1848__the_happy_farmer_0.mid"
+          },
+          {
+            "name": "Knecht Ruprecht",
+            "url": "http://piano-midi.de/midis/schumann/scn68_12.mid",
+            "localPath": "midi/schumann__robert_knecht_ruprecht_album_for_the_young__opus_68__1848__knecht_ruprecht_1.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Sinding, Christian",
+    "url": "http://piano-midi.de/sinding.htm",
+    "pieces": [
+      {
+        "name": "Rustle of spring, Opus 32 No. 3",
+        "parts": [
+          {
+            "name": "Rustle of spring",
+            "url": "http://piano-midi.de/midis/sinding/fruehlingsrauschen.mid",
+            "localPath": "midi/sinding__christian_rustle_of_spring_rustle_of_spring__opus_32_no__3_rustle_of_spring_0.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Tchaikovsky, Peter",
+    "url": "http://piano-midi.de/tschai.htm",
+    "pieces": [
+      {
+        "name": "The Seasons, Opus 37a (1876)",
+        "parts": [
+          {
+            "name": "January - At the Fireside",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_januar.mid",
+            "localPath": "midi/tchaikovsky__peter_january___at_the_fireside_the_seasons__opus_37a__1876__january___at_the_fireside_0.mid"
+          },
+          {
+            "name": "February - Carnival",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_februar.mid",
+            "localPath": "midi/tchaikovsky__peter_february___carnival_the_seasons__opus_37a__1876__february___carnival_1.mid"
+          },
+          {
+            "name": "March - Song of the Lark",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_maerz.mid",
+            "localPath": "midi/tchaikovsky__peter_march___song_of_the_lark_the_seasons__opus_37a__1876__march___song_of_the_lark_2.mid"
+          },
+          {
+            "name": "April - Snowdrop",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_april.mid",
+            "localPath": "midi/tchaikovsky__peter_april___snowdrop_the_seasons__opus_37a__1876__april___snowdrop_3.mid"
+          },
+          {
+            "name": "May - Starlight Nights",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_mai.mid",
+            "localPath": "midi/tchaikovsky__peter_may___starlight_nights_the_seasons__opus_37a__1876__may___starlight_nights_4.mid"
+          },
+          {
+            "name": "June - Barcarolle",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_juni.mid",
+            "localPath": "midi/tchaikovsky__peter_june___barcarolle_the_seasons__opus_37a__1876__june___barcarolle_5.mid"
+          },
+          {
+            "name": "July - Song of the Reaper",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_juli.mid",
+            "localPath": "midi/tchaikovsky__peter_july___song_of_the_reaper_the_seasons__opus_37a__1876__july___song_of_the_reaper_6.mid"
+          },
+          {
+            "name": "August - Harvest",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_august.mid",
+            "localPath": "midi/tchaikovsky__peter_august___harvest_the_seasons__opus_37a__1876__august___harvest_7.mid"
+          },
+          {
+            "name": "September - The Hunt",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_september.mid",
+            "localPath": "midi/tchaikovsky__peter_september___the_hunt_the_seasons__opus_37a__1876__september___the_hunt_8.mid"
+          },
+          {
+            "name": "October - Autumn Song",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_oktober.mid",
+            "localPath": "midi/tchaikovsky__peter_october___autumn_song_the_seasons__opus_37a__1876__october___autumn_song_9.mid"
+          },
+          {
+            "name": "November - Troika Ride",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_november.mid",
+            "localPath": "midi/tchaikovsky__peter_november___troika_ride_the_seasons__opus_37a__1876__november___troika_ride_10.mid"
+          },
+          {
+            "name": "December - Christmas",
+            "url": "http://piano-midi.de/midis/tchaikovsky/ty_dezember.mid",
+            "localPath": "midi/tchaikovsky__peter_december___christmas_the_seasons__opus_37a__1876__december___christmas_11.mid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Christmas",
+    "url": "http://piano-midi.de/xmas.htm",
+    "pieces": [
+      {
+        "name": "M. P. Heller: Joy of Christmas (Christmas Fantasia)",
+        "parts": [
+          {
+            "name": "Joy of Christmas",
+            "url": "http://piano-midi.de/midis/xmas/bk_xmas4.mid",
+            "localPath": "midi/christmas_joy_of_christmas_m__p__heller__joy_of_christmas__christmas_fantasia__joy_of_christmas_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Ferd. Keller: Christmas Fantasia",
+        "parts": [
+          {
+            "name": "Christmas Fantasia",
+            "url": "http://piano-midi.de/midis/xmas/bk_xmas2.mid",
+            "localPath": "midi/christmas_christmas_fantasia_ferd__keller__christmas_fantasia_christmas_fantasia_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Gustav Lange: To Christmas (Fantasia) , Opus 172 No. 5",
+        "parts": [
+          {
+            "name": "To Christmas",
+            "url": "http://piano-midi.de/midis/xmas/bk_xmas5.mid",
+            "localPath": "midi/christmas_to_christmas_gustav_lange__to_christmas__fantasia____opus_172_no__5_to_christmas_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Robert Leonard: Christmas Fantasia, Opus 99",
+        "parts": [
+          {
+            "name": "Christmas Fantasia",
+            "url": "http://piano-midi.de/midis/xmas/bk_xmas3.mid",
+            "localPath": "midi/christmas_christmas_fantasia_robert_leonard__christmas_fantasia__opus_99_christmas_fantasia_0.mid"
+          }
+        ]
+      },
+      {
+        "name": "Heinrich Lichner: Fantasia of Silent Night, Holy Night, Opus 269, No. 3",
+        "parts": [
+          {
+            "name": "Silent Night, Holy Night",
+            "url": "http://piano-midi.de/midis/xmas/bk_xmas1.mid",
+            "localPath": "midi/christmas_silent_night__holy_night_heinrich_lichner__fantasia_of_silent_night__holy_night__opus_269__no__3_silent_night__holy_night_0.mid"
+          }
+        ]
+      }
+    ]
+  }
+]
