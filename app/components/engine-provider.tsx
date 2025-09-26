@@ -1,12 +1,12 @@
-import { createContext, useContext, useEffect, useMemo } from "react";
-import type { ReactNode } from "react";
 import type { Midi } from "@tonejs/midi";
 import type { Note } from "@tonejs/midi/dist/Note";
+import type { ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
+import { useSnapshot } from "valtio";
+import { getOctaves, getTicksPerBar, mergeNotes } from "../util/music";
 import type { MidiEngine } from "./midi-valtio";
 import { createMidiEngine } from "./midi-valtio";
-import { getOctaves, getTicksPerBar, mergeNotes } from "../util/music";
 import { ParallelNotes } from "./parallel-notes";
-import { useSnapshot } from "valtio";
 
 export type SongCtx = {
   song: Midi;
@@ -51,7 +51,7 @@ export function EngineProvider({
       store.octaves = octaves;
       store.tickConnections = tickConnections;
     },
-    [store, trackIndex]
+    [store, trackIndex],
   );
 
   useEffect(() => {

@@ -59,6 +59,7 @@ export type KeySignature =
     };
 
 // prettier-ignore
+// biome-ignore format: no
 export const keySignatures:  {[k in Key]: KeySignature} = {
   'C-major':	{ key: 'C-major',	notes: ['C',  'D',  'E',  'F',  'G',  'A',  'B'], 	scale: 'major', accidental: 'sharp', 	minor: 'A-minor' },
   'G-major':	{ key: 'G-major',	notes: ['G',  'A',  'B',  'C',  'D',  'E',  'F#'], 	scale: 'major', accidental: 'sharp', 	minor: 'E-minor' },

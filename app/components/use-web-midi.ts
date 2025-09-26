@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
-import { Player } from "./use-song-sounds";
 import { create } from "zustand";
 import { useEngineSnapshot } from "./engine-provider";
 import type { PressedNote } from "./midi-valtio";
+import { Player } from "./use-song-sounds";
 
 export type Note = {
   /**
@@ -51,7 +51,6 @@ export const useDevicesStore = create<{
         // Get lists of available MIDI controllers
         const inputs = access.inputs.values();
         const outputs = access.outputs.values();
-
         set({
           inputs: Array.from(inputs),
           outputs: Array.from(outputs),
@@ -65,7 +64,7 @@ export const useDevicesStore = create<{
           console.log(
             event.port.name,
             event.port.manufacturer,
-            event.port.state
+            event.port.state,
           );
         };
       })
@@ -77,9 +76,9 @@ export const useDevicesStore = create<{
 }));
 
 export function useWebMidiDevices() {
-  const inputs = useDevicesStore(state => state.inputs);
-  const outputs = useDevicesStore(state => state.outputs);
-  const  requestMIDIAccess  = useDevicesStore(state => state.requestMIDIAccess);
+  const inputs = useDevicesStore((state) => state.inputs);
+  const outputs = useDevicesStore((state) => state.outputs);
+  const requestMIDIAccess = useDevicesStore((state) => state.requestMIDIAccess);
   useEffect(() => {
     requestMIDIAccess();
   }, [requestMIDIAccess]);
@@ -91,8 +90,8 @@ export function useMidiInput() {
   const volume = useEngineSnapshot().volume;
   const d = inputs[0];
   const player = useRef<Player>();
-  const pressed = useDevicesStore((state) => state.pressed)
-  const setPressed = useDevicesStore((state) => state.setPressed)
+  const pressed = useDevicesStore((state) => state.pressed);
+  const setPressed = useDevicesStore((state) => state.setPressed);
 
   useEffect(() => {
     player.current = new Player();

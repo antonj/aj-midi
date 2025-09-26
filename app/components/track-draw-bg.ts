@@ -17,7 +17,7 @@ import {
 
 export function trackDrawBg(
   ctx: CanvasRenderingContext2D,
-  songExt: MidiEngine
+  songExt: MidiEngine,
 ) {
   const { width: w, height: h } = ctx.canvas;
   ctx.clearRect(0, 0, w, h);
@@ -114,7 +114,7 @@ export function trackDrawBg(
         octaves,
         miniLeftPx,
         miniRightPx,
-        whiteWidthMini
+        whiteWidthMini,
       );
       const y =
         mapRound(n.ticks, minTickMiniPx, maxTickMiniPx, h, 0) - noteHeight; // ticks // flip y axis

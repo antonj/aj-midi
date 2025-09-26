@@ -53,7 +53,7 @@
  */
 export function Scroller(
   interpolator?: (x: number) => number,
-  flywheel?: boolean
+  flywheel?: boolean,
 ) {
   var GRAVITY_EARTH = 9.80665;
 
@@ -235,7 +235,7 @@ export function Scroller(
    */
   function getSplineDeceleration(velocity: number) {
     return Math.log(
-      (INFLEXION * Math.abs(velocity)) / (mFlingFriction * mPhysicalCoeff)
+      (INFLEXION * Math.abs(velocity)) / (mFlingFriction * mPhysicalCoeff),
     );
   }
 
@@ -526,7 +526,7 @@ export function Scroller(
       startY: number,
       dx: number,
       dy: number,
-      duration: number
+      duration: number,
     ) {
       if (duration === 0) {
         mFinished = true;
@@ -577,7 +577,7 @@ export function Scroller(
       minX?: number,
       maxX?: number,
       minY?: number,
-      maxY?: number
+      maxY?: number,
     ) {
       mPpi = window.devicePixelRatio * 160;
       minX = minX === undefined ? -Number.MAX_VALUE : minX;
@@ -708,7 +708,7 @@ export function Scroller(
     },
 
     setInterpolator: function setInterpolator(
-      interpolator: (x: number) => number
+      interpolator: (x: number) => number,
     ) {
       mInterpolator = interpolator;
     },
@@ -718,7 +718,7 @@ export function Scroller(
      */
     isScrollingInDirection: function isScrollingInDirection(
       xvel: number,
-      yvel: number
+      yvel: number,
     ) {
       return (
         !mFinished &&

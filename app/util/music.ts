@@ -1,7 +1,7 @@
 import type { Midi, Track } from "@tonejs/midi";
-import { floorTo } from "./map";
-import type { Note, KeySignature } from "./key-signature";
+import type { KeySignature, Note } from "./key-signature";
 import { noteIndex } from "./key-signature";
+import { floorTo } from "./map";
 
 export type MidiNumber = number;
 export type WhiteIndex = number;
@@ -78,7 +78,7 @@ export function toMidiTone(octave: number, index: number): number {
 
 export function midiToNote(
   midi: number,
-  accidental: "flat" | "sharp" = "sharp"
+  accidental: "flat" | "sharp" = "sharp",
 ): NoteWithFlatAndSharps {
   const { index } = midiToOctave(midi);
   if (accidental === "sharp") {
@@ -173,7 +173,7 @@ export function getOctaves(notes: { midi: number }[]) {
   const highOctave = midiToOctave(high).octave;
   const numOctaves = highOctave - lowOctave + 1;
   const octaves = Array.from({ length: numOctaves }).map(
-    (_, i) => lowOctave + i
+    (_, i) => lowOctave + i,
   );
   const min = toMidiTone(lowOctave, 0);
   const max = toMidiTone(highOctave, 11);
@@ -182,10 +182,10 @@ export function getOctaves(notes: { midi: number }[]) {
 
 export function mergeNotes(
   tracks: Track[],
-  tracksIndexesSelected: Set<number> = new Set()
+  tracksIndexesSelected: Set<number> = new Set(),
 ) {
   const pianoTracks = tracks.filter((_, i) =>
-    tracksIndexesSelected.size === 0 ? true : tracksIndexesSelected.has(i)
+    tracksIndexesSelected.size === 0 ? true : tracksIndexesSelected.has(i),
   );
 
   // song.tracks = pianoTracks;

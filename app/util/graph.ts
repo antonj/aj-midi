@@ -7,7 +7,7 @@ export class GraphDB {
 
   private add(sub: string, pre: string, obj: string) {
     const exists = this.data.some(
-      ([s, p, o]) => s === sub && p === pre && o === obj
+      ([s, p, o]) => s === sub && p === pre && o === obj,
     );
     if (!exists) {
       this.data.push([sub, pre, obj]);
@@ -34,7 +34,7 @@ export class GraphDB {
     sub: Matcher | null,
     pre: Matcher | null,
     obj: Matcher | null,
-    triple: Triple
+    triple: Triple,
   ) {
     for (const [i, t] of this.data.entries()) {
       if (
@@ -52,20 +52,20 @@ export class GraphDB {
       ([itemSub, itemPre, itemObj]) =>
         this.test(sub, itemSub) &&
         this.test(pre, itemPre) &&
-        this.test(obj, itemObj)
+        this.test(obj, itemObj),
     );
   }
 
   query(
-    clauses: Array<[Matcher, Matcher, Matcher]>
+    clauses: Array<[Matcher, Matcher, Matcher]>,
   ): Array<Record<string, string>>;
   query(
     clauses: Array<[Matcher, Matcher, Matcher]>,
-    options: { distinct: string }
+    options: { distinct: string },
   ): string[];
   query(
     clauses: Array<[Matcher, Matcher, Matcher]>,
-    options: { distinct?: string } = {}
+    options: { distinct?: string } = {},
   ): Array<Record<string, string>> | string[] {
     let bindings: Array<Record<string, string>> | null = null;
     for (const clause of clauses) {

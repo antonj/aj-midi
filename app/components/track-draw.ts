@@ -22,7 +22,7 @@ export function mapRound(
   stop1: number,
   start2: number,
   stop2: number,
-  withinBounds = false
+  withinBounds = false,
 ) {
   return pixelRound(map(n, start1, stop1, start2, stop2, withinBounds));
 }
@@ -32,7 +32,7 @@ export function xCenterInPiano(
   octaves: Array<number>,
   minXpx: number,
   maxXpx: number,
-  whiteWidth: number
+  whiteWidth: number,
 ) {
   // | |x| | |x| |  |  |
   // | 2-- | 5-- |  |  |
@@ -63,7 +63,7 @@ function leftAndWidth(
   minX: number,
   maxX: number,
   whiteWidthPx: number,
-  blackWidthPx: number
+  blackWidthPx: number,
 ): [x: number, width: number] {
   let x = xCenterInPiano(midi, octaves, minX, maxX, whiteWidthPx);
   let noteWidth: number;
@@ -108,7 +108,7 @@ export function trackDraw(
   ctx: CanvasRenderingContext2D,
   tick: number,
   songExt: MidiEngine,
-  pressed: Map<number, Set<number>>
+  pressed: Map<number, Set<number>>,
 ) {
   const { width: w, height: h } = ctx.canvas;
   ctx.clearRect(0, 0, w, h);
@@ -157,7 +157,7 @@ export function trackDraw(
           minTick,
           maxTick,
           h,
-          0
+          0,
         );
         ctx.fillRect(-1, y, w, 2);
       }
@@ -185,7 +185,7 @@ export function trackDraw(
         minTickMiniPx,
         maxTickMiniPx,
         h,
-        0
+        0,
       );
       ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
       ctx.fillRect(miniLeftPx, 0, miniWidthPx, top);
@@ -200,7 +200,7 @@ export function trackDraw(
         maxTick,
         h,
         0,
-        true
+        true,
       );
 
       ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
@@ -219,7 +219,7 @@ export function trackDraw(
       0,
       w,
       whiteWidthPx,
-      blackWidthPx
+      blackWidthPx,
     );
     if (yTop > h || yBottom < 0) {
       // out of bounds
@@ -265,7 +265,7 @@ export function trackDraw(
         0,
         w,
         whiteWidthPx,
-        blackWidthPx
+        blackWidthPx,
       );
       let [x2] = leftAndWidth(
         t2.midi,
@@ -273,7 +273,7 @@ export function trackDraw(
         0,
         w,
         whiteWidthPx,
-        blackWidthPx
+        blackWidthPx,
       );
 
       ctx.beginPath();

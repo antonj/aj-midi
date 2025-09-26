@@ -1,7 +1,7 @@
 import { isBlack, notesWithSharps, toMidiTone } from "../util/music";
-import { useMidiInput } from "./use-web-midi";
 import { useEngineSnapshot } from "./engine-provider";
 import styles from "./keyboard.css";
+import { useMidiInput } from "./use-web-midi";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];

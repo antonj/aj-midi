@@ -2,8 +2,8 @@ import type { Midi } from "@tonejs/midi";
 import type { Note } from "@tonejs/midi/dist/Note";
 import { proxy, ref } from "valtio";
 import { subscribeKey } from "valtio/utils";
-import { keySignatures } from "~/util/key-signature";
 import type { Key } from "~/util/key-signature";
+import { keySignatures } from "~/util/key-signature";
 import { debounce } from "../util/debounce";
 import { roundTo } from "../util/map";
 import { getTicksPerBar, MidiNumber } from "../util/music";
@@ -24,35 +24,35 @@ export const QUERY_SETTING_KEYS = [
 type QuerySettingsKey = (typeof QUERY_SETTING_KEYS)[number];
 
 export function getQueryWithPreviousSettings(urlStr: string) {
-	const result = new URLSearchParams();
-	if (typeof localStorage === "undefined") {
-		result.set("file", urlStr);
-		return `?${result.toString()}`;
-	}
+  const result = new URLSearchParams();
+  if (typeof localStorage === "undefined") {
+    result.set("file", urlStr);
+    return `?${result.toString()}`;
+  }
 
-	for (const key of QUERY_SETTING_KEYS) {
-		const val = localStorage.getItem(`${urlStr}:${key}`);
-		if (val !== null) {
-			result.set(key, val);
-		}
-	}
+  for (const key of QUERY_SETTING_KEYS) {
+    const val = localStorage.getItem(`${urlStr}:${key}`);
+    if (val !== null) {
+      result.set(key, val);
+    }
+  }
 
-	let sp: URLSearchParams;
-	try {
-		const url = new URL(urlStr);
-		for (const [key, value] of result.entries()) {
-			url.searchParams.set(key, value);
-		}
-		sp = url.searchParams;
-	} catch (e) {
-		const url = new URL(urlStr, "https://antonj.se");
-		for (const [key, value] of result.entries()) {
-			url.searchParams.set(key, value);
-		}
-		sp = url.searchParams;
-	}
-	sp.set("file", urlStr);
-	return `?${sp.toString()}`;
+  let sp: URLSearchParams;
+  try {
+    const url = new URL(urlStr);
+    for (const [key, value] of result.entries()) {
+      url.searchParams.set(key, value);
+    }
+    sp = url.searchParams;
+  } catch (e) {
+    const url = new URL(urlStr, "https://antonj.se");
+    for (const [key, value] of result.entries()) {
+      url.searchParams.set(key, value);
+    }
+    sp = url.searchParams;
+  }
+  sp.set("file", urlStr);
+  return `?${sp.toString()}`;
 }
 function setVal(url: URL, key: QuerySettingsKey, val: string) {
   url.searchParams.set(key, val);
@@ -137,7 +137,7 @@ export function createMidiEngine(song: Midi) {
       const filtered = song.tracks.filter(
         (t) =>
           t.notes.length > 0 &&
-          this.instruments.indexOf(t.instrument.family) >= 0
+          this.instruments.indexOf(t.instrument.family) >= 0,
       );
       if (filtered.length === 0) return song.tracks;
       return filtered;
@@ -182,7 +182,7 @@ export function createMidiEngine(song: Midi) {
             ? durationTicks
             : roundTo(
                 Math.max(0, this.tickStart) + this.repeatBars * ticksPerBar,
-                ticksPerBar
+                ticksPerBar,
               );
         const tickRepeatStart = !this.repeatBars
           ? 0
@@ -248,7 +248,7 @@ export function createMidiEngine(song: Midi) {
 
 function mapEquals(
   m1: Map<string | number, PressedNote>,
-  m2: Map<string | number, PressedNote>
+  m2: Map<string | number, PressedNote>,
 ) {
   if (m1.size !== m2.size) {
     return false;

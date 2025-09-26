@@ -1,7 +1,7 @@
-import { createContext, useContext, useEffect, useRef } from "react";
 import type { ReactNode } from "react";
-import { MidiEngine } from "./midi-engine";
+import { createContext, useContext, useEffect, useRef } from "react";
 import { SongCtx } from "./engine-provider";
+import { MidiEngine } from "./midi-engine";
 
 const EngineContext = createContext<MidiEngine | null>(null);
 

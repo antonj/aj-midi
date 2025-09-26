@@ -154,7 +154,7 @@ export class GestureDetector {
 
   constructor(
     elem: HTMLElement,
-    callback: (ev: GestureEvent, self: GestureDetector) => void
+    callback: (ev: GestureEvent, self: GestureDetector) => void,
   ) {
     this.elem = elem;
     this.callback = callback;
@@ -201,7 +201,7 @@ export class GestureDetector {
         kind: "down",
         data: p.getGestureBase(ev),
       },
-      this
+      this,
     );
 
     for (const [_, cp] of this.clicks.entries()) {
@@ -236,7 +236,7 @@ export class GestureDetector {
                   width: drag.width,
                 },
               },
-              this
+              this,
             );
           } else {
             this.callback(
@@ -244,7 +244,7 @@ export class GestureDetector {
                 kind: "drag",
                 data: drag,
               },
-              this
+              this,
             );
           }
         }
@@ -267,7 +267,7 @@ export class GestureDetector {
                 moving: drag,
               },
             },
-            this
+            this,
           );
         }
         break;
@@ -301,7 +301,7 @@ export class GestureDetector {
         kind: "up",
         data,
       },
-      this
+      this,
     );
     if (this.pointers.size === 0) {
       this.callback(
@@ -309,7 +309,7 @@ export class GestureDetector {
           kind: "fling",
           data,
         },
-        this
+        this,
       );
     }
   }
@@ -329,7 +329,7 @@ export class GestureDetector {
             width: bounds.width,
           },
         },
-        this
+        this,
       );
     } else {
       this.callback(
@@ -345,7 +345,7 @@ export class GestureDetector {
             width: bounds.width,
           },
         },
-        this
+        this,
       );
     }
   }

@@ -1,9 +1,9 @@
-import { test, Page } from "@playwright/test";
-import fs from "fs/promises";
+import { Page, test } from "@playwright/test";
 import fsSync from "fs";
-import path from "path";
-import https from "https";
+import fs from "fs/promises";
 import http from "http";
+import https from "https";
+import path from "path";
 
 const outputDir = path.join(process.cwd(), "output");
 const midiDir = path.join(outputDir, "midi");

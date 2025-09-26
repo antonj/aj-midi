@@ -14,7 +14,8 @@
     "start": "cross-env NODE_ENV=production remix-serve ./build/index.js",
     "static-build": "esbuild public/audio-worklet.ts --minify --bundle --outfile=public/audio-worklet.js '--define:process.env.NODE_ENV=\"\"'",
     "static-dev": "esbuild public/audio-worklet.ts --watch --bundle --outfile=public/audio-worklet.js '--define:process.env.NODE_ENV=\"development\"'",
-    "test": "jest"
+    "test": "jest",
+    "fix": "biome check . --write"
   },
   "dependencies": {
     "@remix-run/node": "^2.17.1",

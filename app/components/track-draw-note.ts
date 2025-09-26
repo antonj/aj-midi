@@ -1,6 +1,6 @@
 import type { KeySignature } from "~/util/key-signature";
 import { map } from "~/util/map";
-import { whiteIndex, whiteIndexInKey, MidiNumber } from "../util/music";
+import { MidiNumber, whiteIndex, whiteIndexInKey } from "../util/music";
 import {
   lineNotes,
   staffLineBassMiddle,
@@ -17,7 +17,7 @@ export function drawNote(
     ks: KeySignature;
     midiMin: MidiNumber;
     midiMax: MidiNumber;
-  }
+  },
 ) {
   const o = options;
   const { width: w, height: h } = o;
@@ -58,7 +58,7 @@ export function drawNote(
       noteHeight * 0.5,
       -Math.PI / 8,
       0,
-      Math.PI * 2
+      Math.PI * 2,
     );
     ctx.fill();
     ctx.closePath();

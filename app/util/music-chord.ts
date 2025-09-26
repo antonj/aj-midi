@@ -1,5 +1,5 @@
 import type { Note } from "./key-signature";
-import { midiToNote, offsetBetweenNotes, type MidiNumber } from "./music";
+import { type MidiNumber, midiToNote, offsetBetweenNotes } from "./music";
 
 // Seminote interval patterns based on the root note
 const patterns = [
@@ -24,7 +24,7 @@ const patterns = [
  * would generate the same intervals
  */
 function generateIntervals(
-  notes: MidiNumber[]
+  notes: MidiNumber[],
 ): Array<{ root: Note; interval: number[] }> {
   // convert to normalized note strings and remove duplicates
   const norm = Array.from(new Set<Note>(notes.map((n) => midiToNote(n))));

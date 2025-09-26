@@ -6,6 +6,7 @@ import { Scroller } from "../util/scroller";
 import { useEngine, useEngineSnapshot } from "./engine-provider";
 import { miniMapWidthRatio, trackDraw } from "./track-draw";
 import { trackDrawBg } from "./track-draw-bg";
+import { trackDrawKeyabord } from "./track-draw-keyboard";
 import { drawTrackSheet, sheetTickWindow } from "./track-draw-sheet";
 import { useGestureDetector } from "./use-gesture-detector";
 import { usePlayController } from "./use-play-controller";
@@ -13,7 +14,6 @@ import { usePrevious } from "./use-previous";
 import { useSongTicker } from "./use-song-ticker";
 import { useToneDetector } from "./use-tone-detector";
 import { useDevicesStore, useMidiOutput } from "./use-web-midi";
-import { trackDrawKeyabord } from "./track-draw-keyboard";
 
 export function links() {
   return [];
@@ -21,7 +21,7 @@ export function links() {
 
 function fixDpr(
   canvas: HTMLCanvasElement,
-  size: { width: number; height: number }
+  size: { width: number; height: number },
 ): boolean {
   let didChange = false;
   let { width, height } = size;
@@ -98,7 +98,7 @@ export function Track() {
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
   const [canvasBgEl, setCanvasBgEl] = useState<HTMLCanvasElement | null>(null);
   const [canvasSheetEl, setCanvasSheetEl] = useState<HTMLCanvasElement | null>(
-    null
+    null,
   );
   const [canvasKeyboardEl, setCanvasKeyboardEl] =
     useState<HTMLCanvasElement | null>(null);
@@ -289,7 +289,7 @@ export function Track() {
             0,
             ev.data.width,
             0,
-            sheetTickWindow(engine.tickWindow)
+            sheetTickWindow(engine.tickWindow),
           );
           engine.seek(engine.tick - dt);
         }

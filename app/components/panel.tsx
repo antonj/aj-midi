@@ -1,13 +1,12 @@
-import styles from "./panel.css";
-
 import { useId, useState } from "react";
 import { useSnapshot } from "valtio";
 import { useEngine, useEngineSnapshot } from "./engine-provider";
 import { Input, links as InputLinks } from "./input";
 import { links as InputCheckboxLinks } from "./input-checkbox";
 import { InputRange, links as InputRangeLinks } from "./input-range";
-import { useDevicesStore, useWebMidiDevices } from "./use-web-midi";
+import styles from "./panel.css";
 import { PanelLink, links as PanelLinkLinks } from "./panel-link";
+import { useDevicesStore, useWebMidiDevices } from "./use-web-midi";
 
 export function links() {
   return [
@@ -123,7 +122,7 @@ function SelectTracks() {
           console.log(v);
           if (v) {
             eng.trackIndex = new Set(
-              snap.tracks.filter((t) => t.notes.length > 0).map((_, i) => i)
+              snap.tracks.filter((t) => t.notes.length > 0).map((_, i) => i),
             );
           }
         }}

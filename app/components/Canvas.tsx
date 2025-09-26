@@ -14,7 +14,7 @@ function useElementSize(elem: HTMLElement | null) {
         setBounds((b) =>
           b.width === el.contentRect.width && b.height === el.contentRect.height
             ? b
-            : el.contentRect
+            : el.contentRect,
         );
         break;
       }

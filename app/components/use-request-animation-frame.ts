@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 
 export const useRequestAnimationFrame = (
   callback: FrameRequestCallback,
-  onStateChange?: (state: "started" | "stopped") => void
+  onStateChange?: (state: "started" | "stopped") => void,
 ) => {
   const stopTimeout = 120;
   const stateRef = useRef<"started" | "stopped">("stopped");

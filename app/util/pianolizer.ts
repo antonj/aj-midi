@@ -33,7 +33,7 @@ export default class Pianolizer {
       keysNum: 61,
       referenceKey: 33,
       pitchFork: 440.0,
-    }
+    },
   ) {
     this.slidingDFT = new SlidingDFT(new PianoTuning(sampleRate, options), -1);
   }
@@ -109,7 +109,7 @@ export class Complex {
   mul(z: Complex) {
     return new Complex(
       this.re * z.re - this.im * z.im,
-      this.re * z.im + this.im * z.re
+      this.re * z.im + this.im * z.re,
     );
   }
 
@@ -598,7 +598,7 @@ export class PianoTuning extends Tuning {
       keysNum: 61,
       referenceKey: 33,
       pitchFork: 440.0,
-    }
+    },
   ) {
     console.log("set", options);
     super(sampleRate, options.keysNum);
@@ -682,7 +682,7 @@ export class SlidingDFT {
       this.movingAverage = new HeavyMovingAverage(
         this.bands,
         this.sampleRate,
-        Math.round(this.sampleRate * maxAverageWindowInSeconds)
+        Math.round(this.sampleRate * maxAverageWindowInSeconds),
       );
     } else if (maxAverageWindowInSeconds < 0) {
       this.movingAverage = new FastMovingAverage(this.bands, this.sampleRate);

@@ -1,6 +1,6 @@
 import { expect, test } from "@jest/globals";
-import { keySignatures } from "./key-signature";
 import type { KeySignature, Note } from "./key-signature";
+import { keySignatures } from "./key-signature";
 import {
   noteInKeySignature,
   offsetBetweenNotes,
@@ -115,7 +115,7 @@ describe("whiteIndexInKey", () => {
     "whiteIndexInKey %p in key %o is %p",
     (from, ks, expectedResult) => {
       expect(whiteIndexInKey(from, ks)).toEqual(expectedResult);
-    }
+    },
   );
 });
 
@@ -130,6 +130,6 @@ describe("noteInKeySignature", () => {
     "noteInKeySignature %p in key %p is %p",
     (n, ks, expectedResult) => {
       expect(noteInKeySignature(n, ks)).toEqual(expectedResult);
-    }
+    },
   );
 });

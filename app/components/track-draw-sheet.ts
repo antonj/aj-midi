@@ -12,18 +12,18 @@ import {
   whiteIndexInKey,
   whiteIndexInOctave,
 } from "../util/music";
+import { detectChord } from "../util/music-chord";
 import { drawGlyph } from "./glyph";
 import type { MidiEngine } from "./midi-valtio";
 import type { Note } from "./use-song-sounds";
-import { detectChord } from "../util/music-chord";
 
 type TickNumber = number;
 
 export const staffLinesTrebleClef = [64, 67, 71, 74, 77].map((i) =>
-  whiteIndex(i)
+  whiteIndex(i),
 );
 export const staffLinesBassClef = [43, 47, 50, 53, 57].map((i) =>
-  whiteIndex(i)
+  whiteIndex(i),
 );
 export const staffMiddleC = whiteIndex(60);
 export const staffLineTrebleMiddle = whiteIndex(71);
@@ -88,7 +88,7 @@ export function drawTrackSheet(
   ctx: CanvasRenderingContext2D,
   tick: number,
   songExt: MidiEngine,
-  pressed: Map<number, Note>
+  pressed: Map<number, Note>,
 ) {
   const { width: w, height: h } = ctx.canvas;
   const { high, low } = songExt.octaves;
@@ -104,7 +104,7 @@ export function drawTrackSheet(
     midiMin = toWhiteMidi(Math.min(low, lineNotes[0]) - 4, -1);
     midiMax = toWhiteMidi(
       Math.max(high, lineNotes[lineNotes.length - 1]) + 4,
-      1
+      1,
     );
   }
 
@@ -142,14 +142,14 @@ export function drawTrackSheet(
       "treble_clef",
       tickX / 8,
       map(whiteIndex(67 /*G*/), midiMinWhiteIndex, midiMaxWhiteIndex, h, 0),
-      noteHeight
+      noteHeight,
     );
     drawGlyph(
       ctx,
       "bas_clef",
       tickX / 8,
       map(whiteIndex(53 /*F*/), midiMinWhiteIndex, midiMaxWhiteIndex, h, 0),
-      noteHeight
+      noteHeight,
     );
 
     let i = 0;
@@ -168,14 +168,14 @@ export function drawTrackSheet(
         midiMinWhiteIndex,
         midiMaxWhiteIndex,
         h,
-        0
+        0,
       );
       drawGlyph(
         ctx,
         accidental,
         map(i, 0, ksAccidentals.length, noteHeight * 6, tickX),
         y,
-        noteHeight
+        noteHeight,
       );
     }
   }
@@ -198,14 +198,14 @@ export function drawTrackSheet(
       midiMinWhiteIndex,
       midiMaxWhiteIndex,
       h,
-      0
+      0,
     );
     const barBottomPbx = map(
       lineNotes[0],
       midiMinWhiteIndex,
       midiMaxWhiteIndex,
       h,
-      0
+      0,
     );
     for (
       let barTick = 0;
@@ -286,7 +286,7 @@ export function drawTrackSheet(
     // note length, 1, 2, 4, 8, 16, 32, 64, 128
     const noteLength = Math.pow(
       2,
-      Math.round(Math.log2(songExt.ticksPerBar / n.durationTicks))
+      Math.round(Math.log2(songExt.ticksPerBar / n.durationTicks)),
     );
     ctx.fillStyle = "black";
 
@@ -358,7 +358,7 @@ export function drawTrackSheet(
         x,
         y,
         noteHeight,
-        ctx.fillStyle
+        ctx.fillStyle,
       );
     }
     // stem
@@ -381,19 +381,19 @@ export function drawTrackSheet(
           noteLength === 8
             ? "note8thFlag"
             : noteLength === 16
-            ? "note16thFlag"
-            : noteLength === 32
-            ? "note32thFlag"
-            : noteLength === 64
-            ? "note64thFlag"
-            : noteLength === 128
-            ? "note128thFlag"
-            : "note8thFlag",
+              ? "note16thFlag"
+              : noteLength === 32
+                ? "note32thFlag"
+                : noteLength === 64
+                  ? "note64thFlag"
+                  : noteLength === 128
+                    ? "note128thFlag"
+                    : "note8thFlag",
           stemX,
           stemYstop,
           noteHeight,
           ctx.fillStyle,
-          stemYstart < stemYstop
+          stemYstart < stemYstop,
         );
       }
     }

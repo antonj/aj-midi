@@ -4,7 +4,7 @@ export function map(
   stop1: number,
   start2: number,
   stop2: number,
-  withinBounds = false
+  withinBounds = false,
 ) {
   const newval = ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
   if (!withinBounds) {
@@ -23,7 +23,7 @@ export function clamp(n: number, low: number, high: number) {
 
 export function roundTo(x: number, roundTo: number): number {
   return parseFloat(
-    (Math.round(x / roundTo) * roundTo).toFixed(numDecimals(roundTo))
+    (Math.round(x / roundTo) * roundTo).toFixed(numDecimals(roundTo)),
   );
 }
 

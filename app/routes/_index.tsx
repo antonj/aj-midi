@@ -1,18 +1,17 @@
+import { data } from "@remix-run/node";
+import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
 import type { Midi } from "@tonejs/midi";
 import midiPkg from "@tonejs/midi";
-import { useEffect, useState } from "react";
-import { Track, links as trackLinks } from "../components/track";
-import { useSongSound } from "../components/use-song-sounds";
-import { useSearchParams, useLoaderData, Link } from "@remix-run/react";
-import { data } from "@remix-run/node";
-
-import { Panel, links as PanelLinks } from "../components/panel";
-import { EngineProvider } from "../components/engine-provider";
-import { files } from "./midi.$id[.midi]";
-import { useStoredSettingsParams } from "../components/use-stored-settings-params";
 import fs from "fs";
 import path from "path";
+import { useEffect, useState } from "react";
 import { GraphDB } from "~/util/graph";
+import { EngineProvider } from "../components/engine-provider";
+import { Panel, links as PanelLinks } from "../components/panel";
+import { Track, links as trackLinks } from "../components/track";
+import { useSongSound } from "../components/use-song-sounds";
+import { useStoredSettingsParams } from "../components/use-stored-settings-params";
+import { files } from "./midi.$id[.midi]";
 
 export function links() {
   return [...trackLinks(), ...PanelLinks()];
@@ -29,7 +28,7 @@ const hardcodedSongs: Array<SongType> = [
   {
     artist: "Felix Mendelssohn",
     title:
-                        "Lieder ohne Worte: Book VI, Op. 67: No. 2, Allegro leggiero, MWV U145",
+      "Lieder ohne Worte: Book VI, Op. 67: No. 2, Allegro leggiero, MWV U145",
     url: "/static/midi/mendelssohn_opus_67_no_2_and_no_32.midi",
   },
   {
@@ -50,7 +49,7 @@ const hardcodedSongs: Array<SongType> = [
   {
     artist: "Pyotr Ilyich Tchaikovsky",
     title:
-                        "Swan Lake, Op. 20, TH. 12: Dance of the Four Swans (Arr. Wild for Piano)",
+      "Swan Lake, Op. 20, TH. 12: Dance of the Four Swans (Arr. Wild for Piano)",
     url: "/static/midi/swan.midi",
   },
   {
@@ -71,7 +70,6 @@ const hardcodedSongs: Array<SongType> = [
   },
 
   {
-
     artist: "Queen",
     title: "Bohemian Rhapsody",
     url: "/static/midi/bohemian-rhapsody.midi",
@@ -148,8 +146,8 @@ export async function loader() {
 
     // Special cases for common composers
     const specialCases: Record<
-    string,
-          { firstName: string; lastName: string }
+      string,
+      { firstName: string; lastName: string }
     > = {
       "Ludwig van Beethoven": {
         firstName: "Ludwig",
@@ -304,10 +302,10 @@ function useMidi(path: string) {
   const [x, setX] = useState<Midi | null>(null);
   useEffect(() => {
     midiPkg.Midi.fromUrl(path)
-           .then((f) => setX(f))
-           .catch((e) => {
-             console.error("failed to load midi", e);
-           });
+      .then((f) => setX(f))
+      .catch((e) => {
+        console.error("failed to load midi", e);
+      });
   }, [path]);
   return x;
 }
@@ -320,7 +318,6 @@ function SongPicker() {
 
   const songsWithSettings = useStoredSettingsParams(songs);
   const [filters] = useSearchParams();
-  console.log(songsWithSettings);
 
   if (file) {
     return <Song file={file} />;
@@ -383,8 +380,8 @@ function SongPicker() {
         <li>
           <Link
             to={`/`}
-               preventScrollReset={true}
-               className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover text-center"
+            preventScrollReset={true}
+            className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover text-center"
           >
             All
           </Link>
@@ -394,9 +391,9 @@ function SongPicker() {
             <li key={a}>
               <Link
                 to={`?artist=${a}`}
-                   //to={`#${a}`}
-                   preventScrollReset={true}
-                   className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover text-center"
+                //to={`#${a}`}
+                preventScrollReset={true}
+                className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover text-center"
               >
                 {a || "Other"}
               </Link>
@@ -412,8 +409,8 @@ function SongPicker() {
                 {s.rowspan ? (
                   <td
                     rowSpan={s.rowspan}
-                            className="align-top px-2 py-6"
-                            id={s.artist}
+                    className="align-top px-2 py-6"
+                    id={s.artist}
                   >
                     <span className={s.rowspan > 1 ? "sticky top-2" : ""}>
                       {s.artist || "Other"}
@@ -422,7 +419,6 @@ function SongPicker() {
                 ) : null}
                 <td className="p-2  py-6">
                   <a href={s.url} className="block hover:text-accent">
-                    {s.url}
                     <h3 className="font-bold underline">{s.title}</h3>
                     <span>{s.artist || "-"}</span>
                     {/* <pre>{JSON.stringify(s.metadata, null, 2)}</pre>  */}
@@ -459,14 +455,14 @@ function SongPicker() {
             <br />
             <input
               className="pt-2 w-full"
-                         type="file"
-                         accept="audio/midi"
-                         onChange={(e) => {
-                           if (e.target.files && e.target.files.length > 0) {
-                             const file = e.target.files[0];
-                             setFile(URL.createObjectURL(file));
-                           }
-                         }}
+              type="file"
+              accept="audio/midi"
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  const file = e.target.files[0];
+                  setFile(URL.createObjectURL(file));
+                }
+              }}
             />
           </label>
         </li>

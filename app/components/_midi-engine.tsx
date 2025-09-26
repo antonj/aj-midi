@@ -1,14 +1,15 @@
+import { Midi } from "@tonejs/midi";
 import {
   BehaviorSubject,
-  Observable,
-  Subject,
   distinctUntilChanged,
   filter,
   first,
   identity,
   iif,
   map,
+  Observable,
   of,
+  Subject,
   startWith,
   switchMap,
   takeUntil,
@@ -16,9 +17,8 @@ import {
 } from "rxjs";
 import { debounce } from "../util/debounce";
 import { roundTo } from "../util/map";
-import { Midi } from "@tonejs/midi";
-import { SongSettingsExtended } from "./use-song-ticker";
 import { SongCtx } from "./engine-provider";
+import { SongSettingsExtended } from "./use-song-ticker";
 
 function updateQuery(engine: MidiEngine) {
   const url = new URL(window.location.href);
@@ -63,7 +63,7 @@ export class MidiEngine {
   listen<K extends Changes["kind"]>(n: K, initialValue = true) {
     let r = this.changes.pipe(
       filter((x) => x.kind === n),
-      map((x) => x.value as (typeof this)[K])
+      map((x) => x.value as (typeof this)[K]),
     );
     if (initialValue) {
       r = r.pipe(startWith(this[n]));
@@ -95,7 +95,7 @@ export class MidiEngine {
       .pipe(
         map((t) => Math.floor(t)),
         distinctUntilChanged(),
-        tap((t) => console.log("new tick", t))
+        tap((t) => console.log("new tick", t)),
       )
       .subscribe();
 
@@ -122,7 +122,7 @@ export class MidiEngine {
           ? durationTicks
           : roundTo(
               Math.max(0, this.tickStart) + this.repeatBars * ticksPerBar,
-              ticksPerBar
+              ticksPerBar,
             );
       const tickRepeatStart = !this.repeatBars
         ? 0

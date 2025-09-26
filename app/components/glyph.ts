@@ -73,7 +73,7 @@ export function drawGlyph(
   y: number,
   noteHeight: number,
   fillStyle: string = "black",
-  invertY = false
+  invertY = false,
 ) {
   ctx.save();
   const w = 250;

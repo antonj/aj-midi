@@ -82,7 +82,7 @@ class PianolizerWorklet extends AudioWorkletProcessor {
   process(
     input: Float32Array[][],
     output: Float32Array[][],
-    parameters: Record<string, Float32Array>
+    parameters: Record<string, Float32Array>,
   ) {
     // if no inputs are connected then zero channels will be passed in
     if (input[0].length === 0) {

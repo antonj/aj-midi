@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { useMidiInput } from "./use-web-midi";
-import { useEngine, useEngineSnapshot } from "./engine-provider";
-import { eqSet } from "./keyboard";
 import type { NoteId } from "~/components/midi-valtio";
 import { noteId } from "~/components/midi-valtio";
+import { useEngine, useEngineSnapshot } from "./engine-provider";
+import { eqSet } from "./keyboard";
+import { useMidiInput } from "./use-web-midi";
 
 /** Control midi input, to pause if current song has pressed notes but the midi input has not yet pressed those notes */
 

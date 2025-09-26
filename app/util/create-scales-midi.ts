@@ -6,6 +6,7 @@ import {
   scaleMajorHalfsteps,
   scaleMinorHalfsteps,
 } from "./key-signature";
+
 const { Midi, Header } = midi;
 
 export function createScalesMidi(listKs: Array<KeySignature>) {
@@ -41,10 +42,10 @@ export function createScalesMidi(listKs: Array<KeySignature>) {
     // key signature notes
     for (const halfSteps of scale === "major"
       ? scaleMajorHalfsteps.concat(
-          [...scaleMajorHalfsteps].map((s) => -s).reverse()
+          [...scaleMajorHalfsteps].map((s) => -s).reverse(),
         )
       : scaleMinorHalfsteps.concat(
-          [...scaleMinorHalfsteps].map((s) => -s).reverse()
+          [...scaleMinorHalfsteps].map((s) => -s).reverse(),
         )) {
       track.addNote({
         midi: note,

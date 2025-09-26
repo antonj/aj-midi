@@ -16,7 +16,7 @@ function beep(
   durationMs: number,
   frequency: number,
   volume: number,
-  type: OscillatorType = "sine"
+  type: OscillatorType = "sine",
 ) {
   if (
     !isValidNumber(durationMs) ||
@@ -49,7 +49,7 @@ function beep(
   gainNode.gain.setTargetAtTime(
     0,
     endSeconds - fadeTimeSeconds,
-    fadeTimeSeconds
+    fadeTimeSeconds,
   );
 
   oscillator.frequency.value = frequency;

@@ -1,5 +1,5 @@
-import { map } from "./map";
 import { GestureDetector } from "./gesture-detector";
+import { map } from "./map";
 
 const d = new Map<string, Data>();
 
@@ -98,7 +98,7 @@ class Data {
           bottom,
           top,
           data.minY,
-          data.maxY
+          data.maxY,
         );
         ctx.fillText(valY.toFixed(4) + "", x, this.pointer.offsetY);
       }
@@ -175,7 +175,7 @@ type Options = {
 export function logGraph(
   key: string,
   data: { x?: number; y: number },
-  options?: Options
+  options?: Options,
 ) {
   let x = d.get(key);
   if (!x) {

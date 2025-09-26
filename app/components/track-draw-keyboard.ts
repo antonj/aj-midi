@@ -8,10 +8,10 @@ import {
   toMidiTone,
   whiteIndexInOctave,
 } from "../util/music";
-import { blackWidthRatio, pixelRound, xCenterInPiano } from "./track-draw";
-import type { Note } from "./use-song-sounds";
 import type { MidiEngine } from "./midi-valtio";
+import { blackWidthRatio, pixelRound, xCenterInPiano } from "./track-draw";
 import { drawNote } from "./track-draw-note";
+import type { Note } from "./use-song-sounds";
 
 function getFill(active: boolean, down: boolean) {
   switch (true) {
@@ -29,7 +29,7 @@ export function trackDrawKeyabord(
   ctx: CanvasRenderingContext2D,
   tick: number,
   songExt: MidiEngine,
-  deviceDown: Map<number, Note>
+  deviceDown: Map<number, Note>,
 ) {
   let { width: w, height: h } = ctx.canvas;
   ctx.clearRect(0, 0, w, h);

@@ -1,10 +1,10 @@
 import type { Midi } from "@tonejs/midi";
-import { createContext, useContext, useEffect, useRef } from "react";
 import type { ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef } from "react";
 import { createStore, useStore } from "zustand";
 import { debounce } from "~/util/debounce";
-import type { SongCtx } from "./context-song";
 import { getTicksPerBar } from "~/util/music";
+import type { SongCtx } from "./context-song";
 
 export type SongSettings = {
   speed: number;
@@ -60,7 +60,7 @@ export function SettingsProvider({
  */
 export function useSettings<T>(
   selector: (state: SongSettings) => T,
-  equalityFn?: (left: T, right: T) => boolean
+  equalityFn?: (left: T, right: T) => boolean,
 ): T {
   const store = useContext(SettingsContext);
   if (!store) throw new Error("Missing SongSettings.Provider in the tree");
@@ -123,7 +123,7 @@ function createSettingsStore(song: Midi) {
       }
       url.searchParams.set(
         "warmup",
-        Math.floor(get().repeatBarsWarmup).toString()
+        Math.floor(get().repeatBarsWarmup).toString(),
       );
       window.history.replaceState(null, "", url.toString());
     }

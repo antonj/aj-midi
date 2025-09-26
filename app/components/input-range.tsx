@@ -28,7 +28,7 @@ export function InputRange(props: {
           inputRef.current?.focus();
           const x = roundTo(
             map(ev.data.x, 0, ev.data.width, props.min, props.max, true),
-            props.step
+            props.step,
           );
           props.onChange(x);
         }
