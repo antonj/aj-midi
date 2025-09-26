@@ -48,11 +48,13 @@ export function Panel() {
             value ? (engine.volume = 0.5) : (engine.volume = 0)
           }
         />
-        <NumBool
-          label="pause for midi"
-          value={settings.pauseForMidi}
-          onChange={(value) => (engine.pauseForMidi = value)}
-        />
+        {x.state.kind === "fetched devices" ? (
+          <NumBool
+            label="pause for midi"
+            value={settings.pauseForMidi}
+            onChange={(value) => (engine.pauseForMidi = value)}
+          />
+        ) : null}
         <NumBool
           label="sheet-notation"
           value={settings.sheetNotation}
