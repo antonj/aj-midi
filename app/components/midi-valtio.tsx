@@ -24,30 +24,35 @@ export const QUERY_SETTING_KEYS = [
 type QuerySettingsKey = (typeof QUERY_SETTING_KEYS)[number];
 
 export function getQueryWithPreviousSettings(urlStr: string) {
-  const result = new URLSearchParams();
-  for (const key of QUERY_SETTING_KEYS) {
-    const val = localStorage.getItem(`${urlStr}:${key}`);
-    if (val !== null) {
-      result.set(key, val);
-    }
-  }
+	const result = new URLSearchParams();
+	if (typeof localStorage === "undefined") {
+		result.set("file", urlStr);
+		return `?${result.toString()}`;
+	}
 
-  let sp: URLSearchParams;
-  try {
-    let url = new URL(urlStr);
-    for (const [key, value] of result.entries()) {
-      url.searchParams.set(key, value);
-    }
-    sp = url.searchParams;
-  } catch (e) {
-    let url = new URL(urlStr, "https://antonj.se");
-    for (const [key, value] of result.entries()) {
-      url.searchParams.set(key, value);
-    }
-    sp = url.searchParams;
-  }
-  sp.set("file", urlStr);
-  return `?${sp.toString()}`;
+	for (const key of QUERY_SETTING_KEYS) {
+		const val = localStorage.getItem(`${urlStr}:${key}`);
+		if (val !== null) {
+			result.set(key, val);
+		}
+	}
+
+	let sp: URLSearchParams;
+	try {
+		const url = new URL(urlStr);
+		for (const [key, value] of result.entries()) {
+			url.searchParams.set(key, value);
+		}
+		sp = url.searchParams;
+	} catch (e) {
+		const url = new URL(urlStr, "https://antonj.se");
+		for (const [key, value] of result.entries()) {
+			url.searchParams.set(key, value);
+		}
+		sp = url.searchParams;
+	}
+	sp.set("file", urlStr);
+	return `?${sp.toString()}`;
 }
 function setVal(url: URL, key: QuerySettingsKey, val: string) {
   url.searchParams.set(key, val);

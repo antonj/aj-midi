@@ -77,7 +77,9 @@ export const useDevicesStore = create<{
 }));
 
 export function useWebMidiDevices() {
-  const { inputs, outputs, requestMIDIAccess } = useDevicesStore();
+  const inputs = useDevicesStore(state => state.inputs);
+  const outputs = useDevicesStore(state => state.outputs);
+  const  requestMIDIAccess  = useDevicesStore(state => state.requestMIDIAccess);
   useEffect(() => {
     requestMIDIAccess();
   }, [requestMIDIAccess]);
@@ -89,10 +91,9 @@ export function useMidiInput() {
   const volume = useEngineSnapshot().volume;
   const d = inputs[0];
   const player = useRef<Player>();
-  const { pressed, setPressed } = useDevicesStore((state) => ({
-    pressed: state.pressed,
-    setPressed: state.setPressed,
-  }));
+  const pressed = useDevicesStore((state) => state.pressed)
+  const setPressed = useDevicesStore((state) => state.setPressed)
+
   useEffect(() => {
     player.current = new Player();
   }, []);

@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { Track, links as trackLinks } from "../components/track";
 import { useSongSound } from "../components/use-song-sounds";
 import { useSearchParams, useLoaderData, Link } from "@remix-run/react";
+import { data } from "@remix-run/node";
+
 import { Panel, links as PanelLinks } from "../components/panel";
 import { EngineProvider } from "../components/engine-provider";
 import { files } from "./midi.$id[.midi]";
 import { useStoredSettingsParams } from "../components/use-stored-settings-params";
-import { json } from "@remix-run/node";
 import fs from "fs";
 import path from "path";
 import { GraphDB } from "~/util/graph";
@@ -28,7 +29,7 @@ const hardcodedSongs: Array<SongType> = [
   {
     artist: "Felix Mendelssohn",
     title:
-      "Lieder ohne Worte: Book VI, Op. 67: No. 2, Allegro leggiero, MWV U145",
+                        "Lieder ohne Worte: Book VI, Op. 67: No. 2, Allegro leggiero, MWV U145",
     url: "/static/midi/mendelssohn_opus_67_no_2_and_no_32.midi",
   },
   {
@@ -49,7 +50,7 @@ const hardcodedSongs: Array<SongType> = [
   {
     artist: "Pyotr Ilyich Tchaikovsky",
     title:
-      "Swan Lake, Op. 20, TH. 12: Dance of the Four Swans (Arr. Wild for Piano)",
+                        "Swan Lake, Op. 20, TH. 12: Dance of the Four Swans (Arr. Wild for Piano)",
     url: "/static/midi/swan.midi",
   },
   {
@@ -70,6 +71,7 @@ const hardcodedSongs: Array<SongType> = [
   },
 
   {
+
     artist: "Queen",
     title: "Bohemian Rhapsody",
     url: "/static/midi/bohemian-rhapsody.midi",
@@ -115,7 +117,7 @@ const hardcodedSongs: Array<SongType> = [
 export async function loader() {
   const composersPath = path.join(
     process.cwd(),
-    "public/static/output/composers_with_local_files.json"
+    "public/static/output/composers_with_local_files.json",
   );
   const composersData = JSON.parse(fs.readFileSync(composersPath, "utf-8"));
 
@@ -146,8 +148,8 @@ export async function loader() {
 
     // Special cases for common composers
     const specialCases: Record<
-      string,
-      { firstName: string; lastName: string }
+    string,
+          { firstName: string; lastName: string }
     > = {
       "Ludwig van Beethoven": {
         firstName: "Ludwig",
@@ -273,7 +275,7 @@ export async function loader() {
       composer.pieces.flatMap((piece) =>
         piece.parts.map((part, i) => {
           const { displayName, firstName, lastName } = transformArtistName(
-            composer.name
+            composer.name,
           );
           return {
             artist: displayName,
@@ -291,36 +293,40 @@ export async function loader() {
               url: "static/output/" + part.localPath,
             },
           } satisfies SongType;
-        })
-      )
+        }),
+      ),
   );
 
-  return json({ songs: [...hardcodedSongs, ...loaderSongs] });
+  return data({ songs: [...hardcodedSongs, ...loaderSongs] });
 }
 
 function useMidi(path: string) {
   const [x, setX] = useState<Midi | null>(null);
   useEffect(() => {
     midiPkg.Midi.fromUrl(path)
-      .then((f) => setX(f))
-      .catch((e) => {
-        console.error("failed to load midi", e);
-      });
+           .then((f) => setX(f))
+           .catch((e) => {
+             console.error("failed to load midi", e);
+           });
   }, [path]);
   return x;
 }
 
 function SongPicker() {
   const [file, setFile] = useState<string>("");
-  const { songs } = useLoaderData<typeof loader>();
+  const {
+    data: { songs },
+  } = useLoaderData<typeof loader>();
+
   const songsWithSettings = useStoredSettingsParams(songs);
   const [filters] = useSearchParams();
+  console.log(songsWithSettings);
 
   if (file) {
     return <Song file={file} />;
   }
 
-  let db = new GraphDB();
+  const db = new GraphDB();
   for (const s of songsWithSettings) {
     db.addAll([
       [s.url, "artist", s.artist],
@@ -337,7 +343,7 @@ function SongPicker() {
     distinct: "artist",
   });
 
-  let filteredSongs = songsWithSettings.filter((s) => {
+  const filteredSongs = songsWithSettings.filter((s) => {
     for (const [fk, fv] of filters.entries()) {
       if (fk in s) {
         if (s[fk as keyof SongType] !== fv) {
@@ -349,7 +355,7 @@ function SongPicker() {
   });
 
   type SongWithRowspan = SongType & { rowspan?: number };
-  let finalSongs: SongWithRowspan[] = [];
+  const finalSongs: SongWithRowspan[] = [];
   for (let i = 0; i < filteredSongs.length; ) {
     let s = filteredSongs[i];
     const artist = s.artist;
@@ -370,7 +376,6 @@ function SongPicker() {
       }
     }
   }
-  console.log(finalSongs);
 
   return (
     <main className="p-4 md:p-8">
@@ -378,8 +383,8 @@ function SongPicker() {
         <li>
           <Link
             to={`/`}
-            preventScrollReset={true}
-            className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover text-center"
+               preventScrollReset={true}
+               className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover text-center"
           >
             All
           </Link>
@@ -389,9 +394,9 @@ function SongPicker() {
             <li key={a}>
               <Link
                 to={`?artist=${a}`}
-                //to={`#${a}`}
-                preventScrollReset={true}
-                className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover text-center"
+                   //to={`#${a}`}
+                   preventScrollReset={true}
+                   className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover text-center"
               >
                 {a || "Other"}
               </Link>
@@ -399,7 +404,6 @@ function SongPicker() {
           );
         })}
       </ul>
-
       <table>
         <tbody>
           {finalSongs.map((s) => {
@@ -408,8 +412,8 @@ function SongPicker() {
                 {s.rowspan ? (
                   <td
                     rowSpan={s.rowspan}
-                    className="align-top px-2 py-6"
-                    id={s.artist}
+                            className="align-top px-2 py-6"
+                            id={s.artist}
                   >
                     <span className={s.rowspan > 1 ? "sticky top-2" : ""}>
                       {s.artist || "Other"}
@@ -418,9 +422,10 @@ function SongPicker() {
                 ) : null}
                 <td className="p-2  py-6">
                   <a href={s.url} className="block hover:text-accent">
+                    {s.url}
                     <h3 className="font-bold underline">{s.title}</h3>
                     <span>{s.artist || "-"}</span>
-                    {/* <pre>{JSON.stringify(s.metadata, null, 2)}</pre> */}
+                    {/* <pre>{JSON.stringify(s.metadata, null, 2)}</pre>  */}
                   </a>
                 </td>
               </tr>
@@ -428,7 +433,6 @@ function SongPicker() {
           })}
         </tbody>
       </table>
-
       <ul className="hidden">
         {songsWithSettings.map((s) => {
           for (const [fk, fv] of filters.entries()) {
@@ -455,14 +459,14 @@ function SongPicker() {
             <br />
             <input
               className="pt-2 w-full"
-              type="file"
-              accept="audio/midi"
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  const file = e.target.files[0];
-                  setFile(URL.createObjectURL(file));
-                }
-              }}
+                         type="file"
+                         accept="audio/midi"
+                         onChange={(e) => {
+                           if (e.target.files && e.target.files.length > 0) {
+                             const file = e.target.files[0];
+                             setFile(URL.createObjectURL(file));
+                           }
+                         }}
             />
           </label>
         </li>
