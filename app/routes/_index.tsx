@@ -419,9 +419,9 @@ function SongPicker() {
                 ) : null}
                 <td className="p-2  py-6">
                   <a href={s.url} className="block hover:text-accent">
+					   hello
                     <h3 className="font-bold underline">{s.title}</h3>
                     <span>{s.artist || "-"}</span>
-                    {/* <pre>{JSON.stringify(s.metadata, null, 2)}</pre>  */}
                   </a>
                 </td>
               </tr>

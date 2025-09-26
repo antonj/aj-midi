@@ -8,10 +8,47 @@
   html,
   body {
   }
-
-  /* Start purging... */
 }
-/* Stop purging. */
+
+@theme {
+  --color-yellow-500: #ffe600;
+  --color-yellow-300: #edda2f;
+
+  --color-bg-primary: #fff;
+  --color-bg-secondary: #eee;
+
+  --text-color-primary: #333;
+  --text-color-secondary: #ccc;
+  --text-color-tertiary: #aaa;
+  --text-color-accent: #5e6ad3;
+  --text-color-success: #4cb782;
+
+  --text-color-icon-primary: #fff;
+  --text-color-icon-secondary: #fafafa;
+  --text-color-icon-accent: #5e6ad3;
+
+  --color-border-primary: #505050;
+  --color-border-secondary: #303235;
+  --color-border-accent: #5e6ad3;
+
+  --color-bg-input-primary: #27282b;
+  --color-bg-input-primary-hover: #2f3033;
+  --text-color-input-primary: #fff;
+  --text-color-input-placeholder: var(--text-color-tertiary);
+
+  --color-bg-action-primary: var(--color-yellow-500);
+  --color-bg-action-primary-hover: var(--color-yellow-300);
+  --text-color-action-primary: #000;
+
+  --color-bg-action-tertiary: var(--color-bg-primary);
+  --color-bg-action-tertiary-hover: #191919;
+  --color-border-action-tertiary: #202020;
+  --color-border-action-tertiary-hover: #505050;
+  --text-color-action-tertiary: var(--text-color-primary);
+
+  --background-color-action-primary: var(--color-bg-action-primary);
+  --background-color-action-primary-hover: var(--color-bg-action-primary-hover);
+}
 
 .visuallyhidden {
   border: 0;
