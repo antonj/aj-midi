@@ -10,6 +10,12 @@
   width: 200px;
   z-index: 99;
 
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+  overflow: hidden;
+  box-sizing: border-box;
+
   font-size: 0.7rem;
 
   --midi-fg-color: #f5f4f0;
@@ -23,9 +29,16 @@
   border-left: 1px solid black;
 }
 
+[data-panel] > section {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 [data-panel-toggle] {
   position: relative;
   background-color: #000000;
+  flex-shrink: 0;
 }
 [data-panel-toggle]::after {
   position: absolute;

@@ -2,7 +2,7 @@ import type { Midi } from "@tonejs/midi";
 import type { Note } from "@tonejs/midi/dist/Note";
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useMemo } from "react";
-import { useSnapshot } from "valtio";
+import { ref, useSnapshot } from "valtio";
 import { getOctaves, getTicksPerBar, mergeNotes } from "../util/music";
 import type { MidiEngine } from "./midi-valtio";
 import { createMidiEngine } from "./midi-valtio";
@@ -36,7 +36,7 @@ export function EngineProvider({
   useMemo(
     function ctxMemo() {
       const song = store.song;
-      console.log("provider", song);
+      console.log("provider", store);
       let bpm = song.header.tempos[0]?.bpm || 120;
 
       const ticksPerBar = getTicksPerBar(song);
@@ -47,7 +47,7 @@ export function EngineProvider({
 
       store.bpm = bpm;
       store.ticksPerBar = ticksPerBar;
-      store.pianoNotes = pianoNotes;
+      store.pianoNotes = ref(pianoNotes);
       store.octaves = octaves;
       store.tickConnections = tickConnections;
     },
