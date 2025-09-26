@@ -17,8 +17,8 @@ export type Note = {
 };
 
 export const useDevicesStore = create<{
-  inputs: Array<WebMidi.MIDIInput>;
-  outputs: Array<WebMidi.MIDIOutput>;
+  inputs: Array<MIDIInput>;
+  outputs: Array<MIDIOutput>;
   state:
     | { kind: "" }
     | { kind: "requesting" }
@@ -62,9 +62,9 @@ export const useDevicesStore = create<{
           set({ inputs: Array.from(inputs) });
           // Print information about the (dis)connected MIDI controller
           console.log(
-            event.port.name,
-            event.port.manufacturer,
-            event.port.state,
+            event.port?.name,
+            event.port?.manufacturer,
+            event.port?.state,
           );
         };
       })
@@ -89,7 +89,7 @@ export function useMidiInput() {
   const { inputs } = useWebMidiDevices();
   const volume = useEngineSnapshot().volume;
   const d = inputs[0];
-  const player = useRef<Player>();
+  const player = useRef<Player>(null);
   const pressed = useDevicesStore((state) => state.pressed);
   const setPressed = useDevicesStore((state) => state.setPressed);
 
@@ -108,6 +108,7 @@ export function useMidiInput() {
     console.log("useMidiInput");
     const notes = new Map<number, Note>();
     d.onmidimessage = (evt) => {
+      if (!evt.data) return;
       const [command, note, velocity] = evt.data;
       switch (command) {
         case 0x90:
