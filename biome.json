@@ -12,5 +12,13 @@
   },
   "linter": {
     "enabled": false
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["public/audio-worklet.js"],
+      "formatter": {
+        "enabled": false
+      }
+    }
+  ]
 }

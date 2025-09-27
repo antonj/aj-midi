@@ -1,10 +1,16 @@
 import { data } from "@remix-run/node";
-import { Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import {
+  Link,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "@remix-run/react";
 import type { Midi } from "@tonejs/midi";
 import midiPkg from "@tonejs/midi";
 import fs from "fs";
 import path from "path";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GraphDB } from "~/util/graph";
 import { EngineProvider } from "../components/engine-provider";
 import { Panel, links as PanelLinks } from "../components/panel";
@@ -319,6 +325,84 @@ function SongPicker() {
   const songsWithSettings = useStoredSettingsParams(songs);
   const [filters] = useSearchParams();
 
+  const [activeHash, setActiveHash] = useState<string>();
+  const { hash } = useLocation();
+  console.group();
+  console.log("ah", activeHash);
+  console.log("lh", hash);
+  console.groupEnd();
+  const nav = useNavigate();
+
+  useEffect(() => {
+    const onHashChange = () =>
+      setActiveHash(decodeURIComponent(window.location.hash));
+    setActiveHash(decodeURIComponent(hash));
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, [hash]);
+
+  useEffect(() => {
+    // Check which artist header is currently sticky at the top
+    const headers = Array.from(
+      document.querySelectorAll<HTMLElement>("h2[data-anchor]"),
+    );
+
+    const threshold = 1; // pixels tolerance for top ~ 0
+
+    const checkSticky = () => {
+      console.log("check");
+      if (headers.length === 0) return;
+
+      // Find the header that is currently stuck to the top (top <= 0 and still visible)
+      let current: HTMLElement | null = null;
+      let bestTop = -Infinity;
+
+      for (const h of headers) {
+        const rect = h.getBoundingClientRect();
+        const isStickyNow = rect.top <= threshold && rect.bottom > 0; // top edge at/above top and header visible
+        if (isStickyNow && rect.top > bestTop) {
+          bestTop = rect.top;
+          current = h;
+        }
+      }
+
+      if (current) {
+        const anchor = current.dataset.anchor;
+        if (
+          anchor &&
+          decodeURIComponent(window.location.hash) !== `#${anchor}`
+        ) {
+          // Update the hash without causing a scroll jump
+          const oldURL = window.location.href;
+          window.history.replaceState(null, "", `#${anchor}`);
+          console.log({ oldURL, newURL: window.location.href });
+          window.dispatchEvent(
+            new HashChangeEvent("hashchange", {
+              oldURL,
+              newURL: window.location.href,
+            }),
+          );
+        }
+      }
+    };
+
+    // Run on scroll and resize; also run once on mount
+    const onScroll = () => {
+      // Use rAF to coalesce multiple scroll events
+      requestAnimationFrame(checkSticky);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    // Initial check (headers may not exist until after first paint)
+    requestAnimationFrame(checkSticky);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
   if (file) {
     return <Song file={file} />;
   }
@@ -351,83 +435,69 @@ function SongPicker() {
     return true;
   });
 
-  type SongWithRowspan = SongType & { rowspan?: number };
-  const finalSongs: SongWithRowspan[] = [];
-  for (let i = 0; i < filteredSongs.length; ) {
-    let s = filteredSongs[i];
-    const artist = s.artist;
-    let rowspan = 1;
-    for (let y = i + 1; y < filteredSongs.length; y++) {
-      if (artist === filteredSongs[y].artist) {
-        rowspan = rowspan + 1;
-      } else {
-        break;
-      }
-    }
-    for (let r = 0; r < rowspan && i < filteredSongs.length; r++, i++) {
-      s = filteredSongs[i];
-      if (r === 0) {
-        finalSongs.push({ ...s, rowspan });
-      } else {
-        finalSongs.push(s);
-      }
+  type ArtistSongs = { artist: string; songs: SongType[] };
+  const groupedSongs = new Map<string, SongType[]>();
+
+  for (const song of filteredSongs) {
+    const existingSongs = groupedSongs.get(song.artist);
+    if (existingSongs) {
+      existingSongs.push(song);
+    } else {
+      groupedSongs.set(song.artist, [song]);
     }
   }
 
+  const nestedSongs: ArtistSongs[] = Array.from(groupedSongs.entries()).map(
+    ([artist, songs]) => ({ artist, songs }),
+  );
+
   return (
-    <main className="p-4 md:p-8">
-      <ul className="flex gap-1 flex-wrap">
-        <li>
-          <Link
-            to={`/`}
-            preventScrollReset={true}
-            className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover text-center"
-          >
-            All
-          </Link>
-        </li>
-        {uniqueArtists.map((a) => {
-          return (
-            <li key={a}>
-              <Link
-                to={`?artist=${a}`}
-                //to={`#${a}`}
-                preventScrollReset={true}
-                className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover text-center"
+    <main className="flex p-4 md:p-8 gap-8">
+      <div className=" h-svh sticky top-0 overflow-y-scroll">
+        <ul className="flex flex-col gap-1">
+          {uniqueArtists.map((a) => {
+            const anchor = a || "other";
+            return (
+              <li
+                key={anchor}
+                className={activeHash === `#${anchor}` ? "font-bold" : ""}
               >
-                {a || "Other"}
-              </Link>
-            </li>
+                <Link
+                  to={{ hash: anchor }}
+                  className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover"
+                >
+                  {a || "Other"}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <ul className="mt-6 space-y-6">
+        {nestedSongs.map(({ artist, songs }) => {
+          const anchorId = artist || "other";
+          return (
+            <ul key={anchorId} id={anchorId} className="space-y-2">
+              <h2
+                className="sticky top-0 bg-amber-50 font-semibold text-lg"
+                data-anchor={anchorId}
+              >
+                {artist || "Other"}
+              </h2>
+              <ul className="space-y-2">
+                {songs.map((song) => (
+                  <li key={song.url} className="pb-2">
+                    <a href={song.url} className="block hover:text-accent">
+                      <h3 className="font-bold underline">{song.title}</h3>
+                      <span>{song.artist || "-"}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </ul>
           );
         })}
       </ul>
-      <table>
-        <tbody>
-          {finalSongs.map((s) => {
-            return (
-              <tr key={s.url} className="pb-4">
-                {s.rowspan ? (
-                  <td
-                    rowSpan={s.rowspan}
-                    className="align-top px-2 py-6"
-                    id={s.artist}
-                  >
-                    <span className={s.rowspan > 1 ? "sticky top-2" : ""}>
-                      {s.artist || "Other"}
-                    </span>
-                  </td>
-                ) : null}
-                <td className="p-2  py-6">
-                  <a href={s.url} className="block hover:text-accent">
-                    <h3 className="font-bold underline">{s.title}</h3>
-                    <span>{s.artist || "-"}</span>
-                  </a>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
       <ul className="hidden">
         {songsWithSettings.map((s) => {
           for (const [fk, fv] of filters.entries()) {
