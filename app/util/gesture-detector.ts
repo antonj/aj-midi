@@ -151,7 +151,6 @@ export class GestureDetector {
   callback: (ev: GestureEvent, self: GestureDetector) => void;
   pointers: Map<number, Pointer>;
   clicks: Map<number, Pointer>;
-  options: { wheel?: boolean };
 
   constructor(
     elem: HTMLElement,
@@ -162,7 +161,6 @@ export class GestureDetector {
     this.callback = callback;
     this.pointers = new Map();
     this.clicks = new Map();
-    this.options = options;
   }
 
   attach() {
@@ -318,9 +316,7 @@ export class GestureDetector {
   }
 
   wheel(ev: WheelEvent) {
-    if (!this.options.wheel) return;
     const bounds = this.elem.getBoundingClientRect();
-    ev.preventDefault();
     if (ev.ctrlKey) {
       this.callback(
         {

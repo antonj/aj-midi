@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { map, roundTo } from "../util/map";
+import { clamp, map, roundTo } from "../util/map";
 import styles from "./input-range.css";
 import { useGestureDetector } from "./use-gesture-detector";
 
@@ -18,6 +18,7 @@ export function InputRange(props: {
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [elInput, setElInput] = useState<HTMLElement | null>(null);
+  const wheelState = useRef(0);
 
   useGestureDetector(elInput, (ev) => {
     switch (ev.kind) {
@@ -31,6 +32,37 @@ export function InputRange(props: {
             props.step,
           );
           props.onChange(x);
+        }
+        break;
+      case "wheel drag":
+        {
+          if (Math.abs(ev.data.dy) > Math.abs(ev.data.dx)) {
+            return;
+          }
+          ev.data.event.preventDefault();
+          const delta = map(ev.data.dx, 0, ev.data.width, props.min, props.max);
+          if (wheelState.current === 0) {
+            wheelState.current = props.value;
+          }
+          wheelState.current = clamp(
+            wheelState.current + delta,
+            props.min,
+            props.max,
+          );
+          const x = roundTo(
+            clamp(wheelState.current, props.min, props.max),
+            props.step,
+          );
+          console.log("wheel", wheelState.current, x);
+          if (x !== props.value) {
+            props.onChange(x);
+          }
+        }
+        break;
+      case "leave":
+        {
+          console.log("reset");
+          wheelState.current = 0; // reset
         }
         break;
     }

@@ -163,193 +163,203 @@ export function Track() {
     }
   });
 
-  useGestureDetector(canvasEl, (ev) => {
-    switch (ev.kind) {
-      case "down":
-        const x = map(ev.data.x, 0, ev.data.width, 0, 1);
-        {
-          scrollerRef.current.forceFinished(true);
-          ev.data.event.preventDefault();
-          if (x < miniMapWidthRatio) {
-            let y = map(ev.data.y, 0, ev.data.height, 0, 1);
-            let yy = map(y, 1, 0, 0, engine.song.durationTicks, true);
-            engine.seek(yy);
+  useGestureDetector(
+    canvasEl,
+    (ev) => {
+      switch (ev.kind) {
+        case "down":
+          const x = map(ev.data.x, 0, ev.data.width, 0, 1);
+          {
+            scrollerRef.current.forceFinished(true);
+            ev.data.event.preventDefault();
+            if (x < miniMapWidthRatio) {
+              let y = map(ev.data.y, 0, ev.data.height, 0, 1);
+              let yy = map(y, 1, 0, 0, engine.song.durationTicks, true);
+              engine.seek(yy);
+            }
           }
-        }
-        break;
-      case "drag":
-        {
-          ev.data.event.preventDefault();
-          const x = map(ev.data.event_down.x, 0, ev.data.width, 0, 1);
-          if (x < miniMapWidthRatio) {
-            let y = map(ev.data.y, 0, ev.data.height, 0, 1);
-            let yy = map(y, 1, 0, 0, engine.song.durationTicks, true);
-            engine.seek(yy);
-          } else {
+          break;
+        case "drag":
+          {
+            ev.data.event.preventDefault();
+            const x = map(ev.data.event_down.x, 0, ev.data.width, 0, 1);
+            if (x < miniMapWidthRatio) {
+              let y = map(ev.data.y, 0, ev.data.height, 0, 1);
+              let yy = map(y, 1, 0, 0, engine.song.durationTicks, true);
+              engine.seek(yy);
+            } else {
+              let dt = map(ev.data.dy, 0, ev.data.height, 0, engine.tickWindow);
+              engine.seek(engine.tick + dt);
+            }
+          }
+          break;
+        case "wheel drag":
+          {
+            ev.data.event.preventDefault();
             let dt = map(ev.data.dy, 0, ev.data.height, 0, engine.tickWindow);
             engine.seek(engine.tick + dt);
           }
-        }
-        break;
-      case "wheel drag":
-        {
-          let dt = map(ev.data.dy, 0, ev.data.height, 0, engine.tickWindow);
-          engine.seek(engine.tick + dt);
-        }
-        break;
-      case "fling":
-        {
-          let prevY = 0;
-          const h = ev.data.height;
-          const simpleScroller = false;
-          if (!simpleScroller) {
-            scrollerRef.current.fling(0, prevY, 0, ev.data.vy * 1000);
-            function anim() {
-              const scrolling = scrollerRef.current.computeScrollOffset();
-              if (scrolling) {
-                const y = scrollerRef.current.getCurrY();
-                let dy = y - prevY;
-                prevY = y;
-                let dt = map(dy, 0, h, 0, engine.tickWindow);
+          break;
+        case "fling":
+          {
+            let prevY = 0;
+            const h = ev.data.height;
+            const simpleScroller = false;
+            if (!simpleScroller) {
+              scrollerRef.current.fling(0, prevY, 0, ev.data.vy * 1000);
+              function anim() {
+                const scrolling = scrollerRef.current.computeScrollOffset();
+                if (scrolling) {
+                  const y = scrollerRef.current.getCurrY();
+                  let dy = y - prevY;
+                  prevY = y;
+                  let dt = map(dy, 0, h, 0, engine.tickWindow);
 
-                const start = engine.tick + dt;
-                engine.seek(start);
-                requestAnimationFrame(anim);
+                  const start = engine.tick + dt;
+                  engine.seek(start);
+                  requestAnimationFrame(anim);
+                }
               }
-            }
-            requestAnimationFrame(anim);
-          } else {
-            const ajScroller = new AjScroller();
-            ajScroller.fling(ev.data.vy);
-            function anim() {
-              const info = ajScroller.computeOffset();
-              if (!info.done) {
-                const y = info.y;
-                let dy = y - prevY;
-                prevY = y;
-                let dt = map(dy, 0, h, 0, engine.tickWindow);
-                engine.seek(engine.tick + dt);
-                requestAnimationFrame(anim);
+              requestAnimationFrame(anim);
+            } else {
+              const ajScroller = new AjScroller();
+              ajScroller.fling(ev.data.vy);
+              function anim() {
+                const info = ajScroller.computeOffset();
+                if (!info.done) {
+                  const y = info.y;
+                  let dy = y - prevY;
+                  prevY = y;
+                  let dt = map(dy, 0, h, 0, engine.tickWindow);
+                  engine.seek(engine.tick + dt);
+                  requestAnimationFrame(anim);
+                }
               }
+              requestAnimationFrame(anim);
             }
-            requestAnimationFrame(anim);
           }
-        }
-        break;
-      case "pinch":
-        {
-          const h = ev.data.moving.height;
-          const y1 = ev.data.still.y;
-          const y2 = ev.data.moving.y;
-          const dy = ev.data.moving.dy;
-          let tickWindow = engine.tickWindow;
-          let startTick = engine.tick;
-          const zoomPoint = map(ev.data.still.y, h, 0, 0, tickWindow); // zoom around still finger
-          const d1 = Math.abs(y1 - (y2 + dy)); // distance before
-          const d2 = Math.abs(y1 - y2); // distance after
-          const scale = d1 === 0 || d2 === 0 ? 1 : d2 / d1;
-          const windowScaled = scale * tickWindow;
-          if (
-            windowScaled < engine.ticksPerBar / 4 ||
-            windowScaled > engine.song.durationTicks
-          ) {
-            return;
-          }
-          engine.tickWindow = windowScaled;
-          engine.seek(startTick + zoomPoint * (1 - scale));
-        }
-        break;
-      case "zoom":
-        {
-          const h = ev.data.height;
-          const dy = ev.data.dy;
-          let tickWindow = engine.tickWindow;
-          let startTick = engine.tick;
-          const zoomPoint = map(ev.data.y, h, 0, 0, tickWindow); // zoom around still finger
-          const scale = 1 + map(dy, 0, 10, 0, -0.05); // tweak
-          engine.tickWindow = scale * tickWindow;
-          engine.seek(startTick + zoomPoint * (1 - scale));
-        }
-        break;
-    }
-  });
-
-  useGestureDetector(canvasSheetEl, (ev) => {
-    switch (ev.kind) {
-      case "down":
-        {
-          scrollerRef.current.forceFinished(true);
-        }
-        break;
-      case "drag":
-      case "wheel drag":
-        {
-          let dt = map(
-            ev.data.dx,
-            0,
-            ev.data.width,
-            0,
-            sheetTickWindow(engine.tickWindow),
-          );
-          engine.seek(engine.tick - dt);
-        }
-        break;
-      case "fling":
-        {
-          const w = ev.data.width;
-          let prevX = 0;
-          scrollerRef.current.fling(prevX, 0, -ev.data.vx * 1000, 0);
-          function anim() {
-            if (!scrollerRef.current.computeScrollOffset()) {
+          break;
+        case "pinch":
+          {
+            const h = ev.data.moving.height;
+            const y1 = ev.data.still.y;
+            const y2 = ev.data.moving.y;
+            const dy = ev.data.moving.dy;
+            let tickWindow = engine.tickWindow;
+            let startTick = engine.tick;
+            const zoomPoint = map(ev.data.still.y, h, 0, 0, tickWindow); // zoom around still finger
+            const d1 = Math.abs(y1 - (y2 + dy)); // distance before
+            const d2 = Math.abs(y1 - y2); // distance after
+            const scale = d1 === 0 || d2 === 0 ? 1 : d2 / d1;
+            const windowScaled = scale * tickWindow;
+            if (
+              windowScaled < engine.ticksPerBar / 4 ||
+              windowScaled > engine.song.durationTicks
+            ) {
               return;
             }
-            const x = scrollerRef.current.getCurrX();
-            let dx = x - prevX;
-            prevX = x;
-            let dt = map(dx, 0, w, 0, engine.tickWindow);
-            engine.seek(engine.tick + dt);
+            engine.tickWindow = windowScaled;
+            engine.seek(startTick + zoomPoint * (1 - scale));
+          }
+          break;
+        case "zoom":
+          {
+            const h = ev.data.height;
+            const dy = ev.data.dy;
+            let tickWindow = engine.tickWindow;
+            let startTick = engine.tick;
+            const zoomPoint = map(ev.data.y, h, 0, 0, tickWindow); // zoom around still finger
+            const scale = 1 + map(dy, 0, 10, 0, -0.05); // tweak
+            engine.tickWindow = scale * tickWindow;
+            engine.seek(startTick + zoomPoint * (1 - scale));
+          }
+          break;
+      }
+    },
+    { wheel: true },
+  );
+
+  useGestureDetector(
+    canvasSheetEl,
+    (ev) => {
+      switch (ev.kind) {
+        case "down":
+          {
+            scrollerRef.current.forceFinished(true);
+          }
+          break;
+        case "drag":
+        case "wheel drag":
+          {
+            ev.data.event.preventDefault();
+            let dt = map(
+              ev.data.dx,
+              0,
+              ev.data.width,
+              0,
+              sheetTickWindow(engine.tickWindow),
+            );
+            engine.seek(engine.tick - dt);
+          }
+          break;
+        case "fling":
+          {
+            const w = ev.data.width;
+            let prevX = 0;
+            scrollerRef.current.fling(prevX, 0, -ev.data.vx * 1000, 0);
+            function anim() {
+              if (!scrollerRef.current.computeScrollOffset()) {
+                return;
+              }
+              const x = scrollerRef.current.getCurrX();
+              let dx = x - prevX;
+              prevX = x;
+              let dt = map(dx, 0, w, 0, engine.tickWindow);
+              engine.seek(engine.tick + dt);
+              requestAnimationFrame(anim);
+            }
             requestAnimationFrame(anim);
           }
-          requestAnimationFrame(anim);
-        }
-        break;
-      case "pinch":
-        {
-          const w = ev.data.moving.width;
-          const x1 = ev.data.still.x;
-          const x2 = ev.data.moving.x;
-          const dx = ev.data.moving.dx;
-          let tickWindow = sheetTickWindow(engine.tickWindow);
-          let startTick = engine.tick;
-          const zoomPoint = map(ev.data.still.x, w, 0, 0, tickWindow); // zoom around still finger
-          const d1 = Math.abs(x1 - (x2 + dx)); // distance before
-          const d2 = Math.abs(x1 - x2); // distance after
-          const scale = d1 === 0 || d2 === 0 ? 1 : d2 / d1;
-          const windowScaled = scale * engine.tickWindow;
-          if (
-            windowScaled < engine.ticksPerBar / 4 ||
-            windowScaled > engine.song.durationTicks
-          ) {
-            return;
+          break;
+        case "pinch":
+          {
+            const w = ev.data.moving.width;
+            const x1 = ev.data.still.x;
+            const x2 = ev.data.moving.x;
+            const dx = ev.data.moving.dx;
+            let tickWindow = sheetTickWindow(engine.tickWindow);
+            let startTick = engine.tick;
+            const zoomPoint = map(ev.data.still.x, w, 0, 0, tickWindow); // zoom around still finger
+            const d1 = Math.abs(x1 - (x2 + dx)); // distance before
+            const d2 = Math.abs(x1 - x2); // distance after
+            const scale = d1 === 0 || d2 === 0 ? 1 : d2 / d1;
+            const windowScaled = scale * engine.tickWindow;
+            if (
+              windowScaled < engine.ticksPerBar / 4 ||
+              windowScaled > engine.song.durationTicks
+            ) {
+              return;
+            }
+            engine.tickWindow = windowScaled;
+            engine.seek(startTick + zoomPoint * (1 - scale));
           }
-          engine.tickWindow = windowScaled;
-          engine.seek(startTick + zoomPoint * (1 - scale));
-        }
-        break;
-      case "zoom":
-        {
-          const w = ev.data.width;
-          const dx = ev.data.dy;
-          let tickWindow = sheetTickWindow(engine.tickWindow);
-          let history = tickWindow - engine.tickWindow;
-          const zoomPoint = map(ev.data.x, 0, w, 0, tickWindow); // zoom around still finger
-          const scale = 1 + map(dx, 0, 10, 0, -0.05); // tweak
-          engine.tickWindow = scale * engine.tickWindow;
-          engine.seek(engine.tick + (zoomPoint - history) * (1 - scale));
-        }
-        break;
-    }
-  });
+          break;
+        case "zoom":
+          {
+            const w = ev.data.width;
+            const dx = ev.data.dy;
+            let tickWindow = sheetTickWindow(engine.tickWindow);
+            let history = tickWindow - engine.tickWindow;
+            const zoomPoint = map(ev.data.x, 0, w, 0, tickWindow); // zoom around still finger
+            const scale = 1 + map(dx, 0, 10, 0, -0.05); // tweak
+            engine.tickWindow = scale * engine.tickWindow;
+            engine.seek(engine.tick + (zoomPoint - history) * (1 - scale));
+          }
+          break;
+      }
+    },
+    { wheel: true },
+  );
 
   return (
     <div className="flex flex-col w-full h-full select-none">
