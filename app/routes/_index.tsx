@@ -10,7 +10,7 @@ import type { Midi } from "@tonejs/midi";
 import midiPkg from "@tonejs/midi";
 import fs from "fs";
 import path from "path";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { GraphDB } from "~/util/graph";
 import { EngineProvider } from "../components/engine-provider";
 import { Panel, links as PanelLinks } from "../components/panel";
@@ -274,31 +274,30 @@ export async function loader() {
     }
   }
 
-  const loaderSongs: Array<SongType> = composersData.flatMap(
-    (composer: Composer) =>
-      composer.pieces.flatMap((piece) =>
-        piece.parts.map((part, i) => {
-          const { displayName, firstName, lastName } = transformArtistName(
-            composer.name,
-          );
-          return {
+  const loaderSongs = composersData.flatMap((composer: Composer) =>
+    composer.pieces.flatMap((piece) =>
+      piece.parts.map((part, i) => {
+        const { displayName, firstName, lastName } = transformArtistName(
+          composer.name,
+        );
+        return {
+          artist: displayName,
+          title: `${piece.name} - ${part.name}`,
+          url: "static/output/" + part.localPath,
+          metadata: {
+            id: "static/output/" + part.localPath,
             artist: displayName,
+            artist_firstname: firstName,
+            artist_lastname: lastName,
             title: `${piece.name} - ${part.name}`,
+            piece: piece.name,
+            part: part.name,
+            part_order: i.toString(),
             url: "static/output/" + part.localPath,
-            metadata: {
-              id: "static/output/" + part.localPath,
-              artist: displayName,
-              artist_firstname: firstName,
-              artist_lastname: lastName,
-              title: `${piece.name} - ${part.name}`,
-              piece: piece.name,
-              part: part.name,
-              part_order: i.toString(),
-              url: "static/output/" + part.localPath,
-            },
-          } satisfies SongType;
-        }),
-      ),
+          },
+        } satisfies SongType;
+      }),
+    ),
   );
 
   return data({ songs: [...hardcodedSongs, ...loaderSongs] });
@@ -327,11 +326,7 @@ function SongPicker() {
 
   const [activeHash, setActiveHash] = useState<string>();
   const { hash } = useLocation();
-  console.group();
-  console.log("ah", activeHash);
-  console.log("lh", hash);
-  console.groupEnd();
-  const nav = useNavigate();
+  const navRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const onHashChange = () =>
@@ -342,6 +337,33 @@ function SongPicker() {
   }, [hash]);
 
   useEffect(() => {
+    if (!activeHash) return;
+    const container = navRef.current;
+    if (!container) return;
+
+    const normalizedHash = activeHash.startsWith("#")
+      ? activeHash.slice(1)
+      : activeHash;
+
+    const anchors = container.querySelectorAll<HTMLAnchorElement>(
+      "a[data-anchor-link]",
+    );
+    const activeAnchor = Array.from(anchors).find(
+      (anchor) => anchor.getAttribute("data-anchor-link") === normalizedHash,
+    );
+    if (!activeAnchor) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const anchorRect = activeAnchor.getBoundingClientRect();
+    const isAbove = anchorRect.top < containerRect.top;
+    const isBelow = anchorRect.bottom > containerRect.bottom;
+
+    if (isAbove || isBelow) {
+      activeAnchor.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [activeHash]);
+
+  useEffect(() => {
     // Check which artist header is currently sticky at the top
     const headers = Array.from(
       document.querySelectorAll<HTMLElement>("h2[data-anchor]"),
@@ -350,7 +372,6 @@ function SongPicker() {
     const threshold = 1; // pixels tolerance for top ~ 0
 
     const checkSticky = () => {
-      console.log("check");
       if (headers.length === 0) return;
 
       // Find the header that is currently stuck to the top (top <= 0 and still visible)
@@ -375,7 +396,6 @@ function SongPicker() {
           // Update the hash without causing a scroll jump
           const oldURL = window.location.href;
           window.history.replaceState(null, "", `#${anchor}`);
-          console.log({ oldURL, newURL: window.location.href });
           window.dispatchEvent(
             new HashChangeEvent("hashchange", {
               oldURL,
@@ -452,19 +472,20 @@ function SongPicker() {
   );
 
   return (
-    <main className="flex p-4 md:p-8 gap-8">
-      <div className=" h-svh sticky top-0 overflow-y-scroll">
-        <ul className="flex flex-col gap-1">
+    <main className="flex">
+      <div className=" h-svh sticky top-0 overflow-y-scroll" ref={navRef}>
+        <ul className="flex flex-col pb-16 bg-stone-100">
           {uniqueArtists.map((a) => {
             const anchor = a || "other";
             return (
               <li
                 key={anchor}
-                className={activeHash === `#${anchor}` ? "font-bold" : ""}
+                className={activeHash === `#${anchor}` ? "underline" : ""}
               >
                 <Link
                   to={{ hash: anchor }}
-                  className="block px-2 py-0 bg-action-primary hover:bg-action-primary-hover"
+                  data-anchor-link={anchor}
+                  className="block px-2 hover:bg-sky-100"
                 >
                   {a || "Other"}
                 </Link>
@@ -473,23 +494,22 @@ function SongPicker() {
           })}
         </ul>
       </div>
-      <ul className="mt-6 space-y-6">
+      <ul className="space-y-6">
         {nestedSongs.map(({ artist, songs }) => {
           const anchorId = artist || "other";
           return (
             <ul key={anchorId} id={anchorId} className="space-y-2">
               <h2
-                className="sticky top-0 bg-amber-50 font-semibold text-lg"
+                className="sticky top-0 pl-4 bg-stone-50 font-semibold text-lg"
                 data-anchor={anchorId}
               >
                 {artist || "Other"}
               </h2>
-              <ul className="space-y-2">
+              <ul className="">
                 {songs.map((song) => (
-                  <li key={song.url} className="pb-2">
-                    <a href={song.url} className="block hover:text-accent">
-                      <h3 className="font-bold underline">{song.title}</h3>
-                      <span>{song.artist || "-"}</span>
+                  <li key={song.url} className="">
+                    <a href={song.url} className="block pl-4 hover:text-accent">
+                      <h3 className="">{song.title}</h3>
                     </a>
                   </li>
                 ))}
