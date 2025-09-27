@@ -8,18 +8,12 @@
      * @param {Number} sampleRate in Hz. This directly influences the memory usage: 44100Hz or 48000Hz will both allocate a buffer of 64KB (provided 32-bit floats are used).
      * @memberof Pianolizer
      */
-    constructor(
-      sampleRate2,
-      options = {
-        keysNum: 61,
-        referenceKey: 33,
-        pitchFork: 440,
-      },
-    ) {
-      this.slidingDFT = new SlidingDFT(
-        new PianoTuning(sampleRate2, options),
-        -1,
-      );
+    constructor(sampleRate2, options = {
+      keysNum: 61,
+      referenceKey: 33,
+      pitchFork: 440
+    }) {
+      this.slidingDFT = new SlidingDFT(new PianoTuning(sampleRate2, options), -1);
     }
     /**
      * Process a batch of samples.
@@ -83,7 +77,7 @@
     mul(z) {
       return new _Complex(
         this.re * z.re - this.im * z.im,
-        this.re * z.im + this.im * z.re,
+        this.re * z.im + this.im * z.re
       );
     }
     /**
@@ -140,7 +134,7 @@
      * @memberof RingBuffer
      */
     read(position) {
-      return this.buffer[(this.index + ~position) & this.mask];
+      return this.buffer[this.index + ~position & this.mask];
     }
   };
   var DFTBin = class {
@@ -176,7 +170,7 @@
       }
       this.k = k;
       this.N = N;
-      const q = (2 * Math.PI * k) / N;
+      const q = 2 * Math.PI * k / N;
       this.r = 2 / N;
       this.coeff = new Complex(Math.cos(q), -Math.sin(q));
       this.dft = new Complex();
@@ -195,10 +189,7 @@
       this.totalPower -= previousSample * previousSample;
       const previousComplexSample = new Complex(previousSample, 0);
       const currentComplexSample = new Complex(currentSample, 0);
-      this.dft = this.dft
-        .sub(previousComplexSample)
-        .add(currentComplexSample)
-        .mul(this.coeff);
+      this.dft = this.dft.sub(previousComplexSample).add(currentComplexSample).mul(this.coeff);
     }
     /**
      * Root Mean Square.
@@ -217,7 +208,7 @@
      * @memberof DFTBin
      */
     get amplitudeSpectrum() {
-      return (Math.SQRT2 * this.dft.magnitude) / this.N;
+      return Math.SQRT2 * this.dft.magnitude / this.N;
     }
     /**
      * Normalized amplitude (always returns a value between 0.0 and 1.0).
@@ -228,10 +219,10 @@
      * @memberof DFTBin
      */
     get normalizedAmplitudeSpectrum() {
-      return this.totalPower > 0
-        ? // ? this.amplitudeSpectrum / this.rms
-          (this.r * this.dft.norm) / this.totalPower
-        : 0;
+      return this.totalPower > 0 ? (
+        // ? this.amplitudeSpectrum / this.rms
+        this.r * this.dft.norm / this.totalPower
+      ) : 0;
     }
     /**
      * Using this unit of measure, it is easy to view wide dynamic ranges; that is,
@@ -304,7 +295,8 @@
     read(n) {
       return this.sum[n] / this.averageWindow;
     }
-    update(levels) {}
+    update(levels) {
+    }
   };
   var FastMovingAverage = class extends MovingAverage {
     /**
@@ -317,9 +309,7 @@
       this.updateAverageWindow();
       for (let n = 0; n < this.channels; n++) {
         const currentSum = this.sum[n];
-        this.sum[n] = this.averageWindow
-          ? currentSum + levels[n] - currentSum / this.averageWindow
-          : levels[n];
+        this.sum[n] = this.averageWindow ? currentSum + levels[n] - currentSum / this.averageWindow : levels[n];
       }
     }
   };
@@ -403,14 +393,11 @@
      * @param {number} sampleRate This directly influences the memory usage: 44100Hz or 48000Hz will both allocate a buffer of 64KB (provided 32-bit floats are used).
      * @memberof PianoTuning
      */
-    constructor(
-      sampleRate2,
-      options = {
-        keysNum: 61,
-        referenceKey: 33,
-        pitchFork: 440,
-      },
-    ) {
+    constructor(sampleRate2, options = {
+      keysNum: 61,
+      referenceKey: 33,
+      pitchFork: 440
+    }) {
       console.log("set", options);
       super(sampleRate2, options.keysNum);
       this.pitchFork = options.pitchFork;
@@ -471,7 +458,7 @@
         this.movingAverage = new HeavyMovingAverage(
           this.bands,
           this.sampleRate,
-          Math.round(this.sampleRate * maxAverageWindowInSeconds),
+          Math.round(this.sampleRate * maxAverageWindowInSeconds)
         );
       } else if (maxAverageWindowInSeconds < 0) {
         this.movingAverage = new FastMovingAverage(this.bands, this.sampleRate);
@@ -557,15 +544,15 @@
           defaultValue: 0.04,
           minValue: 0,
           maxValue: 0.25,
-          automationRate: "k-rate",
+          automationRate: "k-rate"
         },
         {
           name: "threshold",
           defaultValue: 0.05,
           minValue: 0,
           maxValue: 1,
-          automationRate: "k-rate",
-        },
+          automationRate: "k-rate"
+        }
       ];
     }
     /**
@@ -590,11 +577,7 @@
       const inputPortCount = input.length;
       for (let portIndex = 0; portIndex < inputPortCount; portIndex++) {
         const channelCount = input[portIndex].length;
-        for (
-          let channelIndex = 0;
-          channelIndex < channelCount;
-          channelIndex++
-        ) {
+        for (let channelIndex = 0; channelIndex < channelCount; channelIndex++) {
           for (let sampleIndex = 0; sampleIndex < windowSize; sampleIndex++) {
             const sample = input[portIndex][channelIndex][sampleIndex];
             this.samples[sampleIndex] += sample;
@@ -606,10 +589,7 @@
       for (let i = 0; i < windowSize; i++) {
         this.samples[i] /= n;
       }
-      const levels = this.pianolizer.process(
-        this.samples,
-        parameters.smooth[0],
-      );
+      const levels = this.pianolizer.process(this.samples, parameters.smooth[0]);
       if (this.nextUpdateFrame <= currentTime) {
         this.nextUpdateFrame = currentTime + this.updateInterval;
         for (let i = 0; i < levels.length; i++) {

@@ -18,6 +18,7 @@ import { Track, links as trackLinks } from "../components/track";
 import { useSongSound } from "../components/use-song-sounds";
 import { useStoredSettingsParams } from "../components/use-stored-settings-params";
 import { files } from "./midi.$id[.midi]";
+import { cn } from "~/util/cn";
 
 export function links() {
   return [...trackLinks(), ...PanelLinks()];
@@ -27,7 +28,17 @@ export type SongType = {
   artist: string;
   title: string;
   url: string;
-  metadata?: Record<string, string>;
+  metadata?: {
+    id: string;
+    artist: string;
+    artist_firstname: string;
+    artist_lastname: string;
+    title: string;
+    piece: string;
+    part: string;
+    part_order: string;
+    url: string;
+  };
 };
 
 const hardcodedSongs: Array<SongType> = [
@@ -359,7 +370,7 @@ function SongPicker() {
     const isBelow = anchorRect.bottom > containerRect.bottom;
 
     if (isAbove || isBelow) {
-      activeAnchor.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      activeAnchor.scrollIntoView({ block: "center", behavior: "smooth" });
     }
   }, [activeHash]);
 
@@ -427,23 +438,6 @@ function SongPicker() {
     return <Song file={file} />;
   }
 
-  const db = new GraphDB();
-  for (const s of songsWithSettings) {
-    db.addAll([
-      [s.url, "artist", s.artist],
-      [s.url, "title", s.title],
-      [s.url, "url", s.url],
-    ]);
-    if (s.metadata) {
-      for (const [key, value] of Object.entries(s.metadata)) {
-        db.addAll([[s.url, key, value]]);
-      }
-    }
-  }
-  const uniqueArtists = db.query([["?song", "artist", "?artist"]], {
-    distinct: "artist",
-  });
-
   const filteredSongs = songsWithSettings.filter((s) => {
     for (const [fk, fv] of filters.entries()) {
       if (fk in s) {
@@ -467,83 +461,30 @@ function SongPicker() {
     }
   }
 
-  const nestedSongs: ArtistSongs[] = Array.from(groupedSongs.entries()).map(
-    ([artist, songs]) => ({ artist, songs }),
-  );
+  const nestedSongs: ArtistSongs[] = Array.from(groupedSongs.entries())
+    .map(([artist, songs]) => ({ artist, songs }))
+    .sort((a, b) => {
+      const aLast = a.songs[0].metadata?.artist_lastname ?? a.artist;
+      const bLast = b.songs[0].metadata?.artist_lastname ?? b.artist;
+      return aLast.localeCompare(bLast);
+    });
 
   return (
-    <main className="flex">
-      <div className=" h-svh sticky top-0 overflow-y-scroll" ref={navRef}>
-        <ul className="flex flex-col pb-16 bg-stone-100">
-          {uniqueArtists.map((a) => {
-            const anchor = a || "other";
-            return (
-              <li
-                key={anchor}
-                className={activeHash === `#${anchor}` ? "underline" : ""}
-              >
-                <Link
-                  to={{ hash: anchor }}
-                  data-anchor-link={anchor}
-                  className="block px-2 hover:bg-sky-100"
-                >
-                  {a || "Other"}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      <ul className="space-y-6">
-        {nestedSongs.map(({ artist, songs }) => {
-          const anchorId = artist || "other";
-          return (
-            <ul key={anchorId} id={anchorId} className="space-y-2">
-              <h2
-                className="sticky top-0 pl-4 bg-stone-50 font-semibold text-lg"
-                data-anchor={anchorId}
-              >
-                {artist || "Other"}
-              </h2>
-              <ul className="">
-                {songs.map((song) => (
-                  <li key={song.url} className="">
-                    <a href={song.url} className="block pl-4 hover:text-accent">
-                      <h3 className="">{song.title}</h3>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </ul>
-          );
-        })}
-      </ul>
-      <ul className="hidden">
-        {songsWithSettings.map((s) => {
-          for (const [fk, fv] of filters.entries()) {
-            if (fk in s) {
-              if (s[fk as keyof SongType] !== fv) {
-                return null;
-              }
-            }
-          }
-
-          return (
-            <li key={s.url} className="pb-4">
-              <a href={s.url} className="block hover:text-accent">
-                <h3 className="font-bold underline">{s.title}</h3>
-                <span>{s.artist || "-"}</span>
-                <pre>{JSON.stringify(s.metadata, null, 2)}</pre>
-              </a>
-            </li>
-          );
-        })}
-        <li className="pb-4">
+    <div>
+      <header
+        className={cn("py-8", "border-b border-b-gray-200", "bg-gray-50")}
+      >
+        <div
+          className={cn("flex items-baseline justify-between mx-4 md:mx-16")}
+        >
+          <h1 className={cn("flex items-baseline", "text-4xl", "font-light")}>
+            <img src="/favicon.ico" className="w-4 h-4 mr-2" />
+            MIDI piano player
+          </h1>
           <label className="block font-bold underline hover:text-accent cursor-pointer">
             Upload MIDI
-            <br />
             <input
-              className="pt-2 w-full"
+              className="pt-2 h-0 w-0 block"
               type="file"
               accept="audio/midi"
               onChange={(e) => {
@@ -554,9 +495,127 @@ function SongPicker() {
               }}
             />
           </label>
-        </li>
-      </ul>
-    </main>
+        </div>
+      </header>
+      <div className=" bg-white pt-8">
+        <div className="flex mx-4 md:mx-16">
+          <aside
+            className={cn(
+              "shrink-0 h-svh sticky top-0 overflow-y-scroll",
+              "pr-4",
+            )}
+            ref={navRef}
+          >
+            <h2 className="font-bold py-1">Composer</h2>
+            <ul className="flex flex-col pb-16 text-secondary">
+              {nestedSongs.map((a) => {
+                const anchor = a.artist || "other";
+                return (
+                  <li key={anchor}>
+                    <Link
+                      to={{ hash: anchor }}
+                      replace={true}
+                      data-anchor-link={anchor}
+                      className={cn(
+                        "block py-1 px-4 hover:bg-gray-100 rounded-lg",
+                        activeHash === `#${anchor}`
+                          ? cn(
+                              "text-primary font-medium",
+                              "outline outline-offset-[-1px]",
+                              "outline-gray-300",
+                              "bg-gray-50",
+                            )
+                          : "",
+                      )}
+                    >
+                      {a.artist || "Other"}
+                    </Link>
+                    <span
+                      className={cn(
+                        "invisible h-0 block px-4",
+                        "text-primary font-medium",
+                      )}
+                    >
+                      {a.artist || "Other"}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </aside>
+          <main className="pb-4">
+            <ul className="space-y-16 pb-16">
+              {nestedSongs.map(({ artist, songs }) => {
+                const anchorId = artist || "other";
+                return (
+                  <ul key={anchorId} id={anchorId}>
+                    <h2
+                      className={cn(
+                        "sticky top-0 pl-4 py-1 mb-8 bg-white font-semibold text-2xl",
+                        "border-b border-b-gray-200",
+                      )}
+                      data-anchor={anchorId}
+                    >
+                      {artist || "Other"}
+                    </h2>
+                    <ul className="-mt-6">
+                      {songs.map((song) => (
+                        <li key={song.url} className="">
+                          <a
+                            href={song.url}
+                            className="block pl-4 hover:text-accent"
+                          >
+                            <h3 className="">{song.title}</h3>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </ul>
+                );
+              })}
+            </ul>
+          </main>
+          <ul className="hidden">
+            {songsWithSettings.map((s) => {
+              for (const [fk, fv] of filters.entries()) {
+                if (fk in s) {
+                  if (s[fk as keyof SongType] !== fv) {
+                    return null;
+                  }
+                }
+              }
+
+              return (
+                <li key={s.url} className="pb-4">
+                  <a href={s.url} className="block hover:text-accent">
+                    <h3 className="font-bold underline">{s.title}</h3>
+                    <span>{s.artist || "-"}</span>
+                    <pre>{JSON.stringify(s.metadata, null, 2)}</pre>
+                  </a>
+                </li>
+              );
+            })}
+            <li className="pb-4">
+              <label className="block font-bold underline hover:text-accent cursor-pointer">
+                Upload MIDI
+                <br />
+                <input
+                  className="pt-2 w-full"
+                  type="file"
+                  accept="audio/midi"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      const file = e.target.files[0];
+                      setFile(URL.createObjectURL(file));
+                    }
+                  }}
+                />
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 }
 

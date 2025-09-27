@@ -10,11 +10,9 @@ import type {
   LinksFunction,
   MetaFunction,
 } from "@remix-run/react/dist/routeModules";
-import color from "./styles/color.css";
 import tailwind from "./styles/tailwind.css";
 
 export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: color },
   { rel: "stylesheet", href: tailwind },
 ];
 

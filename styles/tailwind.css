@@ -2,14 +2,6 @@
 
 /* Write your own custom base styles here */
 
-/* Start purging... */
-@layer components {
-  /* Stop purging. */
-  html,
-  body {
-  }
-}
-
 @theme {
   --color-yellow-500: #ffe600;
   --color-yellow-300: #edda2f;
@@ -17,9 +9,9 @@
   --color-bg-primary: #fff;
   --color-bg-secondary: #eee;
 
-  --text-color-primary: #333;
-  --text-color-secondary: #ccc;
-  --text-color-tertiary: #aaa;
+  --text-color-primary: var(--color-gray-800);
+  --text-color-secondary: var(--color-gray-600);
+  --text-color-tertiary: var(--color-gray-500);
   --text-color-accent: #5e6ad3;
   --text-color-success: #4cb782;
 
@@ -48,6 +40,14 @@
 
   --background-color-action-primary: var(--color-bg-action-primary);
   --background-color-action-primary-hover: var(--color-bg-action-primary-hover);
+}
+
+@layer components {
+  html,
+  body {
+    color: var(--text-color-pimary);
+    background-color: var(--color-gray-50);
+  }
 }
 
 .visuallyhidden {
